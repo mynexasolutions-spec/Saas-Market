@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -7,7 +8,7 @@ export default function Footer() {
         <div className="footer-top-grid">
           {/* Brand Info */}
           <div className="footer-brand-col">
-            <a href="#" className="brand-logo" id="footer-brand-logo">
+            <Link href="/" className="brand-logo" id="footer-brand-logo">
               <span className="brand-icon">
                 <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect width="32" height="32" rx="8" fill="#5E4BEE" />
@@ -20,7 +21,7 @@ export default function Footer() {
                 </svg>
               </span>
               <span>SaaS Market</span>
-            </a>
+            </Link>
             <p className="footer-desc">
               A modern marketplace for SaaS products. Where buyers can discover, compare and purchase, and sellers can grow their business.
             </p>
@@ -58,11 +59,11 @@ export default function Footer() {
           <div>
             <h4 className="footer-col-title">Products</h4>
             <ul className="footer-links-list">
-              <li><a href="#featured" className="footer-link-item">All Products</a></li>
-              <li><a href="#categories" className="footer-link-item">Categories</a></li>
-              <li><a href="#featured" className="footer-link-item">New Arrivals</a></li>
-              <li><a href="#featured" className="footer-link-item">Popular Products</a></li>
-              <li><a href="#featured" className="footer-link-item">Deals &amp; Offers</a></li>
+              <li><Link href="/products" className="footer-link-item">All Products</Link></li>
+              <li><Link href="/#categories" className="footer-link-item">Categories</Link></li>
+              <li><Link href="/products" className="footer-link-item">New Arrivals</Link></li>
+              <li><Link href="/products" className="footer-link-item">Popular Products</Link></li>
+              <li><Link href="/pricing" className="footer-link-item">Deals &amp; Offers</Link></li>
             </ul>
           </div>
 
@@ -70,11 +71,11 @@ export default function Footer() {
           <div>
             <h4 className="footer-col-title">For Buyers</h4>
             <ul className="footer-links-list">
-              <li><a href="#how-it-works" className="footer-link-item">How it Works</a></li>
-              <li><a href="#for-buyers" className="footer-link-item">Buyer Guide</a></li>
-              <li><a href="#faq" className="footer-link-item">FAQs</a></li>
-              <li><a href="#reviews" className="footer-link-item">Reviews</a></li>
-              <li><a href="#support" className="footer-link-item">Support</a></li>
+              <li><Link href="/#how-it-works" className="footer-link-item">How it Works</Link></li>
+              <li><Link href="/#for-buyers" className="footer-link-item">Buyer Guide</Link></li>
+              <li><Link href="/pricing#faq" className="footer-link-item">FAQs</Link></li>
+              <li><Link href="/#reviews" className="footer-link-item">Reviews</Link></li>
+              <li><Link href="/contact" className="footer-link-item">Support</Link></li>
             </ul>
           </div>
 
@@ -82,11 +83,11 @@ export default function Footer() {
           <div>
             <h4 className="footer-col-title">For Sellers</h4>
             <ul className="footer-links-list">
-              <li><a href="#for-sellers" className="footer-link-item">List Your Product</a></li>
-              <li><a href="#for-sellers" className="footer-link-item">Seller Guide</a></li>
-              <li><a href="#pricing" className="footer-link-item">Pricing</a></li>
-              <li><a href="#resources" className="footer-link-item">Seller Resources</a></li>
-              <li><a href="#contact" className="footer-link-item">Contact Sales</a></li>
+              <li><Link href="/pricing" className="footer-link-item">List Your Product</Link></li>
+              <li><Link href="/#for-sellers" className="footer-link-item">Seller Guide</Link></li>
+              <li><Link href="/pricing" className="footer-link-item">Pricing</Link></li>
+              <li><Link href="/blog" className="footer-link-item">Seller Resources</Link></li>
+              <li><Link href="/contact" className="footer-link-item">Contact Sales</Link></li>
             </ul>
           </div>
 
@@ -94,11 +95,11 @@ export default function Footer() {
           <div>
             <h4 className="footer-col-title">Company</h4>
             <ul className="footer-links-list">
-              <li><a href="#about" className="footer-link-item">About Us</a></li>
-              <li><a href="#resources" className="footer-link-item">Blog</a></li>
-              <li><a href="#careers" className="footer-link-item">Careers</a></li>
-              <li><a href="#privacy" className="footer-link-item">Privacy Policy</a></li>
-              <li><a href="#terms" className="footer-link-item">Terms of Service</a></li>
+              <li><Link href="/about" className="footer-link-item">About Us</Link></li>
+              <li><Link href="/blog" className="footer-link-item">Blog</Link></li>
+              <li><Link href="/about#team" className="footer-link-item">Careers</Link></li>
+              <li><Link href="/contact" className="footer-link-item">Privacy Policy</Link></li>
+              <li><Link href="/contact" className="footer-link-item">Terms of Service</Link></li>
             </ul>
           </div>
         </div>

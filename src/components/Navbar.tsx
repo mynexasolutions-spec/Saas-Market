@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 interface NavbarProps {
   onOpenAuth: (mode: "login" | "signup") => void;
@@ -16,7 +17,7 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
       <div className="container">
         <nav className="navbar" aria-label="Main Navigation">
           {/* Logo */}
-          <a href="#" className="brand-logo" id="nav-brand-logo">
+          <Link href="/" className="brand-logo" id="nav-brand-logo">
             <span className="brand-icon">
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="32" height="32" rx="8" fill="#5E4BEE" />
@@ -29,52 +30,52 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
               </svg>
             </span>
             <span>SaaS Market</span>
-          </a>
+          </Link>
 
           {/* Nav Links */}
           <ul className="nav-links">
             <li>
-              <a href="#featured" className="nav-link" id="nav-products">
+              <Link href="/products" className="nav-link" id="nav-products">
                 Products
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#categories" className="nav-link" id="nav-categories">
+              <Link href="/#categories" className="nav-link" id="nav-categories">
                 Categories
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#for-buyers" className="nav-link" id="nav-buyers">
+              <Link href="/#for-buyers" className="nav-link" id="nav-buyers">
                 For Buyers
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#for-sellers" className="nav-link" id="nav-sellers">
+              <Link href="/#for-sellers" className="nav-link" id="nav-sellers">
                 For Sellers
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#pricing" className="nav-link" id="nav-pricing">
+              <Link href="/pricing" className="nav-link" id="nav-pricing">
                 Pricing
-              </a>
+              </Link>
             </li>
             <li
               className="nav-link-dropdown"
               onMouseEnter={() => setResourcesOpen(true)}
               onMouseLeave={() => setResourcesOpen(false)}
             >
-              <a href="#resources" className="nav-link" id="nav-resources">
+              <span className="nav-link" id="nav-resources" style={{ cursor: "pointer" }}>
                 Resources
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
-              </a>
+              </span>
               {resourcesOpen && (
                 <div className="dropdown-menu">
-                  <a href="#resources" className="dropdown-item">Blog & Guides</a>
-                  <a href="#how-it-works" className="dropdown-item">How It Works</a>
-                  <a href="#faq" className="dropdown-item">Knowledge Base</a>
-                  <a href="#reviews" className="dropdown-item">Community Reviews</a>
+                  <Link href="/blog" className="dropdown-item">Blog &amp; Guides</Link>
+                  <Link href="/#how-it-works" className="dropdown-item">How It Works</Link>
+                  <Link href="/about" className="dropdown-item">About Us</Link>
+                  <Link href="/contact" className="dropdown-item">Contact Us</Link>
                 </div>
               )}
             </li>
@@ -130,12 +131,14 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
             flexDirection: 'column',
             gap: '0.85rem'
           }}>
-            <a href="#featured" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Products</a>
-            <a href="#categories" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Categories</a>
-            <a href="#for-buyers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Buyers</a>
-            <a href="#for-sellers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Sellers</a>
-            <a href="#pricing" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Pricing</a>
-            <a href="#resources" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Resources</a>
+            <Link href="/products" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Products</Link>
+            <Link href="/#categories" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Categories</Link>
+            <Link href="/#for-buyers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Buyers</Link>
+            <Link href="/#for-sellers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Sellers</Link>
+            <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Pricing</Link>
+            <Link href="/blog" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Blog</Link>
+            <Link href="/about" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>About Us</Link>
+            <Link href="/contact" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Contact</Link>
           </div>
         )}
       </div>
