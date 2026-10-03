@@ -71,11 +71,57 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
                 </svg>
               </span>
               {resourcesOpen && (
-                <div className="dropdown-menu">
-                  <Link href="/blog" className="dropdown-item">Blog &amp; Guides</Link>
-                  <Link href="/#how-it-works" className="dropdown-item">How It Works</Link>
-                  <Link href="/about" className="dropdown-item">About Us</Link>
-                  <Link href="/contact" className="dropdown-item">Contact Us</Link>
+                <div className="dropdown-menu dropdown-menu-rich">
+                  <Link href="/blog" className="dropdown-item-rich">
+                    <div className="dropdown-icon-box" style={{ background: "var(--primary-50)", color: "var(--primary)" }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                      </svg>
+                    </div>
+                    <div className="dropdown-text-box">
+                      <div className="dropdown-title">Blog &amp; Guides</div>
+                      <div className="dropdown-desc">Read our latest articles</div>
+                    </div>
+                  </Link>
+                  <Link href="/#how-it-works" className="dropdown-item-rich">
+                    <div className="dropdown-icon-box" style={{ background: "var(--blue-50)", color: "var(--blue-500)" }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4"></path>
+                        <path d="M12 8h.01"></path>
+                      </svg>
+                    </div>
+                    <div className="dropdown-text-box">
+                      <div className="dropdown-title">How It Works</div>
+                      <div className="dropdown-desc">Learn the buying process</div>
+                    </div>
+                  </Link>
+                  <Link href="/about" className="dropdown-item-rich">
+                    <div className="dropdown-icon-box" style={{ background: "var(--green-50)", color: "var(--green-500)" }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                      </svg>
+                    </div>
+                    <div className="dropdown-text-box">
+                      <div className="dropdown-title">About Us</div>
+                      <div className="dropdown-desc">Our mission &amp; team</div>
+                    </div>
+                  </Link>
+                  <Link href="/contact" className="dropdown-item-rich">
+                    <div className="dropdown-icon-box" style={{ background: "var(--amber-50)", color: "var(--amber-500)" }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                      </svg>
+                    </div>
+                    <div className="dropdown-text-box">
+                      <div className="dropdown-title">Contact Us</div>
+                      <div className="dropdown-desc">Get in touch with support</div>
+                    </div>
+                  </Link>
                 </div>
               )}
             </li>

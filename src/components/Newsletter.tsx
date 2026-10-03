@@ -72,7 +72,7 @@ export default function Newsletter({ onSubscribe }: NewsletterProps) {
                     id="newsletter-submit-btn"
                   >
                     <span>Subscribe</span>
-                    <span style={{ marginLeft: "4px" }}>→</span>
+                    
                   </button>
                 </div>
                 <div className="newsletter-disclaimer">

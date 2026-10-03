@@ -142,7 +142,7 @@ export default function ProductModal({
               className="btn-primary"
               onClick={() => onSelectPlan(product)}
             >
-              Start Free Trial →
+              Start Free Trial
             </button>
           </div>
         </div>

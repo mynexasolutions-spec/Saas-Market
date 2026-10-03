@@ -280,9 +280,6 @@ export default function ProductsPageClient() {
                           </div>
                           <span className="product-details-btn">
                             <span>View Details</span>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                            </svg>
                           </span>
                         </div>
                       </div>
@@ -298,7 +295,7 @@ export default function ProductsPageClient() {
                   <button className="products-page-btn" id="page-2">2</button>
                   <button className="products-page-btn" id="page-3">3</button>
                   <span className="products-page-ellipsis">…</span>
-                  <button className="products-page-btn" id="page-next">Next →</button>
+                  <button className="products-page-btn" id="page-next">Next</button>
                 </div>
               )}
             </div>
@@ -315,7 +312,7 @@ export default function ProductsPageClient() {
               <p className="products-seller-cta-sub">Join 500+ sellers reaching 50,000+ qualified buyers on SaaS Market.</p>
             </div>
             <Link href="/pricing" className="btn-primary products-seller-cta-btn" id="products-list-product-btn">
-              List Your Product →
+              List Your Product
             </Link>
           </div>
         </div>

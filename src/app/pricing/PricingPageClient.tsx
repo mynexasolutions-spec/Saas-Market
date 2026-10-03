@@ -207,7 +207,7 @@ export default function PricingPageClient() {
               <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
             </svg>
             <span>Need a custom enterprise plan for 10+ products or white-label options?{" "}
-              <Link href="/contact" className="pricing-contact-link" id="pricing-enterprise-link">Talk to our team →</Link>
+              <Link href="/contact" className="pricing-contact-link" id="pricing-enterprise-link">Talk to our team</Link>
             </span>
           </div>
         </div>
