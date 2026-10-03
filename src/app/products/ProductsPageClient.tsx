@@ -309,7 +309,7 @@ export default function ProductsPageClient() {
           <div className="products-seller-cta-inner">
             <div>
               <h2 className="products-seller-cta-title">Have a SaaS product to list?</h2>
-              <p className="products-seller-cta-sub">Join 500+ sellers reaching 50,000+ qualified buyers on SaaS Market.</p>
+              <p className="products-seller-cta-sub">Join 500+ sellers reaching 50,000+ qualified buyers on SaaS MRKT.</p>
             </div>
             <Link href="/pricing" className="btn-primary products-seller-cta-btn" id="products-list-product-btn">
               List Your Product
@@ -336,3 +336,4 @@ export default function ProductsPageClient() {
     </PageLayout>
   );
 }
+

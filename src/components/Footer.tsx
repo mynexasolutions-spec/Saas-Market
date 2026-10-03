@@ -20,7 +20,7 @@ export default function Footer() {
                   />
                 </svg>
               </span>
-              <span>SaaS Market</span>
+              <span>SaaS MRKT</span>
             </Link>
             <p className="footer-desc">
               A modern marketplace for SaaS products. Where buyers can discover, compare and purchase, and sellers can grow their business.
@@ -106,7 +106,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="footer-bottom-bar">
-          <div>© 2026 SaaS Market. All rights reserved.</div>
+          <div>© 2026 SaaS MRKT. All rights reserved.</div>
           <div className="footer-community-text">
             <span>Made with</span>
             <span style={{ color: "#EF4444" }}>❤️</span>
@@ -117,3 +117,4 @@ export default function Footer() {
     </footer>
   );
 }
+

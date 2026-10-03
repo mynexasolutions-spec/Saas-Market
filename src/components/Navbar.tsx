@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface NavbarProps {
   onOpenAuth: (mode: "login" | "signup") => void;
@@ -9,6 +10,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
 
@@ -29,7 +31,7 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
                 />
               </svg>
             </span>
-            <span>SaaS Market</span>
+            <span>SaaS MRKT</span>
           </Link>
 
           {/* Nav Links */}
@@ -40,17 +42,17 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
               </Link>
             </li>
             <li>
-              <Link href="/#categories" className="nav-link" id="nav-categories">
+              <Link href="/categories" className="nav-link" id="nav-categories">
                 Categories
               </Link>
             </li>
             <li>
-              <Link href="/#for-buyers" className="nav-link" id="nav-buyers">
+              <Link href="/buyers" className="nav-link" id="nav-buyers">
                 For Buyers
               </Link>
             </li>
             <li>
-              <Link href="/#for-sellers" className="nav-link" id="nav-sellers">
+              <Link href="/sellers" className="nav-link" id="nav-sellers">
                 For Sellers
               </Link>
             </li>
@@ -72,7 +74,7 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
               </span>
               {resourcesOpen && (
                 <div className="dropdown-menu dropdown-menu-rich">
-                  <Link href="/blog" className="dropdown-item-rich">
+                  <Link href="/blog" className={`dropdown-item-rich${pathname === "/blog" ? " active-dropdown-item" : ""}`}>
                     <div className="dropdown-icon-box" style={{ background: "var(--primary-50)", color: "var(--primary)" }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -84,7 +86,7 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
                       <div className="dropdown-desc">Read our latest articles</div>
                     </div>
                   </Link>
-                  <Link href="/#how-it-works" className="dropdown-item-rich">
+                  <Link href="/how-it-works" className={`dropdown-item-rich${pathname === "/how-it-works" ? " active-dropdown-item" : ""}`}>
                     <div className="dropdown-icon-box" style={{ background: "var(--blue-50)", color: "var(--blue-500)" }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -97,7 +99,7 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
                       <div className="dropdown-desc">Learn the buying process</div>
                     </div>
                   </Link>
-                  <Link href="/about" className="dropdown-item-rich">
+                  <Link href="/about" className={`dropdown-item-rich${pathname === "/about" ? " active-dropdown-item" : ""}`}>
                     <div className="dropdown-icon-box" style={{ background: "var(--green-50)", color: "var(--green-500)" }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -111,7 +113,7 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
                       <div className="dropdown-desc">Our mission &amp; team</div>
                     </div>
                   </Link>
-                  <Link href="/contact" className="dropdown-item-rich">
+                  <Link href="/contact" className={`dropdown-item-rich${pathname === "/contact" ? " active-dropdown-item" : ""}`}>
                     <div className="dropdown-icon-box" style={{ background: "var(--amber-50)", color: "var(--amber-500)" }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
@@ -178,9 +180,9 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
             gap: '0.85rem'
           }}>
             <Link href="/products" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Products</Link>
-            <Link href="/#categories" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Categories</Link>
-            <Link href="/#for-buyers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Buyers</Link>
-            <Link href="/#for-sellers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Sellers</Link>
+            <Link href="/categories" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Categories</Link>
+            <Link href="/buyers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Buyers</Link>
+            <Link href="/sellers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Sellers</Link>
             <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Pricing</Link>
             <Link href="/blog" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Blog</Link>
             <Link href="/about" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>About Us</Link>
@@ -191,3 +193,7 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
     </header>
   );
 }
+
+
+
+

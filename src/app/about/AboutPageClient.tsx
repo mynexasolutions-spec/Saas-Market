@@ -22,7 +22,7 @@ const TEAM = [
   {
     name: "Priya Kapoor",
     role: "Head of Content",
-    bio: "Former TechCrunch journalist. Brings deep SaaS market expertise to our editorial team.",
+    bio: "Former TechCrunch journalist. Brings deep SaaS MRKT expertise to our editorial team.",
     initial: "P",
     gradient: "linear-gradient(135deg, #EC4899 0%, #F97316 100%)",
   },
@@ -109,11 +109,11 @@ const VALUES = [
 ];
 
 const MILESTONES = [
-  { year: "2022", title: "Founded in Bangalore", desc: "Aisha and Marcus started SaaS Market from a co-working space with the vision of a fair, transparent SaaS marketplace." },
+  { year: "2022", title: "Founded in Bangalore", desc: "Aisha and Marcus started SaaS MRKT from a co-working space with the vision of a fair, transparent SaaS MRKTplace." },
   { year: "2023", title: "Seed Round & Launch", desc: "Raised $2.4M in seed funding. Launched with 50 SaaS products and hit 1,000 registered buyers in the first 90 days." },
   { year: "2024", title: "10,000 Buyers Milestone", desc: "Crossed 10,000 active buyers and 200 seller listings. Launched our review verification system and seller analytics dashboard." },
-  { year: "2025", title: "Series A & Global Expansion", desc: "Raised $12M Series A. Expanded to 80 countries, launched in 6 languages, and introduced the SaaS Market API for enterprise buyers." },
-  { year: "2026", title: "50,000 Buyers & Growing", desc: "Today SaaS Market serves 50,000+ buyers, 500+ sellers, and has facilitated over $8M in software subscriptions." },
+  { year: "2025", title: "Series A & Global Expansion", desc: "Raised $12M Series A. Expanded to 80 countries, launched in 6 languages, and introduced the SaaS MRKT API for enterprise buyers." },
+  { year: "2026", title: "50,000 Buyers & Growing", desc: "Today SaaS MRKT serves 50,000+ buyers, 500+ sellers, and has facilitated over $8M in software subscriptions." },
 ];
 
 export default function AboutPageClient() {
@@ -125,10 +125,10 @@ export default function AboutPageClient() {
           <div className="about-hero-content">
             <div className="section-badge">OUR STORY</div>
             <h1 className="about-hero-title">
-              We&apos;re Building the World&apos;s Most <span className="section-title-highlight">Trusted SaaS Marketplace</span>
+              We&apos;re Building the World&apos;s Most <span className="section-title-highlight">Trusted SaaS MRKTplace</span>
             </h1>
             <p className="about-hero-subtitle">
-              SaaS Market was founded to fix a broken discovery process. Finding the right software
+              SaaS MRKT was founded to fix a broken discovery process. Finding the right software
               shouldn&apos;t take weeks of demos, confusing pricing pages, and biased review sites.
               We&apos;re building something better.
             </p>
@@ -175,7 +175,7 @@ export default function AboutPageClient() {
                 or sponsored placements.
               </p>
               <p className="section-subtitle" style={{ marginTop: "1rem" }}>
-                SaaS Market uses verified reviews, usage data, and transparent ranking signals to surface
+                SaaS MRKT uses verified reviews, usage data, and transparent ranking signals to surface
                 the best tools for every buyer&apos;s needs. Sellers succeed on merit, not marketing spend.
               </p>
               <Link href="/products" className="btn-primary" style={{ marginTop: "1.5rem", display: "inline-flex" }} id="about-mission-browse-btn">
@@ -230,7 +230,7 @@ export default function AboutPageClient() {
         <div className="container">
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <div className="section-badge">OUR JOURNEY</div>
-            <h2 className="section-title">Building SaaS Market, Year by Year</h2>
+            <h2 className="section-title">Building SaaS MRKT, Year by Year</h2>
           </div>
           <div className="about-timeline">
             {MILESTONES.map((ms, i) => (
@@ -252,7 +252,7 @@ export default function AboutPageClient() {
         <div className="container">
           <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
             <div className="section-badge">THE TEAM</div>
-            <h2 className="section-title">The People Behind SaaS Market</h2>
+            <h2 className="section-title">The People Behind SaaS MRKT</h2>
             <p className="section-subtitle" style={{ margin: "0.5rem auto 0", maxWidth: "560px" }}>
               A small, passionate team of product builders, writers, and engineers on a mission to fix software discovery.
             </p>
@@ -290,3 +290,4 @@ export default function AboutPageClient() {
     </PageLayout>
   );
 }
+

@@ -110,7 +110,7 @@ export default function Home() {
           activeCategory={activeCategory}
         />
 
-        {/* How SaaS Market Works (3 steps flow) */}
+        {/* How SaaS MRKT Works (3 steps flow) */}
         <HowItWorks />
 
         {/* Featured Products (5 cards with screenshots) */}
@@ -120,7 +120,7 @@ export default function Home() {
           categoryFilter={activeCategory}
         />
 
-        {/* Why Choose SaaS Market (Lavender box with 6 cards) */}
+        {/* Why Choose SaaS MRKT (Lavender box with 6 cards) */}
         <WhyChooseUs onExploreClick={handleExploreScroll} />
 
         {/* Dual Banners (For Buyers & For Sellers) */}
@@ -172,3 +172,4 @@ export default function Home() {
     </>
   );
 }
+

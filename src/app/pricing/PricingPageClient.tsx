@@ -78,7 +78,7 @@ const FAQS = [
   },
   {
     q: "Do you charge a commission on sales?",
-    a: "No. SaaS Market charges only the flat monthly plan fee. We never take a percentage of your revenue — what you earn is yours.",
+    a: "No. SaaS MRKT charges only the flat monthly plan fee. We never take a percentage of your revenue — what you earn is yours.",
   },
   {
     q: "What payment methods do you accept?",
@@ -311,3 +311,4 @@ export default function PricingPageClient() {
     </PageLayout>
   );
 }
+

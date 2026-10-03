@@ -185,10 +185,11 @@ export default function AuthModal({
             className="btn-primary"
             style={{ width: "100%", marginTop: "0.5rem", padding: "0.75rem" }}
           >
-            {mode === "login" ? "Sign In to SaaS Market" : "Create Account"}
+            {mode === "login" ? "Sign In to SaaS MRKT" : "Create Account"}
           </button>
         </form>
       </div>
     </div>
   );
 }
+

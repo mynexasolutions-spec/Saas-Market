@@ -50,7 +50,7 @@ export default function HowItWorks() {
             SIMPLE & EASY PROCESS
           </div>
           <h2 className="section-title">
-            How <span className="section-title-highlight">SaaS Market</span> Works
+            How <span className="section-title-highlight">SaaS MRKT</span> Works
           </h2>
           <p className="section-subtitle">
             A simple way to discover, compare and buy the right SaaS products.
@@ -86,3 +86,4 @@ export default function HowItWorks() {
     </section>
   );
 }
+

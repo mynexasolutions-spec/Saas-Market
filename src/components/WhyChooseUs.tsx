@@ -95,7 +95,7 @@ export default function WhyChooseUs({ onExploreClick }: WhyChooseUsProps) {
           {/* Left Column */}
           <div className="why-left-content">
             <div className="section-badge" id="why-choose-badge" style={{ alignSelf: "flex-start" }}>
-              WHY CHOOSE SAAS MARKET
+              WHY CHOOSE SaaS MRKT
             </div>
             <h2 className="why-heading">
               Everything You Need in One{" "}
@@ -139,3 +139,4 @@ export default function WhyChooseUs({ onExploreClick }: WhyChooseUsProps) {
     </section>
   );
 }
+

@@ -203,7 +203,7 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
 
               <div className="post-sidebar-card">
                 <h3 className="post-sidebar-title">Try a SaaS Tool</h3>
-                <p className="post-sidebar-text">Discover the tools mentioned in this article on SaaS Market. Compare features and start free trials.</p>
+                <p className="post-sidebar-text">Discover the tools mentioned in this article on SaaS MRKT. Compare features and start free trials.</p>
                 <Link href="/products" className="btn-primary" style={{ width: "100%", justifyContent: "center" }} id="post-sidebar-browse-btn">
                   Browse Products
                 </Link>

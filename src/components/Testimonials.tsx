@@ -8,7 +8,7 @@ const TESTIMONIALS = [
     name: "Ayesha Khan",
     role: "Product Manager",
     quote:
-      "SaaS Market made it so easy to find the right tools for our team. The comparisons and reviews really helped us make the right decision.",
+      "SaaS MRKT made it so easy to find the right tools for our team. The comparisons and reviews really helped us make the right decision.",
   },
   {
     id: "review-2",
@@ -17,7 +17,7 @@ const TESTIMONIALS = [
     name: "Rohit Sharma",
     role: "Startup Founder",
     quote:
-      "We listed our SaaS product on SaaS Market and got amazing visibility. Highly recommended for SaaS founders.",
+      "We listed our SaaS product on SaaS MRKT and got amazing visibility. Highly recommended for SaaS founders.",
   },
   {
     id: "review-3",
@@ -86,3 +86,4 @@ export default function Testimonials() {
     </section>
   );
 }
+

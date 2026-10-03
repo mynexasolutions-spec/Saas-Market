@@ -128,6 +128,34 @@ const BLOG_POSTS = [
     accentColor: "#F97316",
     gradient: "linear-gradient(135deg, #F97316 0%, #EC4899 100%)",
   },
+  {
+    slug: "securing-cloud-infrastructure",
+    tag: "Guides",
+    title: "Best Practices for Securing Your Cloud Infrastructure",
+    excerpt:
+      "Data breaches are costly. Learn how top-tier SaaS companies use Zero Trust architecture and encryption to protect their most valuable assets.",
+    date: "Aug 28, 2026",
+    readTime: "7 min read",
+    author: "Elena Rossi",
+    authorRole: "Security Engineer",
+    featured: false,
+    accentColor: "#10B981",
+    gradient: "linear-gradient(135deg, #10B981 0%, #3B82F6 100%)",
+  },
+  {
+    slug: "future-of-ai-customer-support",
+    tag: "Trends",
+    title: "The Future of AI in Customer Support Workflows",
+    excerpt:
+      "Chatbots are just the beginning. Discover how predictive AI is anticipating customer needs and resolving tickets before they're even filed.",
+    date: "Aug 22, 2026",
+    readTime: "4 min read",
+    author: "Marcus Chen",
+    authorRole: "AI Researcher",
+    featured: false,
+    accentColor: "#8B5CF6",
+    gradient: "linear-gradient(135deg, #8B5CF6 0%, #F43F5E 100%)",
+  },
 ];
 
 export default function BlogPageClient() {

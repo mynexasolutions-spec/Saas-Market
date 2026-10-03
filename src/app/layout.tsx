@@ -16,11 +16,11 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "SaaS Market - Discover. Compare. Buy. Powerful SaaS Products.",
+  title: "SaaS MRKT - Discover. Compare. Buy. Powerful SaaS Products.",
   description:
-    "SaaS Market is a dedicated platform where buyers can discover, compare and purchase SaaS products, and sellers can list, showcase and grow their SaaS business.",
+    "SaaS MRKT is a dedicated platform where buyers can discover, compare and purchase SaaS products, and sellers can list, showcase and grow their SaaS business.",
   keywords: [
-    "SaaS Marketplace",
+    "SaaS MRKTplace",
     "Software Comparison",
     "Buy SaaS",
     "HR & Payroll",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     "Developer Tools",
     "Accounting Software",
   ],
-  authors: [{ name: "SaaS Market Inc." }],
+  authors: [{ name: "SaaS MRKT Inc." }],
 };
 
 export default function RootLayout({
@@ -42,7 +42,13 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }
+
+
+
+

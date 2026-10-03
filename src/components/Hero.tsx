@@ -84,7 +84,7 @@ export default function Hero({
         <div className="hero-content">
           {/* Top Pill Badge */}
           <div className="section-badge" id="hero-badge">
-            The SaaS Marketplace
+            The SaaS MRKTplace
           </div>
 
           {/* Main Title */}
@@ -95,7 +95,7 @@ export default function Hero({
 
           {/* Subtitle */}
           <p className="hero-subtitle">
-            SaaS Market is a dedicated platform where buyers can discover, compare and purchase SaaS products, and sellers can list, showcase and grow their SaaS business.
+            SaaS MRKT is a dedicated platform where buyers can discover, compare and purchase SaaS products, and sellers can list, showcase and grow their SaaS business.
           </p>
 
           {/* Search Form */}
@@ -136,3 +136,4 @@ export default function Hero({
     </section>
   );
 }
+
