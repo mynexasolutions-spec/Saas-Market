@@ -247,7 +247,7 @@ export default function BlogPageClient() {
       <section className="blog-list-section">
         <div className="container">
           {/* Category Filters */}
-          <div className="blog-filters-row">
+          <div className="blog-filter-bar">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
@@ -290,12 +290,9 @@ export default function BlogPageClient() {
                     <h3 className="blog-card-title">{post.title}</h3>
                     <p className="blog-card-excerpt">{post.excerpt}</p>
                     <div className="blog-card-footer">
-                      <div className="blog-author-mini">
-                        <div className="blog-author-avatar blog-author-avatar--sm" style={{ background: post.gradient }}>
-                          {post.author.charAt(0)}
-                        </div>
-                        <span>{post.author}</span>
-                      </div>
+                      <span className="blog-read-more-btn" style={{ fontSize: '0.78rem' }}>
+                        Read Now
+                      </span>
                       <div className="blog-card-meta">
                         <span>{post.date}</span>
                         <span className="blog-meta-sep">·</span>
