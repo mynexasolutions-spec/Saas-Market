@@ -15,6 +15,12 @@
   --primary-glow: rgba(94, 75, 238, 0.16);
   --primary-shadow: rgba(94, 75, 238, 0.32);
 
+  /* Brand Red Accent */
+  --red-accent: #980e21;
+  --red-accent-hover: #7a0b1a;
+  --red-accent-light: rgba(152, 14, 33, 0.08);
+  --red-accent-glow: rgba(152, 14, 33, 0.28);
+
   /* Slate & Neutral Palette */
   --slate-950: #080D1A;
   --slate-900: #0F172A;
@@ -156,7 +162,7 @@ input, select, textarea {
 }
 
 .section-subtitle {
-  color: var(--slate-500);
+  color: var(--slate-700);
   font-size: 1rem;
   max-width: 620px;
   margin-top: 0.45rem;
@@ -467,7 +473,7 @@ input, select, textarea {
 
 .hero-subtitle {
   font-size: 1.125rem;
-  color: var(--slate-500);
+  color: var(--slate-700);
   line-height: 1.65;
   max-width: 660px;
   margin-bottom: 2.5rem;
@@ -616,7 +622,7 @@ input, select, textarea {
 
 .metric-label {
   font-size: 0.85rem;
-  color: var(--slate-500);
+  color: var(--slate-700);
   font-weight: 500;
   margin-top: 0.15rem;
 }
@@ -826,7 +832,7 @@ input, select, textarea {
 
 .step-desc {
   font-size: 0.9rem;
-  color: var(--slate-500);
+  color: var(--slate-700);
   max-width: 240px;
   line-height: 1.5;
 }
@@ -1101,7 +1107,7 @@ input, select, textarea {
 
 .why-desc {
   font-size: 1.05rem;
-  color: var(--slate-600);
+  color: var(--slate-800);
   line-height: 1.65;
   margin-bottom: 2rem;
 }
@@ -1156,8 +1162,8 @@ input, select, textarea {
 }
 
 .why-feature-desc {
-  font-size: 0.775rem;
-  color: var(--slate-500);
+  font-size: 0.8rem;
+  color: var(--slate-700);
   line-height: 1.45;
 }
 
@@ -1442,7 +1448,7 @@ input, select, textarea {
 
 .testimonial-quote {
   font-size: 0.925rem;
-  color: var(--slate-600);
+  color: var(--slate-800);
   line-height: 1.6;
   font-style: normal;
 }
@@ -1541,7 +1547,7 @@ input, select, textarea {
   font-weight: 700;
   color: var(--slate-900);
   line-height: 1.4;
-  margin-bottom: 1.15rem;
+  margin-bottom: 0.5rem;
   transition: color 0.2s ease;
 }
 
@@ -1554,7 +1560,17 @@ input, select, textarea {
   align-items: center;
   gap: 0.4rem;
   font-size: 0.775rem;
-  color: var(--slate-400);
+  color: var(--slate-700);
+}
+
+.article-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-top: 1px solid var(--slate-150);
+  padding-top: 0.85rem;
+  margin-top: 0.85rem;
 }
 
 @media (max-width: 900px) {
@@ -1627,7 +1643,7 @@ input, select, textarea {
 }
 
 .newsletter-subtitle {
-  color: #94A3B8;
+  color: rgba(255,255,255,0.82);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -1675,7 +1691,7 @@ input, select, textarea {
 
 .newsletter-disclaimer {
   font-size: 0.775rem;
-  color: #64748B;
+  color: rgba(255,255,255,0.6);
   text-align: right;
   padding-right: 0.5rem;
 }
@@ -2209,7 +2225,7 @@ input, select, textarea {
 .blog-featured-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   border-top: 1px solid var(--slate-150);
   padding-top: 1.25rem;
 }
@@ -2260,19 +2276,35 @@ input, select, textarea {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  color: var(--primary);
+  background: var(--red-accent);
+  color: var(--white);
   font-weight: 700;
   font-size: 0.9rem;
-  transition: gap 0.2s ease;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
 }
 
-.blog-featured-card:hover .blog-read-more-btn {
+.blog-featured-card:hover .blog-read-more-btn,
+.blog-read-more-btn:hover {
+  background: var(--red-accent-hover);
   gap: 0.65rem;
+  box-shadow: 0 4px 14px var(--red-accent-glow);
 }
 
 /* Category Filter Bar */
 .blog-list-section {
   padding: 3rem 0 5rem;
+}
+
+/* blog-filters-row: used in BlogPageClient */
+.blog-filters-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding-bottom: 1rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog-filter-bar {
@@ -2290,33 +2322,35 @@ input, select, textarea {
 }
 
 .blog-filter-btn {
-  padding: 0.55rem 1.15rem;
+  padding: 0.5rem 1.1rem;
   border-radius: var(--radius-full);
   background: var(--white);
   border: 1px solid var(--slate-200);
-  color: var(--slate-600);
+  color: var(--slate-800);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
   font-family: inherit;
+  flex-shrink: 0;
 }
 
 .blog-filter-btn:hover {
-  border-color: var(--primary-200);
-  color: var(--primary);
+  border-color: var(--red-accent);
+  color: var(--red-accent);
+  background: var(--red-accent-light);
 }
 
 .blog-filter-btn--active {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--red-accent);
+  border-color: var(--red-accent);
   color: var(--white);
-  box-shadow: 0 4px 14px var(--primary-shadow);
+  box-shadow: 0 4px 14px var(--red-accent-glow);
 }
 
 .blog-filter-btn--active:hover {
-  background: var(--primary-hover);
+  background: var(--red-accent-hover);
   color: var(--white);
 }
 
@@ -2385,7 +2419,7 @@ input, select, textarea {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.78rem;
-  color: var(--slate-500);
+  color: var(--slate-700);
   margin-bottom: 0.65rem;
 }
 
@@ -2399,10 +2433,10 @@ input, select, textarea {
 }
 
 .blog-card-excerpt {
-  color: var(--slate-600);
+  color: var(--slate-800);
   font-size: 0.875rem;
   line-height: 1.55;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   flex-grow: 1;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -2417,7 +2451,43 @@ input, select, textarea {
   border-top: 1px solid var(--slate-150);
   padding-top: 1rem;
   font-size: 0.8rem;
-  color: var(--slate-500);
+  color: var(--slate-700);
+}
+
+/* blog card meta row: date + readtime */
+.blog-card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--slate-700);
+}
+
+.blog-meta-dot {
+  color: var(--slate-400);
+}
+
+/* Read Now CTA in blog cards */
+.blog-card-read-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--red-accent);
+  color: var(--white);
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.blog-card-read-now:hover {
+  background: var(--red-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--red-accent-glow);
 }
 
 .blog-author-mini {

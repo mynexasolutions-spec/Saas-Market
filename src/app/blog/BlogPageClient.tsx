@@ -225,17 +225,8 @@ export default function BlogPageClient() {
               <h2 className="blog-featured-title">{featuredPost.title}</h2>
               <p className="blog-featured-excerpt">{featuredPost.excerpt}</p>
               <div className="blog-featured-footer">
-                <div className="blog-author">
-                  <div className="blog-author-avatar" style={{ background: featuredPost.gradient }}>
-                    {featuredPost.author.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="blog-author-name">{featuredPost.author}</div>
-                    <div className="blog-author-role">{featuredPost.authorRole}</div>
-                  </div>
-                </div>
                 <span className="blog-read-more-btn">
-                  Read Article
+                  Read Now
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                   </svg>
@@ -293,17 +284,23 @@ export default function BlogPageClient() {
                     <h3 className="blog-card-title">{post.title}</h3>
                     <p className="blog-card-excerpt">{post.excerpt}</p>
                     <div className="blog-card-footer">
-                      <div className="blog-author-mini">
-                        <div className="blog-author-avatar blog-author-avatar--sm" style={{ background: post.gradient }}>
-                          {post.author.charAt(0)}
-                        </div>
-                        <span>{post.author}</span>
-                      </div>
-                      <div className="blog-card-meta">
+                      <div className="blog-card-meta-row">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
                         <span>{post.date}</span>
-                        <span className="blog-meta-sep">·</span>
+                        <span className="blog-meta-dot">·</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                        </svg>
                         <span>{post.readTime}</span>
                       </div>
+                      <span className="blog-card-read-now">
+                        Read Now
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                        </svg>
+                      </span>
                     </div>
                   </div>
                 </Link>
