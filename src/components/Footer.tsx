@@ -102,7 +102,22 @@ export default function Footer() {
           <div>© 2026 SaaS MRKT. All rights reserved.</div>
           <div className="footer-community-text">
             <span>Made with</span>
-            <span style={{ color: "#EF4444" }}>❤️</span>
+            <span className="footer-heart-badge">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#EF4444"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-label="heart icon"
+                className="footer-heart-svg"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </span>
             <span>for the SaaS community.</span>
           </div>
         </div>

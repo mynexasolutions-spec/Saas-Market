@@ -303,84 +303,41 @@ export default function CategoriesPageClient() {
       </div>
 
       {/* Categories Grid */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-        gap: "1.15rem",
-        marginBottom: "4.5rem"
-      }}>
+      <div className="categories-page-grid">
         {filteredCategories.length > 0 ? (
           filteredCategories.map((category) => (
             <Link
               href={`/products?category=${encodeURIComponent(category.name)}`}
               key={category.id}
-              style={{ textDecoration: "none", color: "inherit" }}
+              style={{ textDecoration: "none", color: "inherit", display: "flex" }}
             >
-              <div
-                style={{
-                  background: "var(--white)",
-                  borderRadius: "16px",
-                  padding: "1.35rem 1.25rem 1.15rem",
-                  border: "1px solid var(--slate-200)",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
-                  transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
-                  boxShadow: "0 4px 12px rgba(15, 23, 42, 0.03)",
-                  position: "relative"
-                }}
-                className="category-grid-card"
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
-                  <div style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "10px",
-                    background: "rgba(94, 75, 238, 0.08)",
-                    color: "var(--primary)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}>
+              <div className="category-grid-card">
+                <div className="category-card-top">
+                  <div className="category-card-icon">
                     {category.icon}
                   </div>
-                  <span style={{
-                    fontSize: "0.75rem",
-                    fontWeight: 700,
-                    color: "var(--slate-600)",
-                    background: "var(--slate-100)",
-                    padding: "0.2rem 0.6rem",
-                    borderRadius: "var(--radius-full)"
-                  }}>
+                  <span className="category-card-count">
                     {category.count} Products
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: "1.05rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.35rem" }}>
+                <h3 className="category-card-title">
                   {category.name}
                 </h3>
-                <p style={{ color: "var(--slate-600)", fontSize: "0.825rem", lineHeight: "1.45", marginBottom: "0.85rem", flexGrow: 1 }}>
+                <p className="category-card-desc">
                   {category.description}
                 </p>
 
                 {/* Popular tools tags */}
-                <div style={{ borderTop: "1px solid var(--slate-100)", paddingTop: "0.75rem", marginTop: "auto" }}>
-                  <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--slate-400)", textTransform: "uppercase", marginBottom: "0.35rem" }}>
+                <div className="category-card-popular">
+                  <div className="category-card-popular-label">
                     Popular Tools:
                   </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+                  <div className="category-card-tags">
                     {category.popular.map((tool) => (
                       <span
                         key={tool}
-                        style={{
-                          fontSize: "0.7rem",
-                          fontWeight: 500,
-                          color: "var(--slate-700)",
-                          background: "var(--slate-50)",
-                          padding: "0.15rem 0.45rem",
-                          borderRadius: "5px",
-                          border: "1px solid var(--slate-200)"
-                        }}
+                        className="category-card-tag"
                       >
                         {tool}
                       </span>

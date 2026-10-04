@@ -80,7 +80,7 @@ export default function BuyersPage() {
 
   return (
     <PageLayout activeNav="buyers">
-      <div className="section-header" style={{ textAlign: "center", marginBottom: "6rem", marginTop: "4rem" }}>
+      <div className="section-header" style={{ textAlign: "center", marginBottom: "4rem", marginTop: "3.5rem" }}>
         <h1 className="section-title">Built for&nbsp;<span className="section-title-highlight">Software Buyers</span></h1>
         <p className="section-subtitle" style={{ maxWidth: "800px", marginLeft: "auto", marginRight: "auto" }}>
           We remove the guesswork from buying software. Discover verified tools, compare features side-by-side, and make confident decisions for your team.
@@ -88,43 +88,66 @@ export default function BuyersPage() {
       </div>
 
       {/* Hero Overview */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center", marginBottom: "6rem" }}>
-        <div style={{ background: "var(--slate-50)", padding: "4rem", borderRadius: "24px", position: "relative" }}>
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, var(--primary-light) 0%, transparent 100%)", opacity: 0.1, borderRadius: "24px" }}></div>
-          <h2 style={{ fontSize: "2rem", fontWeight: "800", marginBottom: "1.5rem", color: "var(--slate-900)" }}>Verified Reviews & Data</h2>
-          <p style={{ fontSize: "1.1rem", color: "var(--slate-600)", lineHeight: "1.8", marginBottom: "2rem" }}>
+      <div className="overview-hero-grid buyers-hero-grid">
+        <div className="overview-hero-card">
+          <div className="overview-hero-card-glow"></div>
+          <span className="overview-card-badge">VERIFIED &amp; UNBIASED</span>
+          <h2 className="overview-card-title">Verified Reviews &amp; Data</h2>
+          <p className="overview-card-desc">
             Stop relying on biased marketing pages. Our platform aggregates verified user reviews, real-world pricing data, and deep integration specs so you know exactly what you&apos;re buying.
           </p>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {["Unbiased user testimonials", "Transparent pricing history", "Deep technical specifications"].map((item, i) => (
-              <li key={i} style={{ display: "flex", alignItems: "center", gap: "0.75rem", color: "var(--slate-700)", fontWeight: "500" }}>
-                <span style={{ color: "var(--primary)", fontSize: "1.25rem" }}>✓</span> {item}
+          <ul className="overview-card-list">
+            {[
+              "Unbiased user testimonials",
+              "Transparent pricing history",
+              "Deep technical specifications"
+            ].map((item, i) => (
+              <li key={i} className="overview-card-item">
+                <span className="overview-check-icon">✓</span>
+                <span>{item}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div>
-          <h2 style={{ fontSize: "2.5rem", fontWeight: "800", marginBottom: "1.5rem", color: "var(--slate-900)" }}>
+        <div className="overview-hero-content">
+          <h2 className="overview-hero-title">
             Streamline your procurement process
           </h2>
-          <p style={{ fontSize: "1.1rem", color: "var(--slate-600)", lineHeight: "1.8", marginBottom: "2.5rem" }}>
+          <p className="overview-hero-desc">
             Whether you are an enterprise IT manager or a startup founder, SaaS MRKT gives you the tools to evaluate software faster and negotiate better contracts.
           </p>
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <Link href="/products" className="btn btn-primary" style={{ padding: "0.85rem 2rem", fontSize: "1.1rem" }}>
+          <div className="overview-hero-actions">
+            <Link href="/products" className="btn btn-primary overview-action-btn">
               Start Browsing
             </Link>
-            <Link href="/categories" className="btn btn-secondary" style={{ padding: "0.85rem 2rem", fontSize: "1.1rem" }}>
+            <Link href="/categories" className="btn btn-secondary overview-action-btn">
               View Categories
             </Link>
+          </div>
+
+          <div className="overview-trust-row">
+            <div className="overview-trust-item">
+              <strong>2,000+</strong>
+              <span>Verified Tools</span>
+            </div>
+            <div className="overview-trust-divider"></div>
+            <div className="overview-trust-item">
+              <strong>50,000+</strong>
+              <span>Active Buyers</span>
+            </div>
+            <div className="overview-trust-divider"></div>
+            <div className="overview-trust-item">
+              <strong>100%</strong>
+              <span>Free to Use</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* How Buying Works */}
-      <section style={{ marginBottom: "6rem" }}>
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+      <section style={{ marginBottom: "5.5rem" }}>
+        <div className="section-header" style={{ textAlign: "center", marginBottom: "3rem" }}>
           <div className="section-badge" style={{ display: "inline-block", marginBottom: "0.75rem" }}>THE BUYER JOURNEY</div>
           <h2 style={{ fontSize: "2.25rem", fontWeight: "800", color: "var(--slate-900)", marginBottom: "1rem" }}>
             How Buying on SaaS MRKT Works
@@ -134,34 +157,19 @@ export default function BuyersPage() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.5rem" }}>
           {steps.map((step, idx) => (
-            <div key={idx} style={{
-              background: "var(--white)",
-              border: "1px solid var(--slate-200)",
-              borderRadius: "20px",
-              padding: "2.5rem 2rem",
-              position: "relative",
-              boxShadow: "0 4px 20px rgba(15, 23, 42, 0.03)"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-                <div style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "12px",
-                  background: "rgba(94, 75, 238, 0.08)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}>
+            <div key={idx} className="buyer-step-card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+                <div className="buyer-step-icon-wrap">
                   {step.icon}
                 </div>
-                <span style={{ fontSize: "1.75rem", fontWeight: "900", color: "var(--slate-300)" }}>{step.num}</span>
+                <span className="buyer-step-num">{step.num}</span>
               </div>
-              <h3 style={{ fontSize: "1.25rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.75rem" }}>
+              <h3 style={{ fontSize: "1.2rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.5rem" }}>
                 {step.title}
               </h3>
-              <p style={{ fontSize: "0.95rem", color: "var(--slate-600)", lineHeight: "1.6" }}>
+              <p style={{ fontSize: "0.925rem", color: "var(--slate-600)", lineHeight: "1.6", margin: 0 }}>
                 {step.desc}
               </p>
             </div>
@@ -170,9 +178,9 @@ export default function BuyersPage() {
       </section>
 
       {/* Buyer Advantages Grid */}
-      <section style={{ marginBottom: "6rem", background: "var(--slate-50)", padding: "4rem 3rem", borderRadius: "28px" }}>
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-          <div className="section-badge" style={{ display: "inline-block", marginBottom: "0.75rem" }}>UNBIASED & TRANSPARENT</div>
+      <section className="page-padded-section" style={{ marginBottom: "5.5rem", background: "var(--slate-50)", padding: "3.5rem 2.5rem", borderRadius: "24px", border: "1px solid var(--slate-200)" }}>
+        <div className="section-header" style={{ textAlign: "center", marginBottom: "2.75rem" }}>
+          <div className="section-badge" style={{ display: "inline-block", marginBottom: "0.75rem" }}>UNBIASED &amp; TRANSPARENT</div>
           <h2 style={{ fontSize: "2.25rem", fontWeight: "800", color: "var(--slate-900)", marginBottom: "1rem" }}>
             Why Modern Teams Trust SaaS MRKT
           </h2>
@@ -181,16 +189,9 @@ export default function BuyersPage() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "2rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.5rem" }}>
           {benefits.map((b, i) => (
-            <div key={i} style={{
-              background: "var(--white)",
-              borderRadius: "18px",
-              padding: "2rem",
-              border: "1px solid var(--slate-200)",
-              display: "flex",
-              flexDirection: "column"
-            }}>
+            <div key={i} className="buyer-advantage-card">
               <span style={{
                 fontSize: "0.75rem",
                 fontWeight: "700",
@@ -201,10 +202,10 @@ export default function BuyersPage() {
               }}>
                 {b.badge}
               </span>
-              <h3 style={{ fontSize: "1.2rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.75rem" }}>
+              <h3 style={{ fontSize: "1.15rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.6rem" }}>
                 {b.title}
               </h3>
-              <p style={{ fontSize: "0.95rem", color: "var(--slate-600)", lineHeight: "1.65", margin: 0 }}>
+              <p style={{ fontSize: "0.9rem", color: "var(--slate-600)", lineHeight: "1.6", margin: 0 }}>
                 {b.desc}
               </p>
             </div>
@@ -213,8 +214,8 @@ export default function BuyersPage() {
       </section>
 
       {/* Buyer FAQ Section */}
-      <section style={{ marginBottom: "6rem" }}>
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+      <section style={{ marginBottom: "5.5rem" }}>
+        <div className="section-header" style={{ textAlign: "center", marginBottom: "2.75rem" }}>
           <div className="section-badge" style={{ display: "inline-block", marginBottom: "0.75rem" }}>BUYER FAQS</div>
           <h2 style={{ fontSize: "2.25rem", fontWeight: "800", color: "var(--slate-900)", marginBottom: "1rem" }}>
             Frequently Asked Questions
@@ -224,19 +225,19 @@ export default function BuyersPage() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "2rem", maxWidth: "1000px", marginLeft: "auto", marginRight: "auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem", maxWidth: "1000px", marginLeft: "auto", marginRight: "auto" }}>
           {faqs.map((faq, idx) => (
             <div key={idx} style={{
               background: "var(--white)",
               border: "1px solid var(--slate-200)",
               borderRadius: "16px",
-              padding: "2rem",
+              padding: "1.75rem",
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.02)"
             }}>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.75rem" }}>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.6rem" }}>
                 {faq.q}
               </h3>
-              <p style={{ fontSize: "0.95rem", color: "var(--slate-600)", lineHeight: "1.6", margin: 0 }}>
+              <p style={{ fontSize: "0.9rem", color: "var(--slate-600)", lineHeight: "1.6", margin: 0 }}>
                 {faq.a}
               </p>
             </div>
@@ -245,7 +246,7 @@ export default function BuyersPage() {
       </section>
 
       {/* Buyer CTA Banner */}
-      <section style={{
+      <section className="page-padded-section" style={{
         background: "linear-gradient(135deg, var(--slate-900) 0%, #1e1b4b 100%)",
         borderRadius: "20px",
         padding: "2.75rem 2rem",

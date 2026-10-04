@@ -10,9 +10,10 @@ import AuthModal from "@/components/AuthModal";
 interface PageLayoutProps {
   children: React.ReactNode;
   activeNav?: string;
+  noContainer?: boolean;
 }
 
-export default function PageLayout({ children, activeNav }: PageLayoutProps) {
+export default function PageLayout({ children, activeNav, noContainer }: PageLayoutProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
@@ -128,44 +129,85 @@ export default function PageLayout({ children, activeNav }: PageLayoutProps) {
 
             {/* Right Actions */}
             <div className="nav-actions">
-              <Link href="/blog" className="login-link" id="nav-blog-link">Blog</Link>
-              <button className="login-link" onClick={() => handleOpenAuth("login")} id="nav-login-btn">
+              <Link href="/blog" className="login-link nav-desktop-auth" id="nav-blog-link">Blog</Link>
+              <button className="login-link nav-desktop-auth" onClick={() => handleOpenAuth("login")} id="nav-login-btn">
                 Login
               </button>
-              <button className="btn-primary" onClick={() => handleOpenAuth("signup")} id="nav-get-started-btn">
+              <button className="btn-primary nav-desktop-auth" onClick={() => handleOpenAuth("signup")} id="nav-get-started-btn">
                 Get Started
               </button>
               <button
                 className="mobile-menu-btn"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="Toggle Menu"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </svg>
+                {mobileMenuOpen ? (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                ) : (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                  </svg>
+                )}
               </button>
             </div>
           </nav>
 
           {/* Mobile Dropdown */}
           {mobileMenuOpen && (
-            <div style={{ padding: "1.25rem 0", borderTop: "1px solid var(--slate-200)", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-              {navLinks.map((link) => (
-                <Link key={link.id} href={link.href} onClick={() => setMobileMenuOpen(false)} style={{ color: "var(--slate-800)", fontWeight: 600 }}>
-                  {link.label}
-                </Link>
-              ))}
-              <Link href="/blog" onClick={() => setMobileMenuOpen(false)} style={{ color: "var(--slate-800)", fontWeight: 600 }}>Blog</Link>
-              <Link href="/about" onClick={() => setMobileMenuOpen(false)} style={{ color: "var(--slate-800)", fontWeight: 600 }}>About</Link>
-              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} style={{ color: "var(--slate-800)", fontWeight: 600 }}>Contact</Link>
+            <div className="mobile-nav-drawer">
+              <div className="mobile-nav-links">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.id}
+                    href={link.href}
+                    className={`mobile-nav-item${activeNav === link.id ? " active" : ""}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <Link href="/blog" className={`mobile-nav-item${pathname === "/blog" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Blog</Link>
+                <Link href="/how-it-works" className={`mobile-nav-item${pathname === "/how-it-works" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>How It Works</Link>
+                <Link href="/about" className={`mobile-nav-item${pathname === "/about" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>About Us</Link>
+                <Link href="/contact" className={`mobile-nav-item${pathname === "/contact" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+              </div>
+              <div className="mobile-nav-auth-section">
+                <button
+                  className="mobile-btn-login"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleOpenAuth("login");
+                  }}
+                  id="mobile-nav-login-btn"
+                >
+                  Login
+                </button>
+                <button
+                  className="btn-primary mobile-btn-signup"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleOpenAuth("signup");
+                  }}
+                  id="mobile-nav-get-started-btn"
+                >
+                  Get Started
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
             </div>
           )}
         </div>
       </header>
 
-      <main className="container" style={{ paddingBottom: '4rem', minHeight: 'calc(100vh - 400px)' }}>
+      <main className={noContainer ? undefined : "container"} style={{ paddingBottom: '4rem', minHeight: 'calc(100vh - 400px)' }}>
         {children}
       </main>
 

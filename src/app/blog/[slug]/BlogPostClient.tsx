@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 
@@ -23,17 +23,28 @@ interface BlogPostClientProps {
   relatedPosts: BlogPost[];
 }
 
-// Minimal markdown-to-JSX renderer for h2/h3/blockquote/table/p
+// Enhanced markdown-to-JSX renderer with connected timeline markers
 function renderMarkdown(md: string) {
   const lines = md.trim().split("\n");
   const elements: React.ReactNode[] = [];
   let i = 0;
+  let sectionIndex = 0;
 
   while (i < lines.length) {
     const line = lines[i];
 
     if (line.startsWith("## ")) {
-      elements.push(<h2 key={i} className="prose-h2">{line.replace(/^## /, "")}</h2>);
+      sectionIndex++;
+      const title = line.replace(/^## /, "").trim();
+      const sectionId = `section-${sectionIndex}`;
+      elements.push(
+        <div key={`h2-block-${i}`} className="prose-section-header" id={sectionId}>
+          <div className="prose-timeline-marker" aria-hidden="true">
+            <span className="prose-timeline-badge">{String(sectionIndex).padStart(2, "0")}</span>
+          </div>
+          <h2 className="prose-h2">{title}</h2>
+        </div>
+      );
       i++;
     } else if (line.startsWith("### ")) {
       elements.push(<h3 key={i} className="prose-h3">{line.replace(/^### /, "")}</h3>);
@@ -41,7 +52,12 @@ function renderMarkdown(md: string) {
     } else if (line.startsWith("> ")) {
       elements.push(
         <blockquote key={i} className="prose-blockquote">
-          {line.replace(/^> /, "").replace(/\*([^*]+)\*/g, "$1")}
+          <div className="prose-quote-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+            </svg>
+          </div>
+          <p>{line.replace(/^> /, "").replace(/\*([^*]+)\*/g, "$1")}</p>
         </blockquote>
       );
       i++;
@@ -78,7 +94,16 @@ function renderMarkdown(md: string) {
       }
       elements.push(
         <ul key={`ul-${i}`} className="prose-ul">
-          {listItems.map((item, li) => <li key={li}>{item.replace(/\*\*([^*]+)\*\*/g, "$1")}</li>)}
+          {listItems.map((item, li) => (
+            <li key={li}>
+              <span className="prose-bullet-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+              <span>{item.replace(/\*\*([^*]+)\*\*/g, "$1")}</span>
+            </li>
+          ))}
         </ul>
       );
     } else if (/^\d+\. /.test(line)) {
@@ -113,6 +138,31 @@ function renderMarkdown(md: string) {
 
 export default function BlogPostClient({ post, relatedPosts }: BlogPostClientProps) {
   const [copied, setCopied] = useState(false);
+  const [tocOpen, setTocOpen] = useState(false);
+  const [readingProgress, setReadingProgress] = useState(0);
+
+  // Extract H2 headings for Table of Contents
+  const headings = useMemo(() => {
+    return post.content
+      .split("\n")
+      .filter((line) => line.startsWith("## "))
+      .map((line, idx) => ({
+        id: `section-${idx + 1}`,
+        title: line.replace(/^## /, "").trim(),
+      }));
+  }, [post.content]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const progress = (window.scrollY / totalHeight) * 100;
+        setReadingProgress(Math.min(100, Math.max(0, progress)));
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : `https://www.saasmrkt.com/blog/${post.slug}`;
 
@@ -125,7 +175,14 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
   };
 
   return (
-    <PageLayout activeNav="resources">
+    <PageLayout activeNav="resources" noContainer>
+      {/* Scroll Reading Progress Bar */}
+      <div
+        className="post-reading-progress"
+        style={{ width: `${readingProgress}%` }}
+        aria-hidden="true"
+      />
+
       {/* Hero Banner */}
       <div className="post-hero" style={{ background: post.gradient }}>
         <div className="post-hero-decor">
@@ -183,18 +240,20 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
           <div className="post-layout">
             {/* Article Content */}
             <article className="post-content" id="post-article">
+              {/* Featured Cover Image */}
               {post.image && (
                 <div
                   className="post-cover-image-container"
                   style={{
-                    marginBottom: "2.25rem",
-                    borderRadius: "16px",
+                    marginBottom: "2rem",
+                    borderRadius: "20px",
                     overflow: "hidden",
-                    border: "1px solid var(--border-color)",
-                    boxShadow: "0 12px 36px rgba(0, 0, 0, 0.07)",
+                    border: "1.5px solid var(--slate-200)",
+                    boxShadow: "0 14px 40px rgba(15, 23, 42, 0.08)",
                     backgroundColor: "#0F172A",
                   }}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={post.image}
                     alt={post.title}
@@ -209,7 +268,68 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
                 </div>
               )}
 
-              <div className="prose">
+              {/* Executive Summary / Key Takeaways Box */}
+              <div className="post-takeaways-card">
+                <div className="post-takeaways-header">
+                  <div className="post-takeaways-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                  </div>
+                  <h3 className="post-takeaways-title">Executive Summary &amp; Key Highlights</h3>
+                </div>
+                {post.excerpt && <p className="post-takeaways-excerpt">{post.excerpt}</p>}
+                <div className="post-takeaways-chips">
+                  <span className="post-takeaway-chip">⚡ Verified SaaS Analysis</span>
+                  <span className="post-takeaway-chip">📊 2026 Procurement Guide</span>
+                  <span className="post-takeaway-chip">🎯 Actionable Buyer Takeaways</span>
+                </div>
+              </div>
+
+              {/* Mobile Table of Contents Accordion */}
+              {headings.length > 0 && (
+                <div className="post-mobile-toc">
+                  <button
+                    type="button"
+                    className="post-mobile-toc-btn"
+                    onClick={() => setTocOpen(!tocOpen)}
+                    id="post-toc-toggle-btn"
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+                      </svg>
+                      <span>Jump to Section ({headings.length})</span>
+                    </div>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{ transform: tocOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                  {tocOpen && (
+                    <div className="post-mobile-toc-list">
+                      {headings.map((h, i) => (
+                        <a key={h.id} href={`#${h.id}`} className="post-mobile-toc-link" onClick={() => setTocOpen(false)}>
+                          <span className="post-mobile-toc-num">{String(i + 1).padStart(2, "0")}</span>
+                          <span>{h.title}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Main Article Prose with Timeline Track */}
+              <div className="prose prose-timeline-track">
                 {renderMarkdown(post.content)}
               </div>
 
@@ -230,7 +350,7 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
                     aria-label="Share on WhatsApp"
                     title="Share on WhatsApp"
                     style={{
-                      backgroundColor: "#25D366",
+                      background: "#25D366",
                       color: "#FFFFFF",
                       display: "inline-flex",
                       alignItems: "center",
@@ -281,7 +401,7 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
                     aria-label="Copy link"
                     title="Copy link"
                     style={{
-                      background: copied ? "var(--accent-color, #5E4BEE)" : "transparent",
+                      background: copied ? "var(--primary)" : "transparent",
                       color: copied ? "#FFFFFF" : "inherit",
                       border: "1px solid var(--border-color)",
                       cursor: "pointer",
@@ -359,7 +479,7 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
           <div className="container">
             <div className="section-badge">KEEP READING</div>
             <h2 className="section-title" style={{ marginBottom: "1.5rem" }}>Related Articles</h2>
-            <div className="blog-grid blog-grid--3">
+            <div className="blog-grid blog-grid--related">
               {relatedPosts.map((rp) => (
                 <Link href={`/blog/${rp.slug}`} key={rp.slug} className="blog-card" id={`related-${rp.slug}`}>
                   <div className="blog-card-banner" style={{ background: rp.gradient }}>

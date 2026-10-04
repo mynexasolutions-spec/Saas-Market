@@ -114,6 +114,25 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
       "Custom SLA rule management",
     ],
   },
+  {
+    id: "prod-dealflow",
+    name: "DealFlow",
+    category: "CRM",
+    rating: 4.9,
+    reviewCount: 290,
+    description: "Visual sales pipeline, deal tracking, and revenue forecasting CRM.",
+    image: "/images/dealflow.jpg",
+    price: 39,
+    period: "month",
+    brandColor: "#0EA5E9",
+    brandLetter: "D",
+    features: [
+      "Visual drag-and-drop deal pipeline",
+      "Automated lead enrichment and scoring",
+      "Email sequencing and meeting scheduling",
+      "Real-time sales revenue forecasting",
+    ],
+  },
 ];
 
 interface FeaturedProductsProps {

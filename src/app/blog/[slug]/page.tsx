@@ -194,7 +194,7 @@ Point solutions are giving way to platform ecosystems where data flows freely be
 - **As a buyer:** Prioritize AI-native tools, negotiate on usage-based pricing, and demand security documentation upfront.
 - **As a seller:** Invest in API-first architecture, publish a transparent security page, and build for your vertical niche.
     `,
-    relatedSlugs: ["top-10-saas-tools-2026", "how-to-choose-right-saas-tool", "saas-pricing-models-explained"],
+    relatedSlugs: ["top-10-saas-tools-2026", "how-to-choose-right-saas-tool", "saas-pricing-models-explained", "saas-for-remote-teams"],
   },
   "hr-saas-comparison-2026": {
     slug: "hr-saas-comparison-2026",
@@ -698,9 +698,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const post = BLOG_POSTS[slug];
   if (!post) notFound();
 
-  const relatedPosts = post.relatedSlugs
+  // Combine explicit related posts with fallbacks to always ensure 4 items for a 2x2 balanced grid
+  const explicitRelated = post.relatedSlugs
     .map((s) => BLOG_POSTS[s])
     .filter(Boolean);
+
+  const fallbackPosts = Object.values(BLOG_POSTS).filter(
+    (p) => p.slug !== slug && !explicitRelated.some((ep) => ep.slug === p.slug)
+  );
+
+  const relatedPosts = [...explicitRelated, ...fallbackPosts].slice(0, 4);
 
   return <BlogPostClient post={post} relatedPosts={relatedPosts} />;
 }

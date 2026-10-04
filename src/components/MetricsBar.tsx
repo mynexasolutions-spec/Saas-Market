@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 
 const METRICS_DATA = [
   {
@@ -57,27 +59,73 @@ const METRICS_DATA = [
       </svg>
     ),
   },
+  {
+    id: "metric-rating",
+    value: "4.9 / 5",
+    label: "Customer Rating",
+    bg: "#FFFBEB",
+    color: "#D97706",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      </svg>
+    ),
+  },
+  {
+    id: "metric-uptime",
+    value: "99.9%",
+    label: "Instant Delivery",
+    bg: "#ECFDF5",
+    color: "#059669",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <polyline points="9 12 11 14 15 10" />
+      </svg>
+    ),
+  },
 ];
 
 export default function MetricsBar() {
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Duplicate items twice to ensure endless continuous loop
+  const duplicatedMetrics = [...METRICS_DATA, ...METRICS_DATA];
+
   return (
     <section className="metrics-section" id="metrics">
       <div className="container">
-        <div className="metrics-strip">
-          {METRICS_DATA.map((item) => (
-            <div key={item.id} className="metric-item" id={item.id}>
-              <div
-                className="metric-icon-wrap"
-                style={{ backgroundColor: item.bg, color: item.color }}
-              >
-                {item.icon}
-              </div>
-              <div>
-                <div className="metric-value">{item.value}</div>
-                <div className="metric-label">{item.label}</div>
-              </div>
+        <div
+          className="metrics-strip metrics-ticker-container"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+          title="Hover to pause"
+        >
+          {/* Moving Ticker Track (Strictly in one row) */}
+          <div className="metrics-ticker-wrapper">
+            <div className={`metrics-ticker-track ${isPaused ? "ticker-paused" : ""}`}>
+              {duplicatedMetrics.map((item, index) => (
+                <div
+                  key={`${item.id}-${index}`}
+                  className="metric-item metric-ticker-item"
+                  id={`${item.id}-${index}`}
+                >
+                  <div
+                    className="metric-icon-wrap"
+                    style={{ backgroundColor: item.bg, color: item.color }}
+                  >
+                    {item.icon}
+                  </div>
+                  <div className="metric-text-group">
+                    <div className="metric-value">{item.value}</div>
+                    <div className="metric-label">{item.label}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

@@ -136,14 +136,14 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
               </svg>
             </button>
             <button
-              className="login-link"
+              className="login-link nav-desktop-auth"
               onClick={() => onOpenAuth("login")}
               id="nav-login-btn"
             >
               Login
             </button>
             <button
-              className="btn-primary"
+              className="btn-primary nav-desktop-auth"
               onClick={() => onOpenAuth("signup")}
               id="nav-get-started-btn"
             >
@@ -152,34 +152,64 @@ export default function Navbar({ onOpenAuth, onSearchFocus }: NavbarProps) {
             <button
               className="mobile-menu-btn"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Menu"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
+              {mobileMenuOpen ? (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              )}
             </button>
           </div>
         </nav>
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div style={{
-            padding: '1.25rem 0',
-            borderTop: '1px solid var(--slate-200)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.85rem'
-          }}>
-            <Link href="/products" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Products</Link>
-            <Link href="/categories" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Categories</Link>
-            <Link href="/buyers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Buyers</Link>
-            <Link href="/sellers" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>For Sellers</Link>
-            <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Pricing</Link>
-            <Link href="/blog" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Blog</Link>
-            <Link href="/about" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>About Us</Link>
-            <Link href="/contact" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--slate-800)', fontWeight: 600 }}>Contact</Link>
+          <div className="mobile-nav-drawer">
+            <div className="mobile-nav-links">
+              <Link href="/products" className={`mobile-nav-item${pathname === "/products" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Products</Link>
+              <Link href="/categories" className={`mobile-nav-item${pathname === "/categories" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Categories</Link>
+              <Link href="/buyers" className={`mobile-nav-item${pathname === "/buyers" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>For Buyers</Link>
+              <Link href="/sellers" className={`mobile-nav-item${pathname === "/sellers" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>For Sellers</Link>
+              <Link href="/pricing" className={`mobile-nav-item${pathname === "/pricing" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
+              <Link href="/blog" className={`mobile-nav-item${pathname === "/blog" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Blog</Link>
+              <Link href="/about" className={`mobile-nav-item${pathname === "/about" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>About Us</Link>
+              <Link href="/contact" className={`mobile-nav-item${pathname === "/contact" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+            </div>
+            
+            <div className="mobile-nav-auth-section">
+              <button
+                className="mobile-btn-login"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenAuth("login");
+                }}
+                id="mobile-nav-login-btn"
+              >
+                Login
+              </button>
+              <button
+                className="btn-primary mobile-btn-signup"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenAuth("signup");
+                }}
+                id="mobile-nav-get-started-btn"
+              >
+                Get Started
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </div>
           </div>
         )}
       </div>

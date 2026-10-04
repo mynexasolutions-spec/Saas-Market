@@ -40,7 +40,7 @@ const BLOG_POSTS = [
     readTime: "6 min read",
     author: "Arjun Mehta",
     authorRole: "Product Strategist",
-    featured: false,
+    featured: true,
     accentColor: "#3B82F6",
     gradient: "linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)",
   },
@@ -163,7 +163,7 @@ export default function BlogPageClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [visiblePosts, setVisiblePosts] = useState(6);
 
-  const featuredPost = BLOG_POSTS.find((p) => p.featured)!;
+  const featuredPosts = BLOG_POSTS.filter((p) => p.featured);
 
   const filteredPosts = BLOG_POSTS.filter((p) => {
     if (p.featured) return false;
@@ -218,57 +218,59 @@ export default function BlogPageClient() {
         <div className="blog-hero-blob blog-hero-blob--2" />
       </section>
 
-      {/* Featured Article */}
+      {/* Featured Articles */}
       <section className="blog-featured-section">
         <div className="container">
           <div className="section-badge">FEATURED</div>
-          <Link href={`/blog/${featuredPost.slug}`} className="blog-featured-card" id={`blog-featured-${featuredPost.slug}`}>
-            <div className="blog-featured-banner" style={{ background: featuredPost.gradient }}>
-              <div className="blog-featured-banner-decor">
-                <svg viewBox="0 0 600 220" fill="none" preserveAspectRatio="none">
-                  <path d="M0,80 C150,160 320,20 480,100 C550,140 600,90 600,90 L600,220 L0,220 Z" fill="rgba(255,255,255,0.1)" />
-                  <path d="M0,120 C180,40 360,160 540,60 C570,45 600,70 600,70 L600,220 L0,220 Z" fill="rgba(255,255,255,0.06)" />
-                  <circle cx="510" cy="50" r="70" fill="rgba(255,255,255,0.08)" />
-                  <circle cx="80" cy="30" r="40" fill="rgba(255,255,255,0.06)" />
-                </svg>
-              </div>
-              <span className="blog-featured-tag-badge">{featuredPost.tag}</span>
-              <div className="blog-featured-banner-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="16" y1="13" x2="8" y2="13" />
-                  <line x1="16" y1="17" x2="8" y2="17" />
-                  <polyline points="10 9 9 9 8 9" />
-                </svg>
-              </div>
-            </div>
-            <div className="blog-featured-body">
-              <div className="blog-featured-meta">
-                <span className="blog-tag blog-tag--featured">{featuredPost.tag}</span>
-                <span className="blog-meta-sep">•</span>
-                <span className="blog-date">{featuredPost.date}</span>
-                <span className="blog-meta-sep">•</span>
-                <span className="blog-read-time">{featuredPost.readTime}</span>
-              </div>
-              <h2 className="blog-featured-title">{featuredPost.title}</h2>
-              <p className="blog-featured-excerpt">{featuredPost.excerpt}</p>
-              <div className="blog-featured-footer">
-                <div className="blog-author">
-                  <div className="blog-author-avatar" style={{ background: featuredPost.gradient }}>
-                    {featuredPost.author.charAt(0)}
+          <div className="blog-featured-grid">
+            {featuredPosts.map((post) => (
+              <Link href={`/blog/${post.slug}`} key={post.slug} className="blog-featured-card" id={`blog-featured-${post.slug}`}>
+                <div className="blog-featured-banner" style={{ background: post.gradient }}>
+                  <div className="blog-featured-banner-decor">
+                    <svg viewBox="0 0 600 220" fill="none" preserveAspectRatio="none">
+                      <path d="M0,80 C150,160 320,20 480,100 C550,140 600,90 600,90 L600,220 L0,220 Z" fill="rgba(255,255,255,0.1)" />
+                      <path d="M0,120 C180,40 360,160 540,60 C570,45 600,70 600,70 L600,220 L0,220 Z" fill="rgba(255,255,255,0.06)" />
+                      <circle cx="510" cy="50" r="70" fill="rgba(255,255,255,0.08)" />
+                      <circle cx="80" cy="30" r="40" fill="rgba(255,255,255,0.06)" />
+                    </svg>
                   </div>
-                  <div>
-                    <div className="blog-author-name">{featuredPost.author}</div>
-                    <div className="blog-author-role">{featuredPost.authorRole}</div>
+                  <span className="blog-featured-tag-badge">{post.tag}</span>
+                  <div className="blog-featured-banner-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10 9 9 9 8 9" />
+                    </svg>
                   </div>
                 </div>
-                <span className="blog-read-more-btn">
-                  Read Article
-                </span>
-              </div>
-            </div>
-          </Link>
+                <div className="blog-featured-body">
+                  <div className="blog-featured-meta">
+                    <span className="blog-tag blog-tag--featured">{post.tag}</span>
+                    <span className="blog-meta-sep">•</span>
+                    <span className="blog-read-time">{post.readTime}</span>
+                  </div>
+                  <h2 className="blog-featured-title">{post.title}</h2>
+                  <p className="blog-featured-excerpt">{post.excerpt}</p>
+                  <div className="blog-featured-footer">
+                    <div className="blog-author">
+                      <div className="blog-author-avatar" style={{ background: post.gradient }}>
+                        {post.author.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="blog-author-name">{post.author}</div>
+                        <div className="blog-author-role">{post.authorRole}</div>
+                      </div>
+                    </div>
+                    <span className="blog-read-more-btn">
+                      Read Article
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

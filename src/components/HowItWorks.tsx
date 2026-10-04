@@ -72,12 +72,20 @@ export default function HowItWorks() {
 
               {/* Connecting Dotted Arrow between steps */}
               {index < STEPS.length - 1 && (
-                <div className={`step-connector step-connector-${index + 1}`} aria-hidden="true">
-                  <svg width="40" height="12" viewBox="0 0 40 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="0" y1="6" x2="32" y2="6" stroke="#C4B5FD" strokeWidth="2" strokeDasharray="3 3" />
-                    <polyline points="28,2 34,6 28,10" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
+                <>
+                  <div className={`step-connector-desktop step-connector-${index + 1}`} aria-hidden="true">
+                    <svg width="40" height="12" viewBox="0 0 40 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <line x1="0" y1="6" x2="32" y2="6" stroke="#C4B5FD" strokeWidth="2" strokeDasharray="3 3" />
+                      <polyline points="28,2 34,6 28,10" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <div className="step-connector-mobile" aria-hidden="true">
+                    <svg width="14" height="34" viewBox="0 0 14 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <line x1="7" y1="2" x2="7" y2="24" stroke="#C4B5FD" strokeWidth="2" strokeDasharray="3 3" />
+                      <polyline points="3,20 7,26 11,20" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </>
               )}
             </React.Fragment>
           ))}

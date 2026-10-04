@@ -97,13 +97,21 @@ const FAQS = [
 export default function PricingPageClient() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [selectedPlan, setSelectedPlan] = useState<string>("plan-growth");
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [clickedPlan, setClickedPlan] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const handleSelectPlan = (planId: string) => {
     setSelectedPlan(planId);
+    setHoveredCard(planId);
+  };
+
+  const handleButtonClick = (planId: string, planName: string) => {
+    setSelectedPlan(planId);
+    setHoveredCard(planId);
     setClickedPlan(planId);
+    showToast(`Starting ${planName} plan...`);
   };
 
   const showToast = (msg: string) => {
@@ -115,6 +123,8 @@ export default function PricingPageClient() {
     if (base === 0) return 0;
     return billingCycle === "annual" ? Math.round(base * 0.8) : base;
   };
+
+  const activeCardId = hoveredCard || selectedPlan;
 
   return (
     <PageLayout activeNav="pricing">
@@ -155,61 +165,79 @@ export default function PricingPageClient() {
       {/* Plans */}
       <section className="pricing-plans-section">
         <div className="container">
-          <div className="pricing-plans-grid">
-            {[
-              PLANS.filter((p) => p.id !== selectedPlan)[0],
-              PLANS.find((p) => p.id === selectedPlan),
-              PLANS.filter((p) => p.id !== selectedPlan)[1],
-            ].map((plan) => (
-              plan && <div
-                key={plan.id}
-                id={plan.id}
-                className={`pricing-card${selectedPlan === plan.id ? " pricing-card--featured" : ""}`}
-                onClick={() => handleSelectPlan(plan.id)}
-                style={{ cursor: "pointer" }}
-              >
-                {plan.badge && <div className="pricing-card-badge">{plan.badge}</div>}
-                <div className="pricing-card-header">
-                  <h2 className="pricing-card-name">{plan.name}</h2>
-                  <p className="pricing-card-tagline">{plan.tagline}</p>
-                </div>
-                <div className="pricing-card-price">
-                  {plan.price === 0 ? (
-                    <span className="pricing-price-amount">Free</span>
-                  ) : (
-                    <>
-                      <span className="pricing-price-currency">$</span>
-                      <span className="pricing-price-amount">{getPrice(plan.price)}</span>
-                      <span className="pricing-price-period">/{plan.period}</span>
-                    </>
-                  )}
-                  {billingCycle === "annual" && plan.price > 0 && (
-                    <div className="pricing-annual-note">billed annually</div>
-                  )}
-                </div>
-                <ul className="pricing-features-list">
-                  {plan.features.map((feat, fi) => (
-                    <li key={fi} className="pricing-feature-item">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                      {feat}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  id={`${plan.id}-cta`}
-                  className={`pricing-cta-btn ${clickedPlan === plan.id ? "pricing-cta-btn--black" : "btn-secondary"}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelectPlan(plan.id);
-                    showToast(`Starting ${plan.name} plan...`);
+          <div className="pricing-plans-grid" onMouseLeave={() => setHoveredCard(null)}>
+            {PLANS.map((plan) => {
+              const isCardActive = activeCardId === plan.id;
+
+              return (
+                <div
+                  key={plan.id}
+                  id={plan.id}
+                  className={`pricing-card${isCardActive ? " pricing-card--active" : ""}`}
+                  onMouseEnter={() => setHoveredCard(plan.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  onTouchStart={() => {
+                    setHoveredCard(plan.id);
+                    setSelectedPlan(plan.id);
                   }}
+                  onClick={() => handleSelectPlan(plan.id)}
                 >
-                  {plan.cta}
-                </button>
-              </div>
-            ))}
+                  {plan.badge && <div className="pricing-card-badge">{plan.badge}</div>}
+
+                  <div className="pricing-card-header">
+                    <h2 className="pricing-card-name">{plan.name}</h2>
+                    <p className="pricing-card-tagline">{plan.tagline}</p>
+                  </div>
+
+                  <div className="pricing-card-price">
+                    {plan.price === 0 ? (
+                      <span className="pricing-price-amount">Free</span>
+                    ) : (
+                      <>
+                        <span className="pricing-price-currency">$</span>
+                        <span className="pricing-price-amount">{getPrice(plan.price)}</span>
+                        <span className="pricing-price-period">/{plan.period}</span>
+                      </>
+                    )}
+                    {billingCycle === "annual" && plan.price > 0 && (
+                      <div className="pricing-annual-note">billed annually</div>
+                    )}
+                  </div>
+
+                  <ul className="pricing-features-list">
+                    {plan.features.map((feat, fi) => (
+                      <li key={fi} className="pricing-feature-item">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke={isCardActive ? "var(--primary)" : "#10B981"}
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          style={{ transition: "stroke 0.2s ease", flexShrink: 0, marginTop: "2px" }}
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    id={`${plan.id}-cta`}
+                    className={`pricing-cta-btn${clickedPlan === plan.id ? " pricing-cta-btn--black" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleButtonClick(plan.id, plan.name);
+                    }}
+                  >
+                    {plan.cta}
+                  </button>
+                </div>
+              );
+            })}
           </div>
 
           {/* Enterprise Note */}
