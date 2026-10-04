@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -10,15 +11,7 @@ export default function Footer() {
           <div className="footer-brand-col">
             <Link href="/" className="brand-logo" id="footer-brand-logo">
               <span className="brand-icon">
-                <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="32" height="32" rx="8" fill="#5E4BEE" />
-                  <path
-                    d="M10 12C10 9.79086 11.7909 8 14 8H19C20.6569 8 22 9.34315 22 11C22 12.6569 20.6569 14 19 14H13C11.3431 14 10 15.3431 10 17C10 18.6569 11.3431 20 13 20H18C20.2091 20 22 21.7909 22 24"
-                    stroke="white"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <Image src="/logo.png" alt="SaaS MRKT Logo" width={32} height={32} style={{ objectFit: "contain" }} />
               </span>
               <span>SaaS MRKT</span>
             </Link>

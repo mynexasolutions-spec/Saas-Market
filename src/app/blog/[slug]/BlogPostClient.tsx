@@ -124,13 +124,15 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
         </div>
         <div className="container">
           <div className="post-hero-content">
-            <Link href="/blog" className="post-breadcrumb">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-              Back to Blog
-            </Link>
-            <span className="post-tag-pill">{post.tag}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.25rem" }}>
+              <Link href="/blog" className="post-breadcrumb" style={{ marginBottom: 0 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                Back to Blog
+              </Link>
+              <span className="post-tag-pill" style={{ marginBottom: 0 }}>{post.tag}</span>
+            </div>
             <h1 className="post-hero-title">{post.title}</h1>
             <div className="post-hero-meta">
               <div className="blog-author">

@@ -147,13 +147,78 @@ export default function AboutPageClient() {
         <div className="container">
           <div className="about-stats-grid">
             {[
-              { num: "50K+", label: "Active Buyers", icon: "👥" },
-              { num: "500+", label: "Seller Listings", icon: "📦" },
-              { num: "80+", label: "Countries", icon: "🌍" },
-              { num: "$8M+", label: "Software Sold", icon: "💸" },
+              { 
+                num: "50K+", 
+                label: "Active Buyers", 
+                color: "var(--blue-500)",
+                bg: "var(--blue-50)",
+                icon: (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                )
+              },
+              { 
+                num: "500+", 
+                label: "Seller Listings", 
+                color: "var(--orange-500)",
+                bg: "var(--orange-50)",
+                icon: (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                    <line x1="12" y1="22.08" x2="12" y2="12" />
+                  </svg>
+                )
+              },
+              { 
+                num: "80+", 
+                label: "Countries", 
+                color: "var(--emerald-500)",
+                bg: "var(--green-50)",
+                icon: (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                )
+              },
+              { 
+                num: "$8M+", 
+                label: "Software Sold", 
+                color: "var(--primary)",
+                bg: "var(--primary-50)",
+                icon: (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                )
+              },
             ].map((stat, i) => (
               <div key={i} className="about-stat-card" id={`about-stat-${i}`}>
-                <div className="about-stat-icon">{stat.icon}</div>
+                <div 
+                  className="about-stat-icon-wrap"
+                  style={{
+                    backgroundColor: stat.bg,
+                    color: stat.color,
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 1rem",
+                    boxShadow: "0 4px 10px rgba(0,0,0,0.03)",
+                    transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+                  }}
+                >
+                  {stat.icon}
+                </div>
                 <div className="about-stat-num">{stat.num}</div>
                 <div className="about-stat-label">{stat.label}</div>
               </div>

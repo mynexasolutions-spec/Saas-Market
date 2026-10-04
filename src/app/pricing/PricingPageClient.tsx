@@ -96,8 +96,15 @@ const FAQS = [
 
 export default function PricingPageClient() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
+  const [selectedPlan, setSelectedPlan] = useState<string>("plan-growth");
+  const [clickedPlan, setClickedPlan] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const handleSelectPlan = (planId: string) => {
+    setSelectedPlan(planId);
+    setClickedPlan(planId);
+  };
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -149,11 +156,17 @@ export default function PricingPageClient() {
       <section className="pricing-plans-section">
         <div className="container">
           <div className="pricing-plans-grid">
-            {PLANS.map((plan) => (
-              <div
+            {[
+              PLANS.filter((p) => p.id !== selectedPlan)[0],
+              PLANS.find((p) => p.id === selectedPlan),
+              PLANS.filter((p) => p.id !== selectedPlan)[1],
+            ].map((plan) => (
+              plan && <div
                 key={plan.id}
                 id={plan.id}
-                className={`pricing-card${plan.badge ? " pricing-card--featured" : ""}`}
+                className={`pricing-card${selectedPlan === plan.id ? " pricing-card--featured" : ""}`}
+                onClick={() => handleSelectPlan(plan.id)}
+                style={{ cursor: "pointer" }}
               >
                 {plan.badge && <div className="pricing-card-badge">{plan.badge}</div>}
                 <div className="pricing-card-header">
@@ -186,14 +199,12 @@ export default function PricingPageClient() {
                 </ul>
                 <button
                   id={`${plan.id}-cta`}
-                  className={
-                    plan.ctaVariant === "primary"
-                      ? "btn-primary pricing-cta-btn"
-                      : plan.ctaVariant === "dark"
-                      ? "pricing-cta-btn pricing-cta-btn--dark"
-                      : "btn-secondary pricing-cta-btn"
-                  }
-                  onClick={() => showToast(`Starting ${plan.name} plan...`)}
+                  className={`pricing-cta-btn ${clickedPlan === plan.id ? "pricing-cta-btn--black" : "btn-secondary"}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelectPlan(plan.id);
+                    showToast(`Starting ${plan.name} plan...`);
+                  }}
                 >
                   {plan.cta}
                 </button>

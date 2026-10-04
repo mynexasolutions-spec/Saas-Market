@@ -31,7 +31,7 @@ export default function HowItWorksPage() {
 
   return (
     <PageLayout activeNav="resources">
-      <div className="section-header" style={{ textAlign: "center", marginBottom: "4rem" }}>
+      <div className="section-header" style={{ textAlign: "center", marginBottom: "4rem", marginTop: "4rem" }}>
         <h1 className="section-title">How &nbsp;<span className="section-title-highlight">SaaS MRKT</span>&nbsp; Works</h1>
         <p className="section-subtitle" style={{ maxWidth: "800px", margin: "0 auto" }}>
           We've built a seamless experience that takes you from problem to solution<br /> in minutes, not months.
@@ -80,11 +80,24 @@ export default function HowItWorksPage() {
         ))}
       </div>
 
-      <div style={{ textAlign: "center", background: "var(--slate-50)", padding: "4rem 2rem", borderRadius: "24px", marginBottom: "4rem" }}>
+      <div style={{ textAlign: "center", background: "var(--slate-50)", padding: "4rem 2rem", borderRadius: "24px", marginBottom: "4rem", overflow: "hidden" }}>
         <h2 style={{ fontSize: "2rem", fontWeight: "800", color: "var(--slate-900)", marginBottom: "1.5rem" }}>Ready to find your next software?</h2>
-        <Link href="/products" className="btn btn-primary" style={{ padding: "0.85rem 2.5rem", fontSize: "1.1rem" }}>
-          Start Browsing Products
-        </Link>
+        <p style={{ fontSize: "1.1rem", color: "var(--slate-600)", lineHeight: "1.8", maxWidth: "800px", margin: "0 auto 3rem" }}>
+          Explore our extensive catalog of hand-picked, verified SaaS tools. From initial discovery to finalizing contracts, SaaS MRKT acts as your comprehensive procurement partner. Dive into our analytics and comparisons to make the most informed decision for your team today.
+        </p>
+        
+        <div style={{ maxWidth: "800px", margin: "0 auto", borderRadius: "16px", overflow: "hidden", boxShadow: "0 20px 40px rgba(0,0,0,0.1)", border: "1px solid var(--slate-200)" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
+            src="/images/taskflow.jpg" 
+            alt="SaaS Platform Dashboard" 
+            style={{ width: "100%", height: "auto", display: "block" }} 
+          />
+        </div>
+        
+        <p style={{ fontSize: "1.05rem", color: "var(--slate-600)", lineHeight: "1.7", maxWidth: "800px", margin: "3rem auto 0" }}>
+          Whether you need project management, CRM, or advanced marketing automation, our streamlined marketplace connects you with top-tier vendors instantly. Stop guessing and start comparing verified features, pricing plans, and real user reviews all in one place.
+        </p>
       </div>
     </PageLayout>
   );

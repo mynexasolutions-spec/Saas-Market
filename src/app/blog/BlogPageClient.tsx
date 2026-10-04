@@ -161,6 +161,7 @@ const BLOG_POSTS = [
 export default function BlogPageClient() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [visiblePosts, setVisiblePosts] = useState(6);
 
   const featuredPost = BLOG_POSTS.find((p) => p.featured)!;
 
@@ -294,13 +295,13 @@ export default function BlogPageClient() {
                 <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               <p>No articles found for &ldquo;{searchQuery || activeCategory}&rdquo;</p>
-              <button className="btn-primary" onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}>
+              <button className="btn-primary" onClick={() => { setSearchQuery(""); setActiveCategory("All"); setVisiblePosts(6); }}>
                 Clear Filters
               </button>
             </div>
           ) : (
             <div className="blog-grid">
-              {filteredPosts.map((post) => (
+              {filteredPosts.slice(0, visiblePosts).map((post) => (
                 <Link
                   href={`/blog/${post.slug}`}
                   key={post.slug}
@@ -333,15 +334,39 @@ export default function BlogPageClient() {
             </div>
           )}
 
-          {/* Load More */}
-          {filteredPosts.length > 0 && (
-            <div className="blog-load-more">
-              <button className="btn-secondary blog-load-more-btn" id="blog-load-more-btn">
-                Load More Articles
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
+          {/* Pagination Actions */}
+          {(visiblePosts < filteredPosts.length || visiblePosts > 6) && (
+            <div className="blog-load-more" style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              {visiblePosts < filteredPosts.length && (
+                <button 
+                  className="btn-secondary blog-load-more-btn" 
+                  id="blog-load-more-btn"
+                  onClick={() => setVisiblePosts(prev => prev + 6)}
+                >
+                  Load More Articles
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+              )}
+              {visiblePosts > 6 && (
+                <button 
+                  className="btn-secondary blog-load-more-btn" 
+                  id="blog-show-less-btn"
+                  onClick={() => {
+                    setVisiblePosts(6);
+                    const listSection = document.querySelector('.blog-list-section');
+                    if (listSection) {
+                      listSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
+                  Show Less Articles
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="18 15 12 9 6 15" />
+                  </svg>
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -385,3 +410,4 @@ export default function BlogPageClient() {
     </PageLayout>
   );
 }
+

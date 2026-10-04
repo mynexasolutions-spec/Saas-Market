@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function SplashScreen() {
   const [loading, setLoading] = useState(true);
@@ -65,18 +66,8 @@ export default function SplashScreen() {
 
       <div className="global-loader-container">
         <div className="global-loader-brand">
-          <div className="global-loader-icon-wrap">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#gradient)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#5E4BEE" />
-                  <stop offset="100%" stopColor="#EC4899" />
-                </linearGradient>
-              </defs>
-              <polygon points="12 2 2 7 12 12 22 7 12 2" />
-              <polyline points="2 17 12 22 22 17" />
-              <polyline points="2 12 12 17 22 12" />
-            </svg>
+          <div className="global-loader-icon-wrap" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Image src="/logo.png" alt="SaaS MRKT" width={38} height={38} priority style={{ objectFit: "contain" }} />
           </div>
           <div className="global-loader-text">SaaS MRKT</div>
         </div>
