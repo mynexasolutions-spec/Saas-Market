@@ -40,7 +40,7 @@ export default function PageLayout({ children, activeNav }: PageLayoutProps) {
             {/* Logo */}
             <Link href="/" className="brand-logo" id="nav-brand-logo">
               <span className="brand-icon">
-                <Image src="/logo.png" alt="SaaS MRKT Logo" width={32} height={32} priority style={{ objectFit: "contain" }} />
+                <Image src="/logo.png" alt="SaaS MRKT Logo" width={38} height={38} priority style={{ objectFit: "contain" }} />
               </span>
               <span>SaaS MRKT</span>
             </Link>
