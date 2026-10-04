@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BlogPostClient from "./BlogPostClient";
 
-const BLOG_POSTS: Record<string, {
+export const BLOG_POSTS: Record<string, {
   slug: string;
   tag: string;
   title: string;
@@ -518,13 +518,34 @@ interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export function generateStaticParams() {
+  return Object.keys(BLOG_POSTS).map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = BLOG_POSTS[slug];
   if (!post) return { title: "Article Not Found | SaaS Market" };
+  const canonicalUrl = `https://www.saasmrkt.com/blog/${slug}`;
   return {
-    title: `${post.title} | SaaS Market Blog`,
-    description: `${post.title} — Read the full article on the SaaS Market blog. ${post.readTime}.`,
+    title: post.title,
+    description: `${post.title} — Read this in-depth guide on SaaS Market. ${post.readTime} by ${post.author}.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${post.title} | SaaS Market`,
+      description: `${post.title} — ${post.readTime} by ${post.author}.`,
+      url: canonicalUrl,
+      type: "article",
+      publishedTime: post.date,
+      authors: [post.author],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: `${post.title} — ${post.readTime} by ${post.author}.`,
+    },
   };
 }
 

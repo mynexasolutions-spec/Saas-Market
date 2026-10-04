@@ -2,10 +2,19 @@ import type { Metadata } from "next";
 import ContactPageClient from "./ContactPageClient";
 
 export const metadata: Metadata = {
-  title: "Contact Us | SaaS Market",
+  title: "Contact Us",
   description:
     "Get in touch with the SaaS Market team. Whether you're a buyer with a question or a seller wanting to list your product, we're here to help.",
   keywords: ["Contact SaaS Market", "SaaS Support", "Get in Touch"],
+  alternates: {
+    canonical: "https://www.saasmrkt.com/contact",
+  },
+  openGraph: {
+    title: "Contact Us | SaaS Market",
+    description:
+      "Get in touch with the SaaS Market team. We are here to help buyers and sellers.",
+    url: "https://www.saasmrkt.com/contact",
+  },
 };
 
 export default function ContactPage() {
