@@ -34,22 +34,44 @@ export default function ProductModal({
 
         {/* Product Header */}
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.25rem" }}>
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "12px",
-              backgroundColor: product.brandColor,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#fff",
-              fontWeight: 800,
-              fontSize: "1.3rem",
-            }}
-          >
-            {product.brandLetter}
-          </div>
+          {product.logo ? (
+            <div
+              style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "12px",
+                overflow: "hidden",
+                border: "1px solid var(--slate-200)",
+                boxShadow: "0 3px 10px rgba(15, 23, 42, 0.08)",
+                flexShrink: 0,
+              }}
+            >
+              <Image
+                src={product.logo}
+                alt={`${product.name} logo`}
+                width={48}
+                height={48}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "12px",
+                backgroundColor: product.brandColor,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: "1.3rem",
+              }}
+            >
+              {product.brandLetter}
+            </div>
+          )}
           <div>
             <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--slate-900)" }}>
               {product.name}

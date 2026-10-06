@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export interface ProductItem {
   id: string;
@@ -11,11 +12,14 @@ export interface ProductItem {
   reviewCount: number;
   description: string;
   image: string;
+  logo?: string;
   price: number;
   period: string;
   brandColor: string;
   brandLetter: string;
   features: string[];
+  topBadge?: string;
+  tags?: string[];
 }
 
 export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
@@ -24,13 +28,16 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
     name: "Manage360",
     category: "HR & Payroll",
     rating: 4.8,
-    reviewCount: 320,
+    reviewCount: 3200,
     description: "Complete HRMS for modern teams with payroll, attendance and more.",
     image: "/images/manage360.jpg",
+    logo: "/images/logos/manage360.jpg",
     price: 29,
-    period: "month",
+    period: "mo",
     brandColor: "#2563EB",
     brandLetter: "M",
+    topBadge: "Top Rated",
+    tags: ["HRMS", "Payroll"],
     features: [
       "Automated tax filings and payroll calculations",
       "Biometric and remote attendance tracking",
@@ -43,13 +50,16 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
     name: "TaskFlow",
     category: "Project Management",
     rating: 4.9,
-    reviewCount: 510,
-    description: "Manage tasks, teams and projects with ease.",
+    reviewCount: 5100,
+    description: "All-in-one workspace for notes, docs, sprints and task management.",
     image: "/images/taskflow.jpg",
+    logo: "/images/logos/taskflow.jpg",
     price: 19,
-    period: "month",
+    period: "mo",
     brandColor: "#6366F1",
     brandLetter: "T",
+    topBadge: "Top Rated",
+    tags: ["Productivity", "Collaboration"],
     features: [
       "Flexible Kanban, Gantt, and Sprint workflows",
       "Real-time team chat and document sharing",
@@ -62,13 +72,16 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
     name: "FinMate",
     category: "Accounting & Finance",
     rating: 4.7,
-    reviewCount: 180,
-    description: "Simple and powerful accounting for growing businesses.",
+    reviewCount: 1800,
+    description: "Simple and powerful accounting and reconciliation for growing companies.",
     image: "/images/finmate.jpg",
+    logo: "/images/logos/finmate.jpg",
     price: 35,
-    period: "month",
+    period: "mo",
     brandColor: "#10B981",
     brandLetter: "F",
+    topBadge: "Trending",
+    tags: ["Accounting", "Finance"],
     features: [
       "Smart multi-currency invoice generation",
       "Automated bank feed reconciliation",
@@ -81,13 +94,16 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
     name: "MailBoost",
     category: "Marketing",
     rating: 4.6,
-    reviewCount: 158,
-    description: "All-in-one email marketing automation platform.",
+    reviewCount: 1500,
+    description: "All-in-one email marketing, behavioral flows and lifecycle automation.",
     image: "/images/mailboost.jpg",
+    logo: "/images/logos/mailboost.jpg",
     price: 25,
-    period: "month",
+    period: "mo",
     brandColor: "#F97316",
     brandLetter: "M",
+    topBadge: "Popular",
+    tags: ["Marketing", "Email Ops"],
     features: [
       "Drag-and-drop responsive email builder",
       "Behavioral segmentation and triggers",
@@ -100,13 +116,16 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
     name: "Supportly",
     category: "Customer Support",
     rating: 4.8,
-    reviewCount: 158,
-    description: "Provide amazing customer support with smart tools.",
+    reviewCount: 2400,
+    description: "Provide amazing customer support with omnichannel AI assistance.",
     image: "/images/supportly.jpg",
+    logo: "/images/logos/supportly.jpg",
     price: 19,
-    period: "month",
+    period: "mo",
     brandColor: "#8B5CF6",
     brandLetter: "S",
+    topBadge: "Top Rated",
+    tags: ["Customer Support", "Helpdesk"],
     features: [
       "Omnichannel inbox (Email, Chat, WhatsApp)",
       "AI bot auto-responses for common questions",
@@ -117,20 +136,23 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
   {
     id: "prod-dealflow",
     name: "DealFlow",
-    category: "CRM",
+    category: "CRM & Sales",
     rating: 4.9,
-    reviewCount: 290,
-    description: "Visual sales pipeline, deal tracking, and revenue forecasting CRM.",
+    reviewCount: 4200,
+    description: "Close deals faster with intelligent predictive sales CRM pipelines.",
     image: "/images/dealflow.jpg",
+    logo: "/images/logos/dealflow.jpg",
     price: 39,
-    period: "month",
-    brandColor: "#0EA5E9",
+    period: "mo",
+    brandColor: "#EF4444",
     brandLetter: "D",
+    topBadge: "Verified",
+    tags: ["CRM & Sales", "Pipelines"],
     features: [
-      "Visual drag-and-drop deal pipeline",
-      "Automated lead enrichment and scoring",
-      "Email sequencing and meeting scheduling",
-      "Real-time sales revenue forecasting",
+      "Visual sales pipeline with drag-and-drop deals",
+      "Automated email sequences & smart follow-ups",
+      "Lead scoring with predictive AI",
+      "Real-time revenue forecast analytics",
     ],
   },
 ];
@@ -174,17 +196,26 @@ export default function FeaturedProducts({
   return (
     <section className="featured-section" id="featured">
       <div className="container">
-        {/* Header */}
-        <div className="section-badge" id="featured-badge">
-          FEATURED PRODUCTS
-        </div>
-        <div className="section-header-row">
-          <p className="section-subtitle" style={{ marginTop: 0 }}>
+        {/* Centered Section Header */}
+        <div className="featured-header-center">
+          <div className="section-badge" id="featured-badge">
+            FEATURED PRODUCTS
+          </div>
+          <h2 className="section-title">Featured SaaS Products</h2>
+          <p className="section-subtitle">
             Handpicked SaaS tools to help you work smarter and grow faster.
           </p>
-          <a href="#featured" className="view-all-link" id="view-all-products-link">
+        </div>
+
+        {/* Right-Aligned Action Bar on its own line below subtitle */}
+        <div className="featured-top-action-bar">
+          <Link href="/products" className="view-all-link" id="view-all-products-link">
             <span>View All Products</span>
-          </a>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </Link>
         </div>
 
         {/* 5 Cards Grid */}
@@ -196,78 +227,98 @@ export default function FeaturedProducts({
                 <div
                   key={product.id}
                   id={product.id}
-                  className="product-card"
+                  className="product-card saas-discovery-card"
                   onClick={() => onViewProduct(product)}
                 >
-                  {/* Top Row: Brand Icon, Name, Category, Bookmark */}
-                  <div>
-                    <div className="product-card-top">
-                      <div className="product-brand-group">
-                        <div
-                          className="product-logo-box"
-                          style={{ backgroundColor: product.brandColor }}
-                        >
-                          {product.brandLetter}
-                        </div>
-                        <div className="product-meta-header">
-                          <h3 className="product-name">{product.name}</h3>
-                          <span className="product-category-tag">{product.category}</span>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        className={`bookmark-btn ${isSaved ? "saved" : ""}`}
-                        onClick={(e) => toggleBookmark(product.id, e)}
-                        aria-label={`Bookmark ${product.name}`}
-                      >
-                        <svg
-                          width="18"
-                          height="18"
-                          viewBox="0 0 24 24"
-                          fill={isSaved ? "#EC4899" : "none"}
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
-                      </button>
-                    </div>
-
-                    {/* Star Rating */}
-                    <div className="product-rating-row">
-                      <span style={{ color: "#F59E0B" }}>★</span>
-                      <span className="product-rating-score">{product.rating.toFixed(1)}</span>
-                      <span className="product-rating-count">({product.reviewCount})</span>
-                    </div>
-
-                    {/* Description Snippet */}
-                    <p className="product-snippet">{product.description}</p>
-
-                    {/* Preview UI Screenshot Frame */}
-                    <div className="product-preview-frame">
-                      <Image
-                        src={product.image}
-                        alt={`${product.name} interface dashboard preview`}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 240px"
-                        className="product-preview-img"
-                      />
-                    </div>
+                  {/* Product Preview Image Banner — Clean & Unobstructed */}
+                  <div className="discovery-card-image-wrap">
+                    <Image
+                      src={product.image}
+                      alt={`${product.name} dashboard preview`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 360px"
+                      className="discovery-card-img"
+                    />
                   </div>
 
-                  {/* Card Bottom: Price & View Details */}
-                  <div className="product-card-bottom">
-                    <div>
-                      <span className="product-price">${product.price}</span>
-                      <span className="product-price-term">/{product.period}</span>
+                  {/* Card Body */}
+                  <div className="discovery-card-body">
+                    {/* Header Row: Logo & Name on Left, Status Badge on Right */}
+                    <div className="discovery-card-header-row">
+                      <div className="discovery-card-brand-group">
+                        {product.logo ? (
+                          <div className="discovery-card-logo-wrap">
+                            <Image
+                              src={product.logo}
+                              alt={`${product.name} logo`}
+                              width={34}
+                              height={34}
+                              className="discovery-card-logo-img"
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className="discovery-card-logo"
+                            style={{ backgroundColor: product.brandColor }}
+                          >
+                            {product.brandLetter}
+                          </div>
+                        )}
+                        <h3 className="discovery-card-title">{product.name}</h3>
+                      </div>
+
+                      <span className={`discovery-top-badge ${
+                        product.topBadge === "Trending"
+                          ? "badge-trending"
+                          : product.topBadge === "Popular"
+                          ? "badge-popular"
+                          : product.topBadge === "Verified"
+                          ? "badge-verified"
+                          : "badge-top-rated"
+                      }`}>
+                        {product.topBadge || "Top Rated"}
+                      </span>
                     </div>
 
-                    <span className="product-details-btn">
-                      <span>View Details</span>
-                    </span>
+                    {/* Description */}
+                    <p className="discovery-card-desc">{product.description}</p>
+
+                    {/* Meta Row: Tags on left, Rating on right */}
+                    <div className="discovery-meta-row">
+                      <div className="discovery-tags-group">
+                        {(product.tags || [product.category]).map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="discovery-tag-pill"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="discovery-rating-inline">
+                        <span className="discovery-stars">★ ★</span>
+                        <span className="discovery-rating-score">
+                          {typeof product.rating === "number" ? product.rating.toFixed(1) : product.rating}
+                        </span>
+                        <span className="discovery-rating-count">
+                          ({product.reviewCount >= 1000 ? `${(product.reviewCount / 1000).toFixed(1)}K` : product.reviewCount})
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Primary CTA Button */}
+                    <button
+                      type="button"
+                      className="discovery-btn-primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onViewProduct(product);
+                      }}
+                    >
+                      View Basic Info
+                    </button>
                   </div>
                 </div>
               );

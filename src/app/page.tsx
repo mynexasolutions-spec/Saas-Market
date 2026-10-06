@@ -5,10 +5,13 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import HowItWorks from "@/components/HowItWorks";
+import PlatformShowcase from "@/components/PlatformShowcase";
+import ClientRelationBanner from "@/components/ClientRelationBanner";
 import FeaturedProducts, { ProductItem } from "@/components/FeaturedProducts";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import DualBanners from "@/components/DualBanners";
 import Testimonials from "@/components/Testimonials";
+import SplitFeatureShowcase from "@/components/SplitFeatureShowcase";
 import BlogArticles from "@/components/BlogArticles";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
@@ -115,8 +118,14 @@ export default function Home() {
           activeCategory={activeCategory}
         />
 
+        {/* Live Platform Handover Showcase Banner */}
+        <PlatformShowcase />
+
         {/* How SaaS MRKT Works (3 steps flow) */}
         <HowItWorks />
+
+        {/* SaaS & Client Relationship Partnership Showcase */}
+        <ClientRelationBanner />
 
         {/* Featured Products (5 cards with screenshots) */}
         <FeaturedProducts
@@ -136,6 +145,9 @@ export default function Home() {
 
         {/* What Our Users Say (Testimonials) */}
         <Testimonials />
+
+        {/* Enterprise Split Showcase (Image Left, Text Right) */}
+        <SplitFeatureShowcase onExplore={handleExploreScroll} />
 
         {/* Latest Articles & Resources (Blog) */}
         <BlogArticles

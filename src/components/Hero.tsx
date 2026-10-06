@@ -339,9 +339,9 @@ export default function Hero({ onExploreScroll }: HeroProps) {
       </div>
 
       {/* Floating Hero Metrics Bar */}
-      <div className="hero-metrics-bar-wrapper">
+      {/* <div className="hero-metrics-bar-wrapper">
         <MetricsBar />
-      </div>
+      </div> */}
     </section>
   );
 }
