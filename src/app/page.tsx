@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import MetricsBar from "@/components/MetricsBar";
 import Categories from "@/components/Categories";
 import HowItWorks from "@/components/HowItWorks";
 import FeaturedProducts, { ProductItem } from "@/components/FeaturedProducts";
@@ -20,6 +19,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
+  
+  const [searchOpen, setSearchOpen] = useState(false);
   
   // Modals state
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
@@ -44,12 +45,23 @@ export default function Home() {
     }
   };
 
-  const handleSearchFocus = () => {
-    const inputElem = document.getElementById("hero-search-input");
-    if (inputElem) {
-      inputElem.scrollIntoView({ behavior: "smooth", block: "center" });
-      inputElem.focus();
-    }
+  const handleSearchToggle = () => {
+    setSearchOpen((prev) => {
+      const nextState = !prev;
+      if (nextState) {
+        setTimeout(() => {
+          const heroElem = document.getElementById("hero");
+          if (heroElem) {
+            heroElem.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+          const inputElem = document.getElementById("hero-search-input");
+          if (inputElem) {
+            inputElem.focus();
+          }
+        }, 120);
+      }
+      return nextState;
+    });
   };
 
   const handleCategorySelect = (categoryName: string) => {
@@ -84,25 +96,18 @@ export default function Home() {
 
   return (
     <>
-      {/* Navigation Header */}
+      {/* Navigation Header with Inline Expanding Search */}
       <Navbar
         onOpenAuth={handleOpenAuth}
-        onSearchFocus={handleSearchFocus}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearchSubmit={handleSearchSubmit}
       />
 
       {/* Main Page Flow */}
       <main id="main-content">
-        {/* Hero Section */}
-        <Hero
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedTag={selectedTag}
-          setSelectedTag={setSelectedTag}
-          onSearchSubmit={handleSearchSubmit}
-        />
-
-        {/* 4 Stats Metrics Bar */}
-        <MetricsBar />
+        {/* Hero Section (Contains Integrated Bottom Metrics Bar) */}
+        <Hero onExploreScroll={handleExploreScroll} />
 
         {/* Browse by Category (10 cards) */}
         <Categories
