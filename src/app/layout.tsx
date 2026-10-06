@@ -33,7 +33,11 @@ export const metadata: Metadata = {
     "CRM Software",
     "Project Management Tools",
     "Developer APIs",
+    "Developer Tools",
+    "HR & Payroll",
     "Accounting Software",
+    "B2B Software",
+    "SaaS Deals",
   ],
   authors: [{ name: "SaaS MRKT Inc.", url: "https://www.saasmrkt.com" }],
   creator: "SaaS MRKT Inc.",
@@ -42,30 +46,41 @@ export const metadata: Metadata = {
     canonical: "https://www.saasmrkt.com",
   },
   openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.saasmrkt.com",
+    siteName: "SaaS MRKT",
     title: "SaaS MRKT — Modern SaaS Marketplace & Software Discovery",
     description:
       "Discover, compare, and buy verified B2B software solutions. Explore 2,000+ top SaaS applications with transparent pricing and real user reviews.",
-    url: "https://www.saasmrkt.com",
-    siteName: "SaaS MRKT",
     images: [
       {
         url: "/og-image.png",
-        width: 500,
-        height: 500,
+        width: 1200,
+        height: 630,
         alt: "SaaS MRKT",
         type: "image/png",
       },
     ],
-    locale: "en_US",
-    type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "SaaS MRKT — Modern SaaS Marketplace & Software Discovery",
     description:
       "Discover, compare, and buy verified B2B software solutions. Explore 2,000+ top SaaS applications with transparent pricing and real user reviews.",
     images: ["/og-image.png"],
     creator: "@saasmrkt",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: [

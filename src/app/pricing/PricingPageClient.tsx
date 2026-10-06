@@ -298,7 +298,7 @@ export default function PricingPageClient() {
         <div className="container">
           <div className="pricing-faq-inner">
             <div className="section-badge">FAQ</div>
-            <h2 className="section-title" style={{ marginBottom: "2rem" }}>Frequently Asked Questions</h2>
+            <h2 className="section-title" style={{ marginBottom: "2rem", textAlign: "center" }}>Frequently Asked Questions</h2>
             <div className="pricing-faq-list">
               {FAQS.map((faq, i) => (
                 <div key={i} id={`faq-${i}`} className={`pricing-faq-item${openFaq === i ? " pricing-faq-item--open" : ""}`}>
