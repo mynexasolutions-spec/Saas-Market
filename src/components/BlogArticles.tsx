@@ -60,7 +60,7 @@ export default function BlogArticles({ onArticleClick }: BlogArticlesProps) {
         </div>
         <div className="section-header-row">
           <div>
-            <h2 className="section-title">Latest Articles & Resources</h2>
+            <h2 className="section-title">Latest Articles &amp; Resources</h2>
             <p className="section-subtitle">
               Stay updated with the latest insights, tips and trends in the SaaS industry.
             </p>
