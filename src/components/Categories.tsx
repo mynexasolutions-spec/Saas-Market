@@ -174,10 +174,6 @@ export default function Categories({ onSelectCategory, activeCategory }: Categor
           </div>
           <Link href="/categories" className="view-all-link" id="view-all-categories-link">
             <span>View All Categories</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
           </Link>
         </div>
 
@@ -205,8 +201,6 @@ export default function Categories({ onSelectCategory, activeCategory }: Categor
                     <span className="category-count">{cat.count}</span>
                   </div>
                 </div>
-                <span className="category-arrow">
-                </span>
               </div>
             );
           })}

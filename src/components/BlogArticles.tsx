@@ -2,52 +2,47 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const ARTICLES = [
   {
     id: "article-1",
     tag: "Business Growth",
+    tagDotColor: "#8B5CF6",
     title: "Top 10 SaaS Tools for Growing Businesses in 2026",
     date: "Sep 20, 2026",
     readTime: "5 min read",
-    bannerClass: "article-banner-1",
-    waveSvg: (
-      <svg className="article-wave-svg" viewBox="0 0 400 200" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,80 C100,160 220,20 320,100 C370,140 400,90 400,90 L400,200 L0,200 Z" fill="rgba(139, 92, 246, 0.25)" />
-        <path d="M0,120 C120,40 240,160 360,60 C380,45 400,70 400,70 L400,200 L0,200 Z" fill="rgba(168, 85, 247, 0.2)" />
-        <circle cx="340" cy="50" r="45" fill="rgba(255, 255, 255, 0.4)" filter="blur(10px)" />
-      </svg>
-    ),
+    image: "/images/blog/top-10-saas-tools-2026.jpg",
+    bottomBadge: {
+      text: "Featured",
+      type: "featured",
+    },
   },
   {
     id: "article-2",
     tag: "Guides",
+    tagDotColor: "#3B82F6",
     title: "How to Choose the Right SaaS Tool for Your Team",
     date: "Sep 18, 2026",
     readTime: "6 min read",
-    bannerClass: "article-banner-2",
-    waveSvg: (
-      <svg className="article-wave-svg" viewBox="0 0 400 200" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,60 C120,130 200,40 300,110 C350,140 400,80 400,80 L400,200 L0,200 Z" fill="rgba(59, 130, 246, 0.22)" />
-        <path d="M0,110 C90,60 210,150 340,70 C370,55 400,85 400,85 L400,200 L0,200 Z" fill="rgba(99, 102, 241, 0.18)" />
-        <circle cx="80" cy="60" r="50" fill="rgba(255, 255, 255, 0.45)" filter="blur(10px)" />
-      </svg>
-    ),
+    image: "/images/blog/how-to-choose-right-saas-tool.jpg",
+    bottomBadge: {
+      text: "Must Read",
+      type: "must-read",
+    },
   },
   {
     id: "article-3",
     tag: "Trends",
+    tagDotColor: "#F59E0B",
     title: "SaaS Trends to Watch in 2026",
     date: "Sep 15, 2026",
     readTime: "4 min read",
-    bannerClass: "article-banner-3",
-    waveSvg: (
-      <svg className="article-wave-svg" viewBox="0 0 400 200" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,90 C140,40 220,140 330,60 C370,40 400,70 400,70 L400,200 L0,200 Z" fill="rgba(244, 63, 94, 0.18)" />
-        <path d="M0,130 C110,90 230,170 350,80 C380,60 400,90 400,90 L400,200 L0,200 Z" fill="rgba(249, 115, 22, 0.16)" />
-        <circle cx="280" cy="40" r="48" fill="rgba(255, 255, 255, 0.45)" filter="blur(10px)" />
-      </svg>
-    ),
+    image: "/images/blog/saas-trends-2026.jpg",
+    bottomBadge: {
+      text: "Trending",
+      type: "trending",
+    },
   },
 ];
 
@@ -72,10 +67,6 @@ export default function BlogArticles({ onArticleClick }: BlogArticlesProps) {
           </div>
           <Link href="/blog" className="view-all-link" id="view-all-articles-link">
             <span>View All Articles</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
           </Link>
         </div>
 
@@ -88,22 +79,37 @@ export default function BlogArticles({ onArticleClick }: BlogArticlesProps) {
               id={art.id}
               onClick={() => onArticleClick(art.title)}
             >
-              <div className={`article-banner ${art.bannerClass}`}>
-                {art.waveSvg}
-                <span className="article-tag-badge">{art.tag}</span>
+              <div className="article-banner">
+                <Image
+                  src={art.image}
+                  alt={art.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="article-banner-image"
+                />
+                <div className="article-banner-overlay" />
+                <span className="article-tag-badge">
+                  <span className="article-tag-dot" style={{ backgroundColor: art.tagDotColor }} />
+                  {art.tag}
+                </span>
               </div>
               <div className="article-body">
                 <h3 className="article-title">{art.title}</h3>
-                <div className="article-meta-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  <span>{art.date}</span>
-                  <span>•</span>
-                  <span>{art.readTime}</span>
+                <div className="article-body-footer">
+                  <div className="article-meta-row">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <span>{art.date}</span>
+                    <span>•</span>
+                    <span>{art.readTime}</span>
+                  </div>
+                  <span className={`article-bottom-badge badge-${art.bottomBadge.type}`}>
+                    {art.bottomBadge.text}
+                  </span>
                 </div>
               </div>
             </article>
