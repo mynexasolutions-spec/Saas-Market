@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
@@ -17,8 +18,11 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import ProductModal from "@/components/ProductModal";
 import AuthModal from "@/components/AuthModal";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const router = useRouter();
+  const { isAuthOpen, authMode, openAuth, closeAuth } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
@@ -27,8 +31,6 @@ export default function Home() {
   
   // Modals state
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<"login" | "signup">("signup");
   
   // Toast state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -79,11 +81,6 @@ export default function Home() {
     }
   };
 
-  const handleOpenAuth = (mode: "login" | "signup") => {
-    setAuthMode(mode);
-    setAuthModalOpen(true);
-  };
-
   const handleAuthSuccess = (email: string) => {
     showToast(`Welcome! Logged in as ${email}`);
   };
@@ -101,7 +98,7 @@ export default function Home() {
     <>
       {/* Navigation Header with Inline Expanding Search */}
       <Navbar
-        onOpenAuth={handleOpenAuth}
+        onOpenAuth={openAuth}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onSearchSubmit={handleSearchSubmit}
@@ -129,7 +126,7 @@ export default function Home() {
 
         {/* Featured Products (5 cards with screenshots) */}
         <FeaturedProducts
-          onViewProduct={(product) => setSelectedProduct(product)}
+          onViewProduct={(product) => router.push(`/products/${product.id}`)}
           searchFilter={searchQuery}
           categoryFilter={activeCategory}
         />
@@ -140,7 +137,7 @@ export default function Home() {
         {/* Dual Banners (For Buyers & For Sellers) */}
         <DualBanners
           onExploreProducts={handleExploreScroll}
-          onBecomeSeller={() => handleOpenAuth("signup")}
+          onBecomeSeller={() => openAuth("signup")}
         />
 
         {/* What Our Users Say (Testimonials) */}
@@ -173,9 +170,9 @@ export default function Home() {
 
       {/* Authentication Modal */}
       <AuthModal
-        isOpen={authModalOpen}
+        isOpen={isAuthOpen}
         initialMode={authMode}
-        onClose={() => setAuthModalOpen(false)}
+        onClose={closeAuth}
         onSuccess={handleAuthSuccess}
       />
 

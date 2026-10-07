@@ -279,22 +279,27 @@ export default function FeaturedProducts({
                     {/* Description */}
                     <p className="discovery-card-desc">{product.description}</p>
 
-                    {/* Meta Row: Tags on left, Rating on right */}
+                    {/* Dedicated Badges Row: Attractive pills in single row */}
+                    <div className="discovery-badges-row">
+                      {(product.tags || [product.category]).slice(0, 2).map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="discovery-tag-pill"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Price & Rating Row */}
                     <div className="discovery-meta-row">
-                      <div className="discovery-tags-group">
-                        {(product.tags || [product.category]).map((tag, idx) => (
-                          <span
-                            key={idx}
-                            className="discovery-tag-pill"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                      <div className="discovery-price-group">
+                        <span className="discovery-price-amount">${product.price}</span>
                       </div>
 
                       <div className="discovery-rating-inline">
-                        <span className="discovery-stars">★ ★</span>
+                        <span className="discovery-stars">★</span>
                         <span className="discovery-rating-score">
                           {typeof product.rating === "number" ? product.rating.toFixed(1) : product.rating}
                         </span>

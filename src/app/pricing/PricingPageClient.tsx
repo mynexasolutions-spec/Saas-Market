@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
+import { useAuth } from "@/context/AuthContext";
 
 const PLANS = [
   {
@@ -95,6 +96,7 @@ const FAQS = [
 ];
 
 export default function PricingPageClient() {
+  const { subscribe, isSubscribed } = useAuth();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [selectedPlan, setSelectedPlan] = useState<string>("plan-growth");
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
@@ -111,7 +113,7 @@ export default function PricingPageClient() {
     setSelectedPlan(planId);
     setHoveredCard(planId);
     setClickedPlan(planId);
-    showToast(`Starting ${planName} plan...`);
+    subscribe(planName);
   };
 
   const showToast = (msg: string) => {

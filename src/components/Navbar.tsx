@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 interface NavbarProps {
   onOpenAuth: (mode: "login" | "signup") => void;
@@ -21,6 +22,7 @@ export default function Navbar({
   onSearchSubmit,
 }: NavbarProps) {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -245,20 +247,69 @@ export default function Navbar({
                 </svg>
               </button>
             )}
-            <button
-              className="login-link nav-desktop-auth"
-              onClick={() => onOpenAuth("login")}
-              id="nav-login-btn"
-            >
-              Login
-            </button>
-            <button
-              className="btn-primary nav-desktop-auth"
-              onClick={() => onOpenAuth("signup")}
-              id="nav-get-started-btn"
-            >
-              Get Started
-            </button>
+            {user ? (
+              <div className="nav-user-logged-wrap">
+                <div className="nav-user-badge" title={user.email}>
+                  <span className="nav-user-avatar" aria-hidden="true">
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </span>
+                  <span className="nav-user-name">{user.name}</span>
+                  <span className="nav-user-indicator" title="Active"></span>
+                </div>
+                <button
+                  type="button"
+                  className="nav-logout-btn"
+                  onClick={logout}
+                  title="Sign out of account"
+                  id="nav-logout-btn"
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  <span>Log Out</span>
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  className="login-link nav-desktop-auth"
+                  onClick={() => onOpenAuth("login")}
+                  id="nav-login-btn"
+                >
+                  Login
+                </button>
+                <button
+                  className="btn-primary nav-desktop-auth"
+                  onClick={() => onOpenAuth("signup")}
+                  id="nav-get-started-btn"
+                >
+                  Get Started
+                </button>
+              </>
+            )}
             <button
               className="mobile-menu-btn"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -307,24 +358,77 @@ export default function Navbar({
               </Link>
             </div>
             <div className="mobile-nav-auth-section">
-              <button
-                className="mobile-btn-login"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenAuth("login");
-                }}
-              >
-                Log In
-              </button>
-              <button
-                className="btn-primary mobile-btn-signup"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenAuth("signup");
-                }}
-              >
-                Get Started
-              </button>
+              {user ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
+                  <div className="nav-user-badge" style={{ width: "fit-content" }} title={user.email}>
+                    <span className="nav-user-avatar" aria-hidden="true">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </span>
+                    <span className="nav-user-name">{user.name}</span>
+                    <span className="nav-user-indicator" title="Active"></span>
+                  </div>
+                  <button
+                    type="button"
+                    className="nav-logout-btn"
+                    style={{ width: "100%", justifyContent: "center" }}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logout();
+                    }}
+                  >
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="mobile-btn-login"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenAuth("login");
+                    }}
+                  >
+                    Log In
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-primary mobile-btn-signup"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenAuth("signup");
+                    }}
+                  >
+                    Get Started
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}

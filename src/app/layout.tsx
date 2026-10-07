@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -95,11 +96,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+
   // Structured Data for Google Sitelinks & Organization
   const websiteSchema = {
     "@context": "https://schema.org",
@@ -181,6 +178,11 @@ export default function RootLayout({
     ],
   };
 
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en" className={plusJakartaSans.variable}>
       <head>
@@ -198,7 +200,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
