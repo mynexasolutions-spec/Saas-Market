@@ -129,7 +129,6 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
 
             {/* Right Actions */}
             <div className="nav-actions">
-              <Link href="/blog" className="login-link nav-desktop-auth" id="nav-blog-link">Blog</Link>
               <button className="login-link nav-desktop-auth" onClick={() => handleOpenAuth("login")} id="nav-login-btn">
                 Login
               </button>

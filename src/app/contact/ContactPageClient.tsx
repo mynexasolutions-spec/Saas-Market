@@ -54,7 +54,7 @@ export default function ContactPageClient() {
   };
 
   return (
-    <PageLayout>
+    <PageLayout noContainer>
       {/* Hero */}
       <section className="contact-hero">
         <div className="container">

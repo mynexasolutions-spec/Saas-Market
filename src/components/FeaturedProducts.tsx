@@ -247,8 +247,8 @@ export default function FeaturedProducts({
                             <Image
                               src={product.logo}
                               alt={`${product.name} logo`}
-                              width={34}
-                              height={34}
+                              width={30}
+                              height={30}
                               className="discovery-card-logo-img"
                             />
                           </div>

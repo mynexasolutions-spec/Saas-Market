@@ -177,7 +177,7 @@ export default function BlogPageClient() {
   });
 
   return (
-    <PageLayout activeNav="resources">
+    <PageLayout activeNav="resources" noContainer>
       {/* Hero / Page Header */}
       <section className="blog-hero">
         <div className="container">

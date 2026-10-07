@@ -127,7 +127,7 @@ export default function PricingPageClient() {
   const activeCardId = hoveredCard || selectedPlan;
 
   return (
-    <PageLayout activeNav="pricing">
+    <PageLayout activeNav="pricing" noContainer>
       {/* Hero */}
       <section className="pricing-hero">
         <div className="container">
