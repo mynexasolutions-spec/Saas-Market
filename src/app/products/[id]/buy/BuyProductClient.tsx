@@ -49,10 +49,48 @@ export default function BuyProductClient({ product }: BuyProductClientProps) {
   const sellerName = product.sellerName || "Elena Rostova";
   const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
   const licenseKey = `SMRKT-${product.name.toUpperCase().slice(0, 4)}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const handleDownloadZip = () => {
+    const packageInfo = `=====================================================
+PACKAGE: ${product.name}
+CATEGORY: ${product.category}
+VERSION: 1.0.0
+LICENSE KEY: ${licenseKey}
+ORDER ID: ${orderNumber}
+CUSTOMER: ${formData.fullName || "Valued Customer"} (${formData.email || "customer@example.com"})
+=====================================================
+
+Thank you for purchasing ${product.name} from SaaS MRKT!
+
+INCLUDED ASSETS & QUICK START:
+1. API Credentials: Configured and active.
+2. Production Build: Ready for deployment.
+3. Documentation: https://saas-mrkt.dev/docs/${product.id}
+4. Seller Support: ${sellerName}
+
+For questions or assistance, contact support@saas-mrkt.dev.
+`;
+    const blob = new Blob([packageInfo], { type: "application/zip" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${product.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-source-bundle.zip`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <PageLayout activeNav="products" noContainer>
       <div className="checkout-page-wrapper">
+        {/* Background Ambient Decorative Layers */}
+        <div className="checkout-bg-mesh" aria-hidden="true" />
+        <div className="checkout-bg-glow checkout-bg-glow--top-left" aria-hidden="true" />
+        <div className="checkout-bg-glow checkout-bg-glow--bottom-right" aria-hidden="true" />
+        <div className="checkout-bg-glow checkout-bg-glow--center" aria-hidden="true" />
+        <div className="checkout-bg-ring checkout-bg-ring--1" aria-hidden="true" />
+        <div className="checkout-bg-ring checkout-bg-ring--2" aria-hidden="true" />
+
         <div className="container">
           {/* Breadcrumb */}
           <nav className="checkout-breadcrumb" aria-label="Breadcrumb">
@@ -104,14 +142,24 @@ export default function BuyProductClient({ product }: BuyProductClientProps) {
                 <Link href={`/products/${product.id}`} className="checkout-btn-back">
                   Back to {product.name}
                 </Link>
-                <Link href="/products" className="checkout-btn-explore">
-                  Explore More SaaS
-                </Link>
+                <button
+                  type="button"
+                  onClick={handleDownloadZip}
+                  className="checkout-btn-explore"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Download Zip File
+                </button>
               </div>
             </div>
           ) : (
-            /* Checkout Form & Order Summary */
-            <div className="checkout-grid">
+            <>
+              {/* Checkout Form & Order Summary */}
+              <div className="checkout-grid">
               {/* Left Column: Checkout Details */}
               <div className="checkout-form-column">
                 <div className="checkout-card">
@@ -268,20 +316,6 @@ export default function BuyProductClient({ product }: BuyProductClientProps) {
                       )}
                     </div>
 
-                    {/* Guarantee & Terms */}
-                    <div className="checkout-guarantee-box">
-                      <div className="checkout-guarantee-icon">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                          <path d="m9 12 2 2 4-4" />
-                        </svg>
-                      </div>
-                      <div>
-                        <strong>30-Day Money Back Guarantee</strong>
-                        <p>If {product.name} does not meet your expectations, request a full refund within 30 days with no questions asked.</p>
-                      </div>
-                    </div>
-
                     <div className="checkout-terms-row">
                       <label className="checkout-checkbox-label">
                         <input
@@ -398,7 +432,25 @@ export default function BuyProductClient({ product }: BuyProductClientProps) {
                 </div>
               </div>
             </div>
-          )}
+
+            {/* Centered Reassurance Text */}
+            <div className="checkout-under-card-note">
+              <div className="checkout-under-card-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <span>Guaranteed Safe &amp; Secure Checkout</span>
+              </div>
+              <p className="checkout-under-card-desc">
+                256-bit SSL encrypted escrow payment • Instant automated license delivery
+              </p>
+              <p className="checkout-under-card-sub">
+                Cancel anytime in one click. 30-day money-back guarantee with full escrow protection.
+              </p>
+            </div>
+          </>
+        )}
         </div>
       </div>
     </PageLayout>
