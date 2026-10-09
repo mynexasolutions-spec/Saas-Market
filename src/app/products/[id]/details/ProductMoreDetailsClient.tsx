@@ -810,7 +810,7 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                 </div>
 
                 {/* Then Show Image */}
-                <div className="pdetails-media-block" style={{ marginTop: "2rem" }}>
+                <div className="pdetails-media-block pdetails-media-block--compact">
                   <div className="pdetails-media-header">
                     <span className="pdetails-media-tag" style={{ background: "#ECFDF5", color: "#059669" }}>Financial Telemetry</span>
                     <span className="pdetails-media-title">Verified Revenue &amp; Growth Metrics</span>
