@@ -458,7 +458,11 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     <div className="pdetails-media-block pdetails-split-media">
                       <div className="pdetails-media-wrapper">
                         <Image
-                          src={product.image || "/images/taskflow-workspace-dashboard.jpg"}
+                          src={
+                            product.id === "prod-taskflow" || !product.image
+                              ? "/images/taskflow-command-center-dark.jpg"
+                              : product.image
+                          }
                           alt={`${product.name} Production Workspace Interface`}
                           width={1280}
                           height={720}

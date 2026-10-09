@@ -221,7 +221,7 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
     reviewCount: 5100,
     description: "All-in-one workspace for notes, docs, sprints and task management.",
     tagline: "Unified workspace for high-velocity software and product teams",
-    image: "/images/taskflow.jpg",
+    image: "/images/taskflow-command-center-dark.jpg",
     logo: "/images/logos/taskflow.jpg",
     price: 19,
     period: "mo",
