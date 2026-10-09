@@ -79,15 +79,17 @@ export default function SellersPage() {
   ];
 
   return (
-    <PageLayout activeNav="sellers">
-      <div className="section-header" style={{ textAlign: "center", marginBottom: "6rem", marginTop: "4rem" }}>
-        <h1 className="section-title">Grow your &nbsp;<span className="section-title-highlight">Software Business</span></h1>
-        <p className="section-subtitle" style={{ maxWidth: "800px", marginLeft: "auto", marginRight: "auto" }}>
-          Get your software in front of 50,000+ qualified buyers actively looking for solutions. No hidden fees, just growth.
-        </p>
-      </div>
+    <PageLayout activeNav="sellers" noContainer>
+      <div className="sellers-page-wrapper">
+        <div className="container">
+          <div className="section-header" style={{ textAlign: "center", marginBottom: "4rem", marginTop: "1rem" }}>
+            <h1 className="section-title">Grow your &nbsp;<span className="section-title-highlight">Software Business</span></h1>
+            <p className="section-subtitle" style={{ maxWidth: "800px", marginLeft: "auto", marginRight: "auto" }}>
+              Get your software in front of 50,000+ qualified buyers actively looking for solutions. No hidden fees, just growth.
+            </p>
+          </div>
 
-      {/* Hero Overview */}
+          {/* Hero Overview */}
       <div className="overview-hero-grid sellers-hero-grid">
         <div className="overview-hero-content">
           <h2 className="overview-hero-title">
@@ -142,14 +144,10 @@ export default function SellersPage() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2rem" }}>
           {steps.map((step, idx) => (
-            <div key={idx} style={{
-              background: "var(--white)",
-              border: "1px solid var(--slate-200)",
+            <div key={idx} className="seller-step-card" style={{
               borderRadius: "20px",
               padding: "2.5rem 2rem",
               position: "relative",
-              boxShadow: "0 4px 20px rgba(15, 23, 42, 0.03)",
-              transition: "transform 0.25s ease, box-shadow 0.25s ease"
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
                 <div style={{
@@ -177,7 +175,7 @@ export default function SellersPage() {
       </section>
 
       {/* Seller Advantages Grid */}
-      <section style={{ marginBottom: "6rem", background: "var(--slate-50)", padding: "4rem 3rem", borderRadius: "28px" }}>
+      <section className="seller-advantages-panel" style={{ marginBottom: "6rem", padding: "4rem 3rem", borderRadius: "28px" }}>
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
           <div className="section-badge" style={{ display: "inline-block", marginBottom: "0.75rem" }}>BUILT FOR SCALE</div>
           <h2 style={{ fontSize: "2.25rem", fontWeight: "800", color: "var(--slate-900)", marginBottom: "1rem" }}>
@@ -190,13 +188,9 @@ export default function SellersPage() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "2rem" }}>
           {benefits.map((b, i) => (
-            <div key={i} style={{
-              background: "var(--white)",
+            <div key={i} className="seller-advantage-card" style={{
               borderRadius: "18px",
               padding: "2rem",
-              border: "1px solid var(--slate-200)",
-              display: "flex",
-              flexDirection: "column"
             }}>
               <span style={{
                 fontSize: "0.75rem",
@@ -233,12 +227,9 @@ export default function SellersPage() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "2rem", maxWidth: "1000px", margin: "0 auto" }}>
           {faqs.map((faq, idx) => (
-            <div key={idx} style={{
-              background: "var(--white)",
-              border: "1px solid var(--slate-200)",
+            <div key={idx} className="seller-faq-card" style={{
               borderRadius: "16px",
               padding: "2rem",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.02)"
             }}>
               <h3 style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.75rem" }}>
                 {faq.q}
@@ -258,7 +249,7 @@ export default function SellersPage() {
         padding: "2.75rem 2rem",
         textAlign: "center",
         color: "white",
-        marginBottom: "4rem",
+        marginBottom: "1.5rem",
         position: "relative",
         overflow: "hidden"
       }}>
@@ -287,6 +278,8 @@ export default function SellersPage() {
           </div>
         </div>
       </section>
+        </div>
+      </div>
     </PageLayout>
   );
 }
