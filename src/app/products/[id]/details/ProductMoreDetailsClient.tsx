@@ -458,21 +458,13 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     <div className="pdetails-media-block pdetails-split-media">
                       <div className="pdetails-media-wrapper">
                         <Image
-                          src={product.image || "/images/manage360.jpg"}
-                          alt={`${product.name} Interactive Dashboard Interface`}
+                          src={product.image || "/images/taskflow-workspace-dashboard.jpg"}
+                          alt={`${product.name} Production Workspace Interface`}
                           width={1280}
                           height={720}
                           className="pdetails-media-img"
                           priority
                         />
-                      </div>
-                      <div className="pdetails-media-caption">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                          <circle cx="9" cy="9" r="2"/>
-                          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                        </svg>
-                        <span>{product.name} Production Workspace Interface</span>
                       </div>
                     </div>
                   </div>
