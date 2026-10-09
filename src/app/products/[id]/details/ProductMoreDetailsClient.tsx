@@ -1076,64 +1076,7 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     </div>
                   </div>
 
-                  {/* Verified Customer Testimonials */}
-                  <div className="pdetails-quotes-grid">
-                    <div className="pdetails-quote-card">
-                      <p>&ldquo;{product.name} drastically accelerated our team sprint cycle. The integration was seamless, webhook syncing worked out of the box, and support was lightning fast.&rdquo;</p>
-                      <div className="pdetails-quote-author">
-                        <div className="pdetails-quote-avatar">MV</div>
-                        <div className="pdetails-quote-meta">
-                          <span className="pdetails-quote-name">
-                            Marcus Vance
-                            <span className="pdetails-verified-badge">✓ Verified Buyer</span>
-                          </span>
-                          <span className="pdetails-quote-role">VP Engineering at CloudSync</span>
-                        </div>
-                      </div>
-                    </div>
 
-                    <div className="pdetails-quote-card">
-                      <p>&ldquo;Best investment we made this quarter. Transitioned 45 engineers over a weekend with zero downtime and saved over 6 hours per sprint on planning ceremonies.&rdquo;</p>
-                      <div className="pdetails-quote-author">
-                        <div className="pdetails-quote-avatar" style={{ background: "linear-gradient(135deg, #059669, #34D399)" }}>SL</div>
-                        <div className="pdetails-quote-meta">
-                          <span className="pdetails-quote-name">
-                            Sarah Lin
-                            <span className="pdetails-verified-badge">✓ Verified Buyer</span>
-                          </span>
-                          <span className="pdetails-quote-role">Head of Product at Vertex Labs</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pdetails-quote-card">
-                      <p>&ldquo;The branch linking and multiplayer board telemetry replaced three separate tools for our teams. Outstanding software with rock-solid uptime.&rdquo;</p>
-                      <div className="pdetails-quote-author">
-                        <div className="pdetails-quote-avatar" style={{ background: "linear-gradient(135deg, #2563EB, #60A5FA)" }}>DS</div>
-                        <div className="pdetails-quote-meta">
-                          <span className="pdetails-quote-name">
-                            David Sterling
-                            <span className="pdetails-verified-badge">✓ Verified Buyer</span>
-                          </span>
-                          <span className="pdetails-quote-role">Staff Architect at FinTech Global</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pdetails-quote-card">
-                      <p>&ldquo;Enterprise security compliance and role-based permissions were passed on the first try by our external auditors. Flawless experience.&rdquo;</p>
-                      <div className="pdetails-quote-author">
-                        <div className="pdetails-quote-avatar" style={{ background: "linear-gradient(135deg, #7C3AED, #A78BFA)" }}>ER</div>
-                        <div className="pdetails-quote-meta">
-                          <span className="pdetails-quote-name">
-                            Elena Rostova
-                            <span className="pdetails-verified-badge">✓ Verified Buyer</span>
-                          </span>
-                          <span className="pdetails-quote-role">Director of Operations at NextScale</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Rating & Comments Action Header */}
                   <div className="pdetails-reviews-action-header">
