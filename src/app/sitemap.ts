@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { BLOG_POSTS } from "./blog/[slug]/page";
+import { CATEGORIES_DATA } from "@/data/categoriesData";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.saasmrkt.com";
@@ -69,13 +70,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
+  // Dynamic category landing pages
+  const categoryRoutes: MetadataRoute.Sitemap = Object.keys(CATEGORIES_DATA).map((slug) => ({
+    url: `${baseUrl}/categories/${slug}`,
+    lastModified: currentDate,
+    changeFrequency: "weekly",
+    priority: 0.85,
+  }));
+
   // Dynamic blog articles
   const blogRoutes: MetadataRoute.Sitemap = Object.keys(BLOG_POSTS).map((slug) => ({
     url: `${baseUrl}/blog/${slug}`,
     lastModified: currentDate,
     changeFrequency: "weekly",
-    priority: 0.7,
+    priority: 0.75,
   }));
 
-  return [...staticRoutes, ...blogRoutes];
+  return [...staticRoutes, ...categoryRoutes, ...blogRoutes];
 }

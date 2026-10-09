@@ -17,6 +17,62 @@ const CATEGORIES = [
 
 const BLOG_POSTS = [
   {
+    slug: "best-project-management-tools-2026",
+    tag: "Reviews",
+    title: "Best Project Management Tools for Remote & Agile Teams in 2026",
+    excerpt:
+      "We tested 12 agile project management platforms across sprint tracking, Gantt automation, and team adoption. Here are the top 5 tools delivering peak delivery speed in 2026.",
+    date: "Oct 5, 2026",
+    readTime: "9 min read",
+    author: "Arjun Mehta",
+    authorRole: "Product Strategist & Agile Lead",
+    featured: false,
+    accentColor: "#6366F1",
+    gradient: "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
+  },
+  {
+    slug: "best-crm-software-startups-2026",
+    tag: "Guides",
+    title: "Top 7 B2B CRM Software for Fast-Growing Startups (Ranked by ROI)",
+    excerpt:
+      "Stop losing pipeline deals to messy spreadsheets. Discover the highest-converting B2B CRMs offering automated follow-ups, deal scoring, and startup-friendly pricing in 2026.",
+    date: "Oct 2, 2026",
+    readTime: "8 min read",
+    author: "Sara Chen",
+    authorRole: "Market Analyst & SaaS Growth Advisor",
+    featured: false,
+    accentColor: "#EF4444",
+    gradient: "linear-gradient(135deg, #EF4444 0%, #F97316 100%)",
+  },
+  {
+    slug: "best-accounting-software-small-business",
+    tag: "Reviews",
+    title: "Best Accounting & Invoicing Software for Small Businesses (2026 Review)",
+    excerpt:
+      "Tired of reconciling receipts and chasing overdue invoices? We reviewed the top cloud accounting platforms for SMBs, evaluating bank integrations, tax compliance, and multi-currency support.",
+    date: "Sep 28, 2026",
+    readTime: "7 min read",
+    author: "Kevin Oduya",
+    authorRole: "Financial Analyst & SMB Consultant",
+    featured: false,
+    accentColor: "#10B981",
+    gradient: "linear-gradient(135deg, #10B981 0%, #06B6D4 100%)",
+  },
+  {
+    slug: "saas-stack-audit-cut-wasted-spend",
+    tag: "Business Growth",
+    title: "How to Audit Your SaaS Stack & Cut 30% Wasted Spend in 2026",
+    excerpt:
+      "The average company wastes $3,400 per employee annually on redundant or unused software licenses. Follow this step-by-step audit playbook to reclaim your bottom line.",
+    date: "Sep 25, 2026",
+    readTime: "9 min read",
+    author: "Elena Rossi",
+    authorRole: "SaaS Procurement & Security Specialist",
+    featured: false,
+    accentColor: "#8B5CF6",
+    gradient: "linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)",
+  },
+  {
     slug: "top-10-saas-tools-2026",
     tag: "Business Growth",
     title: "Top 10 SaaS Tools for Growing Businesses in 2026",
@@ -225,25 +281,28 @@ export default function BlogPageClient() {
           <div className="blog-featured-grid">
             {featuredPosts.map((post) => (
               <Link href={`/blog/${post.slug}`} key={post.slug} className="blog-featured-card" id={`blog-featured-${post.slug}`}>
-                <div className="blog-featured-banner" style={{ background: post.gradient }}>
-                  <div className="blog-featured-banner-decor">
-                    <svg viewBox="0 0 600 220" fill="none" preserveAspectRatio="none">
-                      <path d="M0,80 C150,160 320,20 480,100 C550,140 600,90 600,90 L600,220 L0,220 Z" fill="rgba(255,255,255,0.1)" />
-                      <path d="M0,120 C180,40 360,160 540,60 C570,45 600,70 600,70 L600,220 L0,220 Z" fill="rgba(255,255,255,0.06)" />
-                      <circle cx="510" cy="50" r="70" fill="rgba(255,255,255,0.08)" />
-                      <circle cx="80" cy="30" r="40" fill="rgba(255,255,255,0.06)" />
-                    </svg>
-                  </div>
-                  <span className="blog-featured-tag-badge">{post.tag}</span>
-                  <div className="blog-featured-banner-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="16" y1="13" x2="8" y2="13" />
-                      <line x1="16" y1="17" x2="8" y2="17" />
-                      <polyline points="10 9 9 9 8 9" />
-                    </svg>
-                  </div>
+                <div className="blog-featured-banner" style={{ background: post.gradient, position: "relative", overflow: "hidden" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`/images/blog/${post.slug}.jpg`}
+                    alt={post.title}
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background: "linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.65) 100%)",
+                      pointerEvents: "none",
+                    }}
+                  />
+                  <span className="blog-featured-tag-badge" style={{ position: "relative", zIndex: 2 }}>{post.tag}</span>
                 </div>
                 <div className="blog-featured-body">
                   <div className="blog-featured-meta">
@@ -306,12 +365,28 @@ export default function BlogPageClient() {
                   className="blog-card"
                   id={`blog-card-${post.slug}`}
                 >
-                  <div className="blog-card-banner" style={{ background: post.gradient }}>
-                    <svg viewBox="0 0 400 160" fill="none" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-                      <path d="M0,60 C100,120 220,20 320,80 C370,110 400,70 400,70 L400,160 L0,160 Z" fill="rgba(255,255,255,0.08)" />
-                      <circle cx="340" cy="30" r="40" fill="rgba(255,255,255,0.06)" />
-                    </svg>
-                    <span className="blog-tag-badge">{post.tag}</span>
+                  <div className="blog-card-banner" style={{ background: post.gradient, position: "relative", overflow: "hidden" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/images/blog/${post.slug}.jpg`}
+                      alt={post.title}
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.6) 100%)",
+                        pointerEvents: "none",
+                      }}
+                    />
+                    <span className="blog-tag-badge" style={{ position: "relative", zIndex: 2 }}>{post.tag}</span>
                   </div>
                   <div className="blog-card-body">
                     <h3 className="blog-card-title">{post.title}</h3>

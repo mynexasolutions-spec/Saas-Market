@@ -307,7 +307,7 @@ export default function CategoriesPageClient() {
         {filteredCategories.length > 0 ? (
           filteredCategories.map((category) => (
             <Link
-              href={`/products?category=${encodeURIComponent(category.name)}`}
+              href={`/categories/${category.id}`}
               key={category.id}
               style={{ textDecoration: "none", color: "inherit", display: "flex" }}
             >

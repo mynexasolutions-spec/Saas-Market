@@ -120,6 +120,53 @@ function renderMarkdown(md: string) {
     } else if (line.startsWith("---")) {
       elements.push(<hr key={i} className="prose-hr" />);
       i++;
+    } else if (line.startsWith("![")) {
+      const match = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+      if (match) {
+        const alt = match[1];
+        const src = match[2];
+        elements.push(
+          <figure key={`figure-${i}`} style={{ margin: "2.25rem 0" }}>
+            <div
+              style={{
+                borderRadius: "16px",
+                overflow: "hidden",
+                border: "1px solid var(--slate-200)",
+                boxShadow: "0 8px 30px rgba(15, 23, 42, 0.08)",
+                background: "#0F172A",
+              }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={alt}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  display: "block",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+            {alt && (
+              <figcaption
+                style={{
+                  fontSize: "0.825rem",
+                  color: "var(--slate-500)",
+                  textAlign: "center",
+                  marginTop: "0.6rem",
+                  fontStyle: "italic",
+                }}
+              >
+                {alt}
+              </figcaption>
+            )}
+          </figure>
+        );
+        i++;
+      } else {
+        i++;
+      }
     } else if (line.trim() === "") {
       i++;
     } else {
