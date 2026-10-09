@@ -13436,6 +13436,143 @@ body:has(.product-detail-page-container) {
   max-width: 820px;
 }
 
+/* Compare Toolbar & Chooser Feature */
+.pdetails-compare-toolbar {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pdetails-compare-toolbar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pdetails-compare-toolbar-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.pdetails-compare-toolbar-title svg {
+  color: #4F46E5;
+}
+
+.pdetails-compare-pickers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.pdetails-compare-picker-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pdetails-compare-picker-label {
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pdetails-compare-picker-select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0F172A;
+  background-color: #ffffff;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.pdetails-compare-picker-select:hover {
+  border-color: #94A3B8;
+}
+
+.pdetails-compare-picker-select:focus {
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.pdetails-compare-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #E2E8F0;
+}
+
+.pdetails-compare-pills-label {
+  font-size: 0.8rem;
+  color: #64748B;
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
+
+.pdetails-compare-quick-btn {
+  font-size: 0.775rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 9999px;
+  border: 1px solid #E2E8F0;
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pdetails-compare-quick-btn:hover {
+  background: #EEF2FF;
+  color: #4F46E5;
+  border-color: #C7D2FE;
+}
+
+/* In-table column header select */
+.pdetails-compare-col-header-select {
+  margin-top: 0.65rem;
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #CBD5E1;
+  border-radius: 0.45rem;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.pdetails-compare-col-header-select:hover {
+  border-color: #94A3B8;
+}
+
+.pdetails-compare-col-header-select:focus {
+  border-color: #4F46E5;
+}
+
 /* Comparison Matrix Table */
 .pdetails-compare-table-container {
   overflow-x: auto;
