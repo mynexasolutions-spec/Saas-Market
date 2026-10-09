@@ -9455,12 +9455,13 @@ body {
 }
 
 /* ==========================================================================
-   Buyers, Sellers, Blog & How It Works Page Ambient Colorful Full-Bleed Background & Glass Cards
+   Buyers, Sellers, Blog, How It Works & About Ambient Colorful Full-Bleed Background
    ========================================================================== */
 .buyers-page-wrapper,
 .sellers-page-wrapper,
 .blog-page-wrapper,
-.hiw-page-wrapper {
+.hiw-page-wrapper,
+.about-page-wrapper {
   background: 
     radial-gradient(circle 950px at 12% 8%, rgba(99, 102, 241, 0.22), transparent 55%),
     radial-gradient(circle 900px at 88% 12%, rgba(236, 72, 153, 0.2), transparent 55%),
@@ -9480,11 +9481,13 @@ body {
   padding: 2.5rem 0 5rem 0;
 }
 
-.blog-page-wrapper {
+.blog-page-wrapper,
+.about-page-wrapper {
   padding: 0 0 5rem 0;
 }
 
-.blog-page-wrapper .blog-hero {
+.blog-page-wrapper .blog-hero,
+.about-page-wrapper .about-hero {
   background: transparent !important;
 }
 
@@ -9639,6 +9642,28 @@ body {
   color: #ffffff !important;
   border-color: #2563eb !important;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+}
+
+/* About Page on Full-Bleed Ambient Background */
+.about-page-wrapper .about-stat-card,
+.about-page-wrapper .about-mission-card,
+.about-page-wrapper .about-value-card,
+.about-page-wrapper .about-timeline-card,
+.about-page-wrapper .about-team-card {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;
+}
+
+.about-page-wrapper .about-stat-card:hover,
+.about-page-wrapper .about-value-card:hover,
+.about-page-wrapper .about-team-card:hover {
+  background: rgba(255, 255, 255, 0.98) !important;
+  transform: translateY(-4px);
+  border-color: var(--primary) !important;
+  box-shadow: 0 16px 36px -8px rgba(94, 75, 238, 0.16) !important;
 }
 
 /* ==========================================================================
