@@ -97,8 +97,8 @@ export default function SellersPage() {
             Buyers on SaaS MRKT aren&apos;t just browsing — they are actively comparing tools to solve a specific problem. By listing your product, you capture demand exactly when it matters.
           </p>
           <div className="overview-hero-actions">
-            <Link href="/pricing" className="btn btn-primary overview-action-btn">
-              View Seller Pricing
+            <Link href="/contact" className="btn btn-primary overview-action-btn">
+              Get Started
             </Link>
             <Link href="/contact" className="btn btn-secondary overview-action-btn">
               Talk to Sales
@@ -270,8 +270,8 @@ export default function SellersPage() {
             List your SaaS tool in under 10 minutes. Get verified leads delivered straight to your inbox with zero commission.
           </p>
           <div style={{ display: "flex", gap: "0.85rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/pricing" className="btn btn-primary" style={{ padding: "0.7rem 1.6rem", fontSize: "0.925rem" }}>
-              Explore Seller Plans
+            <Link href="/contact" className="btn btn-primary" style={{ padding: "0.7rem 1.6rem", fontSize: "0.925rem" }}>
+              Get Listed Now
             </Link>
             <Link href="/contact" className="btn" style={{
               padding: "0.7rem 1.6rem",

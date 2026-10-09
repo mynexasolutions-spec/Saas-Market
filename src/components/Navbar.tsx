@@ -157,11 +157,7 @@ export default function Navbar({
                   For Sellers
                 </Link>
               </li>
-              <li>
-                <Link href="/pricing" className="nav-link" id="nav-pricing">
-                  Pricing
-                </Link>
-              </li>
+
               <li
                 className="nav-link-dropdown"
                 onMouseEnter={() => setResourcesOpen(true)}
@@ -347,9 +343,7 @@ export default function Navbar({
               <Link href="/sellers" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
                 For Sellers
               </Link>
-              <Link href="/pricing" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
-                Pricing
-              </Link>
+
               <Link href="/blog" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
                 Blog &amp; Resources
               </Link>

@@ -15,7 +15,7 @@ interface ProductDetailClientProps {
 
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
   const router = useRouter();
-  const { user, openAuth, isSubscribed, subscribe } = useAuth();
+  const { user, openAuth } = useAuth();
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -39,15 +39,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     toastTimerRef.current = setTimeout(() => {
       setToastMsg(null);
     }, 3500);
-  };
-
-  const handleSeeMoreDetailClick = (e: React.MouseEvent) => {
-    if (!isSubscribed) {
-      e.preventDefault();
-      e.stopPropagation();
-      showToast("Please get subscription");
-      return;
-    }
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -295,43 +286,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
               {/* CTA Action Buttons */}
               <div className="detail-actions-row">
-                {!isSubscribed ? (
-                  <button
-                    type="button"
-                    className="detail-btn-lock"
-                    id="detail-see-more-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      showToast("Please get subscription");
-                    }}
-                    aria-label="See More Detail (Subscription required)"
-                  >
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <span>See More Detail</span>
-                  </button>
-                ) : (
-                  <Link
-                    href={`/products/${product.id}/details`}
-                    className="detail-btn-lock detail-btn-unlocked"
-                    id="detail-see-more-btn"
-                  >
-                    <span>See More Detail</span>
-                  </Link>
-                )}
-
                 <button
                   type="button"
                   className="detail-btn-secondary"
@@ -339,6 +293,27 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 >
                   Contact Seller
                 </button>
+
+                <Link
+                  href={`/products/${product.id}/details`}
+                  className="detail-btn-lock"
+                  id="detail-see-more-btn"
+                  style={{ textDecoration: "none" }}
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                  <span>See More Detail</span>
+                </Link>
               </div>
             </div>
 
@@ -533,22 +508,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   </div>
                   <div className="detail-info-text">
                     <span className="detail-info-label">Annual Revenue</span>
-                    {isSubscribed ? (
-                      <span className="detail-unlocked-pill">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                        $148,500 / yr (Verified)
-                      </span>
-                    ) : (
-                      <span className="detail-locked-pill">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                        </svg>
-                        Hidden
-                      </span>
-                    )}
+                    <strong className="detail-info-val">$148,500 / yr</strong>
                   </div>
                 </div>
 

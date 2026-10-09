@@ -128,9 +128,6 @@ export default function ProductsPageClient() {
                           onClick={() => handleCategorySelect(cat.value)}
                         >
                           <span>{cat.label}</span>
-                          <span className="products-filter-count">
-                            {EXTENDED_PRODUCTS.filter((p) => !cat.value || p.category === cat.value).length}
-                          </span>
                         </button>
                       </li>
                     ))}

@@ -74,58 +74,63 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
           <div className="pdetails-content-body">
             {activeTab === "overview" && (
               <div className="pdetails-tab-pane">
-                {/* About Project Long Description */}
-                <div className="pdetails-about-card">
-                  <span className="pdetails-about-badge">About Project</span>
-                  <h2 className="pdetails-card-title">About {product.name}</h2>
-                  <p className="pdetails-about-paragraph">
-                    {product.name} is a comprehensive, production-grade {product.category?.toLowerCase() || "software"} platform engineered to streamline mission-critical operations for {product.targetAudience?.toLowerCase() || "modern software and engineering organizations"}. Built from the ground up to eliminate tool fragmentation and administrative friction, the platform unifies real-time collaborative documentation, agile sprint tracking, automated continuous delivery workflows, and cross-functional team coordination into a single cohesive interface. Backed by high-reliability cloud infrastructure, enterprise encryption standards, and strict SOC2 Type II compliance guarantees, {product.name} provides squads with the clarity, velocity, and governance required to execute high-impact initiatives without operational bottlenecks.
-                  </p>
-                  <p className="pdetails-about-paragraph">
-                    {product.aboutText ? `${product.aboutText} ` : ""}{product.tagline ? `${product.tagline}. ` : ""}With seamless integrations across developer ecosystems, automated webhook synchronization, and interactive telemetry analytics, teams can accelerate their product delivery cycles, reduce context switching, and maintain transparent audit trails across every milestone.
-                  </p>
-                  <p className="pdetails-about-paragraph">
-                    At its core, the platform incorporates a modern microservices-driven architecture backed by distributed caching layers, low-latency database sharding, and real-time event streaming. This allows organizations to scale concurrent active sessions seamlessly from early-stage pilots to high-throughput enterprise deployments without degradation in response times. Native API extensibility and bi-directional synchronizations ensure that existing developer toolchains—including Git providers, issue trackers, and customer communication channels—stay completely synchronized without requiring manual intervention.
-                  </p>
+                {/* 2-Column Split: Left Image, Right About */}
+                <div className="pdetails-overview-split">
+                  {/* Left Column: Image */}
+                  <div className="pdetails-split-image-col">
+                    <div className="pdetails-media-block pdetails-split-media">
+                      <div className="pdetails-media-header">
+                        <span className="pdetails-media-tag">Workspace UI</span>
+                        <span className="pdetails-media-title">Interactive Sprint Dashboard</span>
+                      </div>
+                      <div className="pdetails-media-wrapper">
+                        <Image
+                          src="/images/taskflow-dashboard-preview.jpg"
+                          alt={`${product.name} Interactive Dashboard Interface`}
+                          width={1280}
+                          height={720}
+                          className="pdetails-media-img"
+                          priority
+                        />
+                      </div>
+                      <div className="pdetails-media-caption">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                          <circle cx="9" cy="9" r="2"/>
+                          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                        </svg>
+                        <span>{product.name} Production Workspace Interface</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: About */}
+                  <div className="pdetails-split-about-col">
+                    <div className="pdetails-about-card pdetails-split-about-card">
+                      <span className="pdetails-about-badge">About Project</span>
+                      <h2 className="pdetails-card-title">About {product.name}</h2>
+                      <p className="pdetails-about-paragraph">
+                        {product.name} is a comprehensive, production-grade {product.category?.toLowerCase() || "software"} platform engineered to streamline mission-critical operations for {product.targetAudience?.toLowerCase() || "modern software and engineering organizations"}. Built from the ground up to eliminate tool fragmentation and administrative friction, the platform unifies real-time collaborative documentation, agile sprint tracking, automated continuous delivery workflows, and cross-functional team coordination into a single cohesive interface.
+                      </p>
+                      <p className="pdetails-about-paragraph">
+                        {product.aboutText ? `${product.aboutText} ` : ""}{product.tagline ? `${product.tagline}. ` : ""}With seamless integrations across developer ecosystems, automated webhook synchronization, and interactive telemetry analytics, teams can accelerate their product delivery cycles, reduce context switching, and maintain transparent audit trails across every milestone.
+                      </p>
+                      <p className="pdetails-about-paragraph">
+                        At its core, the platform incorporates a modern microservices-driven architecture backed by distributed caching layers, low-latency database sharding, and real-time event streaming.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pdetails-about-card" style={{ marginTop: "2rem" }}>
+                  <h3 className="pdetails-card-title" style={{ fontSize: "1.3rem" }}>Enterprise Architecture &amp; Team Ergonomics</h3>
                   <p className="pdetails-about-paragraph">
                     Furthermore, the system emphasizes frictionless onboarding and team ergonomics. Built-in permission matrices, granular role-based access controls (RBAC), and multi-tenant isolation patterns allow administrators to safely partition datasets across departments or external contractors. Detailed audit logging, automated weekly digest summaries, and customizable Kanban or sprint perspectives ensure both technical leads and executive stakeholders maintain comprehensive visibility over development throughput and product milestones.
                   </p>
                   <p className="pdetails-about-paragraph">
                     Engineered with long-term maintainability in mind, the codebase adheres to strict automated testing standards, comprehensive OpenAPI specifications, and containerized Docker CI/CD pipelines. This rigorous engineering foundation makes {product.name} an exceptionally stable asset for teams seeking immediate operational efficiency and an attractive proposition for buyers demanding transparent technical diligence and zero tech-debt overhead.
                   </p>
-
-                  {/* Platform Interface Preview */}
-                  <div className="pdetails-media-block">
-                    <div className="pdetails-media-header">
-                      <span className="pdetails-media-tag">Workspace UI</span>
-                      <span className="pdetails-media-title">Interactive Sprint Dashboard &amp; Task Pipeline</span>
-                    </div>
-                    <div className="pdetails-media-wrapper">
-                      <Image
-                        src="/images/taskflow-dashboard-preview.jpg"
-                        alt={`${product.name} Interactive Dashboard Interface`}
-                        width={1280}
-                        height={720}
-                        className="pdetails-media-img"
-                        priority
-                      />
-                    </div>
-                    <div className="pdetails-media-caption">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                        <circle cx="9" cy="9" r="2"/>
-                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                      </svg>
-                      <span>Figure 1: {product.name} Production Workspace — Real-time sprint velocity graphs, interactive kanban columns, and automated backlog scoring.</span>
-                    </div>
-                  </div>
-
-                  <p className="pdetails-about-paragraph">
-                    The user interface shown above has been intentionally crafted around cognitive simplicity and rapid task completion. Featuring dynamic sprint velocity charts, live sprint progress meters, and drag-and-drop Kanban workflow boards, the interactive console offers engineering and product squads instantaneous visibility into project health. Real-time state synchronizations push automatically via WebSockets without requiring page reloads, ensuring distributed squad members remain completely synchronized on milestone progress and backlog priorities.
-                  </p>
-                  <p className="pdetails-about-paragraph">
-                    Customizable views enable team members to switch fluidly between high-level executive roadmaps and granular issue-level tracking. Built-in tagging systems, priority indicators, and multi-user assignment controls give leads the flexibility to structure complex development phases while maintaining transparency across team dependencies.
-                  </p>
+                </div>
 
                   {/* Team Work Session & Operational Collaboration */}
                   <div className="pdetails-media-block">
@@ -159,7 +164,6 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                   <p className="pdetails-about-paragraph">
                     By replacing scattered spreadsheets and disconnected chat threads with structured, audit-ready development workflows, teams report significant reductions in planning overhead and an average 40% increase in sprint delivery velocity. With integrated retrospective tools and historical burn-down telemetry, engineering organizations continuously iterate on delivery quality while maintaining sustainable velocity across every development cycle.
                   </p>
-                </div>
 
                 <div className="pdetails-specs-grid">
                   <div className="pdetails-spec-card">
@@ -360,7 +364,7 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                         </svg>
                       </div>
                       <h3>SOC2 Type II</h3>
-                      <p>Annual third-party audit completed. Full compliance audit reports available upon subscription.</p>
+                      <p>Annual third-party audit completed. Full compliance audit reports available upon request.</p>
                     </div>
                     <div className="pdetails-sec-box">
                       <div className="pdetails-sec-icon" aria-hidden="true">
@@ -438,7 +442,7 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "4px" }}>
                         <polyline points="20 6 9 17 4 12"/>
                       </svg>
-                      PRO SUBSCRIPTION ACTIVE
+                      VERIFIED FINANCIAL METRICS
                     </span>
                     <h2>Verified Diligence Financial Data</h2>
                     <p>All metrics below have been audited and verified through Stripe and bank integration.</p>

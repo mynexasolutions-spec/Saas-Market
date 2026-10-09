@@ -93,22 +93,17 @@ export default function Testimonials() {
   return (
     <section className="testimonials-section" id="reviews">
       <div className="container">
-        {/* Header */}
-        <div className="section-badge" id="testimonials-badge">
-          CUSTOMER REVIEWS
-        </div>
-        <div className="section-header-row">
-          <div>
-            <h2 className="section-title">What Our Users Say</h2>
-            <p className="section-subtitle">
-              Trusted by thousands of buyers and sellers worldwide.
-            </p>
+        {/* Centered Header */}
+        <div className="testimonials-header-center">
+          <div className="section-badge" id="testimonials-badge">
+            CUSTOMER REVIEWS
           </div>
-          <a href="#reviews" className="view-all-link" id="view-all-reviews-link">
-            <span>View All Reviews</span>
-          </a>
+          <h2 className="section-title">What Our Users Say</h2>
+          <p className="section-subtitle">
+            Trusted by thousands of buyers and sellers worldwide.
+          </p>
         </div>
-      </div>
+
 
       {/* Auto-moving Infinite Carousel Row */}
       <div className="testimonials-carousel-viewport">
@@ -151,6 +146,7 @@ export default function Testimonials() {
           ))}
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }

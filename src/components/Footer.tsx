@@ -56,7 +56,7 @@ export default function Footer() {
               <li><Link href="/#categories" className="footer-link-item">Categories</Link></li>
               <li><Link href="/products" className="footer-link-item">New Arrivals</Link></li>
               <li><Link href="/products" className="footer-link-item">Popular Products</Link></li>
-              <li><Link href="/pricing" className="footer-link-item">Deals &amp; Offers</Link></li>
+              <li><Link href="/products" className="footer-link-item">Deals &amp; Offers</Link></li>
             </ul>
           </div>
 
@@ -64,10 +64,10 @@ export default function Footer() {
           <div>
             <h4 className="footer-col-title">For Buyers</h4>
             <ul className="footer-links-list">
-              <li><Link href="/#how-it-works" className="footer-link-item">How it Works</Link></li>
-              <li><Link href="/#for-buyers" className="footer-link-item">Buyer Guide</Link></li>
-              <li><Link href="/pricing#faq" className="footer-link-item">FAQs</Link></li>
-              <li><Link href="/#reviews" className="footer-link-item">Reviews</Link></li>
+              <li><Link href="/how-it-works" className="footer-link-item">How it Works</Link></li>
+              <li><Link href="/buyers" className="footer-link-item">Buyer Guide</Link></li>
+              <li><Link href="/contact" className="footer-link-item">FAQs</Link></li>
+              <li><Link href="/products" className="footer-link-item">Reviews</Link></li>
               <li><Link href="/contact" className="footer-link-item">Support</Link></li>
             </ul>
           </div>
@@ -76,9 +76,8 @@ export default function Footer() {
           <div>
             <h4 className="footer-col-title">For Sellers</h4>
             <ul className="footer-links-list">
-              <li><Link href="/pricing" className="footer-link-item">List Your Product</Link></li>
-              <li><Link href="/#for-sellers" className="footer-link-item">Seller Guide</Link></li>
-              <li><Link href="/pricing" className="footer-link-item">Pricing</Link></li>
+              <li><Link href="/sellers" className="footer-link-item">List Your Product</Link></li>
+              <li><Link href="/sellers" className="footer-link-item">Seller Guide</Link></li>
               <li><Link href="/blog" className="footer-link-item">Seller Resources</Link></li>
               <li><Link href="/contact" className="footer-link-item">Contact Sales</Link></li>
             </ul>

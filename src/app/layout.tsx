@@ -164,13 +164,6 @@ export const metadata: Metadata = {
       {
         "@type": "SiteNavigationElement",
         position: 5,
-        name: "Pricing Plans",
-        description: "Transparent flat monthly and annual vendor subscription plans with a 14-day free trial.",
-        url: "https://www.saasmrkt.com/pricing",
-      },
-      {
-        "@type": "SiteNavigationElement",
-        position: 6,
         name: "How It Works",
         description: "Learn how the end-to-end software discovery and review verification process works.",
         url: "https://www.saasmrkt.com/how-it-works",
