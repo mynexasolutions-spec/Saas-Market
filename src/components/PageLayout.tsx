@@ -31,7 +31,6 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
     { href: "/categories", label: "Categories", id: "categories" },
     { href: "/buyers", label: "For Buyers", id: "buyers" },
     { href: "/sellers", label: "For Sellers", id: "sellers" },
-    { href: "/pricing", label: "Pricing", id: "pricing" },
   ];
 
   return (
