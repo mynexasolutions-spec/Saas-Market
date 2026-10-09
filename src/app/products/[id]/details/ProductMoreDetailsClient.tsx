@@ -8,13 +8,208 @@ import { ProductItem } from "@/data/products";
 
 interface ProductMoreDetailsClientProps {
   product: ProductItem;
+  initialTab?: "overview" | "architecture" | "security" | "financials" | "reviews" | "compare";
 }
 
-export default function ProductMoreDetailsClient({ product }: ProductMoreDetailsClientProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "architecture" | "security" | "financials" | "reviews">("overview");
+export default function ProductMoreDetailsClient({ product, initialTab = "overview" }: ProductMoreDetailsClientProps) {
+  const [activeTab, setActiveTab] = useState<"overview" | "architecture" | "security" | "financials" | "reviews" | "compare">(initialTab);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab");
+      if (tabParam && ["overview", "architecture", "security", "financials", "reviews", "compare"].includes(tabParam)) {
+        setActiveTab(tabParam as any);
+      }
+    }
+  }, []);
 
   const sellerName = product.sellerName || "Elena Rostova";
   const techStack = product.techStack || ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "AWS"];
+
+  // Dynamic competitor benchmarking data based on category
+  const competitors = React.useMemo(() => {
+    const cat = (product.category || "").toLowerCase();
+    if (cat.includes("hr") || cat.includes("payroll")) {
+      return [
+        {
+          name: "BambooHR",
+          sub: "Legacy SMB HR Platform",
+          letter: "B",
+          color: "#16A34A",
+          price: "$108/mo (min 20 seats)",
+          rating: 4.5,
+          reviews: "2,410",
+          ipTransfer: "No (Vendor Lock-in)",
+          edgeLatency: "240ms P95",
+          sla: "99.90% SLA",
+          soc2: "Enterprise Add-on ($$$)",
+          support: "Standard Ticket Queue",
+          hosting: "Proprietary Cloud",
+          api: "REST API (Rate limited)",
+        },
+        {
+          name: "Rippling",
+          sub: "All-in-one Workforce Cloud",
+          letter: "R",
+          color: "#E11D48",
+          price: "$140/mo (Base + seat fees)",
+          rating: 4.6,
+          reviews: "1,980",
+          ipTransfer: "No (Vendor Lock-in)",
+          edgeLatency: "210ms P95",
+          sla: "99.90% SLA",
+          soc2: "Annual Add-on Fee",
+          support: "Chat / 48h SLA",
+          hosting: "Proprietary Cloud",
+          api: "REST API Only",
+        },
+      ];
+    }
+    if (cat.includes("project") || cat.includes("collab") || cat.includes("task")) {
+      return [
+        {
+          name: "Monday.com",
+          sub: "Enterprise Work OS",
+          letter: "M",
+          color: "#F59E0B",
+          price: "$48/mo (min 3 seats)",
+          rating: 4.6,
+          reviews: "3,890",
+          ipTransfer: "No (Vendor Lock-in)",
+          edgeLatency: "220ms P95",
+          sla: "99.90% SLA",
+          soc2: "Enterprise Plan Only",
+          support: "Tiered Ticket Support",
+          hosting: "Shared AWS Cloud",
+          api: "GraphQL (Limited)",
+        },
+        {
+          name: "Asana",
+          sub: "Team Task Management",
+          letter: "A",
+          color: "#F43F5E",
+          price: "$32.99/user/mo",
+          rating: 4.5,
+          reviews: "4,120",
+          ipTransfer: "No (Vendor Lock-in)",
+          edgeLatency: "190ms P95",
+          sla: "99.90% SLA",
+          soc2: "Enterprise Plan Only",
+          support: "Forum & Ticket",
+          hosting: "AWS Monolith",
+          api: "REST API v1",
+        },
+      ];
+    }
+    if (cat.includes("crm") || cat.includes("sales")) {
+      return [
+        {
+          name: "HubSpot CRM",
+          sub: "Inbound Marketing & CRM",
+          letter: "H",
+          color: "#F97316",
+          price: "$50/mo (Starter Tier)",
+          rating: 4.5,
+          reviews: "4,500",
+          ipTransfer: "No (Vendor Lock-in)",
+          edgeLatency: "250ms P95",
+          sla: "99.90% SLA",
+          soc2: "Enterprise Tier ($$$)",
+          support: "Phone & Chat",
+          hosting: "Proprietary Cloud",
+          api: "REST API (Strict caps)",
+        },
+        {
+          name: "Salesforce Essentials",
+          sub: "Small Business CRM",
+          letter: "S",
+          color: "#0284C7",
+          price: "$30/user/mo",
+          rating: 4.4,
+          reviews: "3,200",
+          ipTransfer: "No (Vendor Lock-in)",
+          edgeLatency: "280ms P95",
+          sla: "99.85% SLA",
+          soc2: "Requires Add-on",
+          support: "Tiered Support",
+          hosting: "Salesforce Cloud",
+          api: "SOAP & REST API",
+        },
+      ];
+    }
+    if (cat.includes("finance") || cat.includes("accounting")) {
+      return [
+        {
+          name: "QuickBooks Online",
+          sub: "Small Business Bookkeeping",
+          letter: "Q",
+          color: "#10B981",
+          price: "$38/mo (Simple Start)",
+          rating: 4.4,
+          reviews: "5,800",
+          ipTransfer: "No (Vendor Lock-in)",
+          edgeLatency: "290ms P95",
+          sla: "99.80% SLA",
+          soc2: "Standard",
+          support: "Chat Support",
+          hosting: "Intuit Cloud",
+          api: "Intuit Developer API",
+        },
+        {
+          name: "Xero",
+          sub: "Cloud Accounting Platform",
+          letter: "X",
+          color: "#0EA5E9",
+          price: "$47/mo (Growing)",
+          rating: 4.5,
+          reviews: "3,100",
+          ipTransfer: "No (Vendor Lock-in)",
+          edgeLatency: "260ms P95",
+          sla: "99.85% SLA",
+          soc2: "Standard",
+          support: "Email Support",
+          hosting: "AWS Cloud",
+          api: "REST API v2",
+        },
+      ];
+    }
+    // Default fallback competitors
+    return [
+      {
+        name: "Industry Competitor A",
+        sub: "Closed Enterprise SaaS",
+        letter: "C",
+        color: "#64748B",
+        price: "$89/user/mo",
+        rating: 4.5,
+        reviews: "2,200",
+        ipTransfer: "No (Vendor Lock-in)",
+        edgeLatency: "230ms P95",
+        sla: "99.90% SLA",
+        soc2: "Enterprise Only",
+        support: "Ticket Queue",
+        hosting: "Multi-tenant Cloud",
+        api: "REST API",
+      },
+      {
+        name: "Legacy Alternative B",
+        sub: "Traditional On-Premise / Hosted",
+        letter: "L",
+        color: "#94A3B8",
+        price: "$65/mo + Setup Fee",
+        rating: 4.4,
+        reviews: "1,750",
+        ipTransfer: "No (Vendor Lock-in)",
+        edgeLatency: "260ms P95",
+        sla: "99.85% SLA",
+        soc2: "Available as Add-on",
+        support: "Email / Forum",
+        hosting: "Shared Cloud",
+        api: "Legacy Webhook",
+      },
+    ];
+  }, [product.category]);
 
   return (
     <PageLayout activeNav="products" noContainer>
@@ -67,6 +262,13 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
               onClick={() => setActiveTab("reviews")}
             >
               Customer Reviews
+            </button>
+            <button
+              type="button"
+              className={`pdetails-tab ${activeTab === "compare" ? "pdetails-tab--active" : ""}`}
+              onClick={() => setActiveTab("compare")}
+            >
+              Compare
             </button>
           </div>
 
@@ -519,6 +721,229 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                     <div className="pdetails-quote-card">
                       <p>&ldquo;Best investment we made this quarter. Everything worked out of the box with zero configuration headache.&rdquo;</p>
                       <strong>— Sarah Lin, Head of Product at Vertex Labs</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "compare" && (
+              <div className="pdetails-tab-pane">
+                <div className="pdetails-compare-wrap">
+                  <div className="pdetails-compare-card">
+                    <div className="pdetails-compare-header">
+                      <span className="pdetails-compare-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="20" x2="18" y2="10" />
+                          <line x1="12" y1="20" x2="12" y2="4" />
+                          <line x1="6" y1="20" x2="6" y2="14" />
+                        </svg>
+                        Competitive Benchmarks
+                      </span>
+                      <h2 className="pdetails-compare-title">Compare {product.name} With Market Alternatives</h2>
+                      <p className="pdetails-compare-desc">
+                        Direct side-by-side technical, financial, and architectural benchmark comparing {product.name} against leading alternatives in the {product.category || "SaaS"} market. Evaluate verified metrics, codebase asset transfer rights, latency SLAs, and operational overhead.
+                      </p>
+                    </div>
+
+                    {/* Comparison Matrix Table */}
+                    <div className="pdetails-compare-table-container">
+                      <table className="pdetails-compare-table">
+                        <thead>
+                          <tr>
+                            <th style={{ width: "25%" }}>Feature / Dimension</th>
+                            <th className="pdetails-compare-col-featured" style={{ width: "31%" }}>
+                              <div className="pdetails-compare-product-cell">
+                                <div
+                                  className="pdetails-compare-avatar"
+                                  style={{ backgroundColor: product.brandColor || "#4F46E5" }}
+                                >
+                                  {product.brandLetter || product.name.charAt(0)}
+                                </div>
+                                <div className="pdetails-compare-product-info">
+                                  <span className="pdetails-compare-product-name">{product.name}</span>
+                                  <span className="pdetails-compare-pill-verified">✓ Verified Marketplace Listing</span>
+                                </div>
+                              </div>
+                            </th>
+                            <th style={{ width: "22%" }}>
+                              <div className="pdetails-compare-product-cell">
+                                <div
+                                  className="pdetails-compare-avatar"
+                                  style={{ backgroundColor: competitors[0].color }}
+                                >
+                                  {competitors[0].letter}
+                                </div>
+                                <div className="pdetails-compare-product-info">
+                                  <span className="pdetails-compare-product-name">{competitors[0].name}</span>
+                                  <span className="pdetails-compare-pill-competitor">{competitors[0].sub}</span>
+                                </div>
+                              </div>
+                            </th>
+                            <th style={{ width: "22%" }}>
+                              <div className="pdetails-compare-product-cell">
+                                <div
+                                  className="pdetails-compare-avatar"
+                                  style={{ backgroundColor: competitors[1].color }}
+                                >
+                                  {competitors[1].letter}
+                                </div>
+                                <div className="pdetails-compare-product-info">
+                                  <span className="pdetails-compare-product-name">{competitors[1].name}</span>
+                                  <span className="pdetails-compare-pill-competitor">{competitors[1].sub}</span>
+                                </div>
+                              </div>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Category</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">{product.category || "Enterprise SaaS"}</td>
+                            <td>{product.category || "Enterprise SaaS"}</td>
+                            <td>{product.category || "Enterprise SaaS"}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Customer Rating</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>{product.rating || 4.9} ★</strong> <span className="pdetails-compare-val-muted">({(product.reviewCount || 5120).toLocaleString()} reviews)</span>
+                            </td>
+                            <td>{competitors[0].rating} ★ <span className="pdetails-compare-val-muted">({competitors[0].reviews} reviews)</span></td>
+                            <td>{competitors[1].rating} ★ <span className="pdetails-compare-val-muted">({competitors[1].reviews} reviews)</span></td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Asset &amp; IP Transfer</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <span style={{ color: "#059669", fontWeight: 700 }}>✓ 100% Full IP Transfer via Escrow</span>
+                            </td>
+                            <td className="pdetails-compare-val-muted">{competitors[0].ipTransfer}</td>
+                            <td className="pdetails-compare-val-muted">{competitors[1].ipTransfer}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Starting Price</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>${product.price}/mo</strong> <span className="pdetails-compare-val-muted">or Full Asset Acquisition</span>
+                            </td>
+                            <td>{competitors[0].price}</td>
+                            <td>{competitors[1].price}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Global Edge Latency (P95)</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>&lt; 110ms Edge Routing</strong>
+                            </td>
+                            <td>{competitors[0].edgeLatency}</td>
+                            <td>{competitors[1].edgeLatency}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Contractual SLA</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>99.98% High-Availability</strong>
+                            </td>
+                            <td>{competitors[0].sla}</td>
+                            <td>{competitors[1].sla}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Security &amp; Compliance</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>Pre-audited SOC 2 Type II &amp; GDPR</strong>
+                            </td>
+                            <td>{competitors[0].soc2}</td>
+                            <td>{competitors[1].soc2}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Technology Foundation</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>{techStack.slice(0, 4).join(", ")}</strong>
+                            </td>
+                            <td>{competitors[0].hosting}</td>
+                            <td>{competitors[1].hosting}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Transition &amp; Handover</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>45-Day 1-on-1 Transition Support</strong>
+                            </td>
+                            <td className="pdetails-compare-val-muted">{competitors[0].support}</td>
+                            <td className="pdetails-compare-val-muted">{competitors[1].support}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">API &amp; Integration Engine</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>OpenAPI 3.0 + Webhook Subscriptions</strong>
+                            </td>
+                            <td>{competitors[0].api}</td>
+                            <td>{competitors[1].api}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Differentiators Grid */}
+                    <div className="pdetails-compare-cards-grid">
+                      <div className="pdetails-compare-feature-box">
+                        <div className="pdetails-compare-feature-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            <path d="m9 12 2 2 4-4" />
+                          </svg>
+                        </div>
+                        <h3 className="pdetails-compare-feature-title">Guaranteed Escrow Protection</h3>
+                        <p className="pdetails-compare-feature-desc">
+                          Transactions on SaaS MRKT are conducted under milestone escrow holding. Funds release only after complete technical audit, codebase transfer, and verified domain handover.
+                        </p>
+                      </div>
+
+                      <div className="pdetails-compare-feature-box">
+                        <div className="pdetails-compare-feature-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="16 18 22 12 16 6" />
+                            <polyline points="8 6 2 12 8 18" />
+                          </svg>
+                        </div>
+                        <h3 className="pdetails-compare-feature-title">Clean Modern Codebase</h3>
+                        <p className="pdetails-compare-feature-desc">
+                          Unlike bloated legacy monoliths, {product.name} is engineered with strict TypeScript typing, Dockerized microservices, and continuous CI/CD pipelines ready for turnkey scaling.
+                        </p>
+                      </div>
+
+                      <div className="pdetails-compare-feature-box">
+                        <div className="pdetails-compare-feature-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                          </svg>
+                        </div>
+                        <h3 className="pdetails-compare-feature-title">Audited Unit Economics</h3>
+                        <p className="pdetails-compare-feature-desc">
+                          Pre-verified Stripe revenue feeds, low server overhead (&lt;4.8% of MRR), and healthy NRR retention dynamics provide full fiscal visibility with zero hidden liabilities.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* CTA Box */}
+                    <div className="pdetails-compare-cta">
+                      <div>
+                        <h3>Interested in evaluating or acquiring {product.name}?</h3>
+                        <p>Speak directly with the verified seller or request access to the technical sandbox repository.</p>
+                      </div>
+                      <div className="pdetails-compare-cta-btns">
+                        <Link href="/sellers" className="pdetails-compare-cta-btn-primary">
+                          Contact Seller ({sellerName})
+                        </Link>
+                        <Link href="/products" className="pdetails-compare-cta-btn-secondary">
+                          Explore More Listings
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
