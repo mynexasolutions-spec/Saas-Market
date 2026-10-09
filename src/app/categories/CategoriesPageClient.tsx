@@ -205,18 +205,20 @@ export default function CategoriesPageClient() {
   }, [selectedGroup, searchQuery]);
 
   return (
-    <PageLayout activeNav="categories">
-      {/* Page Header */}
-      <div style={{ textAlign: "center", marginTop: "2.75rem", marginBottom: "2.25rem" }}>
-        <h1 style={{
-          fontSize: "2.25rem",
-          fontWeight: 800,
-          color: "var(--slate-900)",
-          letterSpacing: "-0.025em",
-          marginBottom: "0.65rem"
-        }}>
-          Explore Categories
-        </h1>
+    <PageLayout activeNav="categories" noContainer>
+      <div className="categories-page-wrapper">
+        <div className="container">
+          {/* Page Header */}
+          <div style={{ textAlign: "center", marginBottom: "2.75rem" }}>
+            <h1 style={{
+              fontSize: "2.5rem",
+              fontWeight: 800,
+              color: "var(--slate-900)",
+              letterSpacing: "-0.025em",
+              marginBottom: "0.65rem"
+            }}>
+              Explore Categories
+            </h1>
         <p style={{
           fontSize: "1.05rem",
           color: "var(--slate-600)",
@@ -408,6 +410,8 @@ export default function CategoriesPageClient() {
           </div>
         </div>
       </section>
+        </div>
+      </div>
     </PageLayout>
   );
 }
