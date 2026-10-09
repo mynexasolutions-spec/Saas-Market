@@ -206,8 +206,30 @@ export default function CategoriesPageClient() {
 
   return (
     <PageLayout activeNav="categories">
+      {/* Page Header */}
+      <div style={{ textAlign: "center", marginTop: "2.75rem", marginBottom: "2.25rem" }}>
+        <h1 style={{
+          fontSize: "2.25rem",
+          fontWeight: 800,
+          color: "var(--slate-900)",
+          letterSpacing: "-0.025em",
+          marginBottom: "0.65rem"
+        }}>
+          Explore Categories
+        </h1>
+        <p style={{
+          fontSize: "1.05rem",
+          color: "var(--slate-600)",
+          maxWidth: "680px",
+          margin: "0 auto",
+          lineHeight: 1.6
+        }}>
+          Discover curated SaaS platforms, developer infrastructure, and enterprise tools across industry domains.
+        </p>
+      </div>
+
       {/* Categories Grid */}
-      <div className="categories-page-grid" style={{ paddingTop: "2.5rem" }}>
+      <div className="categories-page-grid">
         {filteredCategories.length > 0 ? (
           filteredCategories.map((category) => (
             <Link
