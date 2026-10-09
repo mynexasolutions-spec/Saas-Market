@@ -386,6 +386,99 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
     return allComparableOptions.find((c) => c.id === comp2Id) || allComparableOptions[1] || industryOptions[1];
   }, [allComparableOptions, comp2Id, industryOptions]);
 
+  // Interactive Rating & Comment State
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [userRating, setUserRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewerName, setReviewerName] = useState("");
+  const [reviewerRole, setReviewerRole] = useState("");
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewCategory, setReviewCategory] = useState("Overall Experience");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [helpfulVotes, setHelpfulVotes] = useState<Record<string, number>>({});
+  const [userVoted, setUserVoted] = useState<Record<string, boolean>>({});
+
+  const [commentsList, setCommentsList] = useState([
+    {
+      id: "rev-1",
+      name: "Alex Rivers",
+      role: "CTO at DataPulse",
+      avatarBg: "linear-gradient(135deg, #4F46E5, #818CF8)",
+      initials: "AR",
+      rating: 5,
+      date: "Verified 2 days ago",
+      tag: "Engineering & Sprints",
+      comment: "The real-time collaborative documentation and live Git branch linking cut our sprint cycle times by more than 40%. The webhook synchronization with GitHub and Slack functioned flawlessly on day one.",
+      helpfulCount: 38,
+    },
+    {
+      id: "rev-2",
+      name: "Maya Patel",
+      role: "Product Operations Lead at HyperGrowth",
+      avatarBg: "linear-gradient(135deg, #059669, #34D399)",
+      initials: "MP",
+      rating: 5,
+      date: "Verified 5 days ago",
+      tag: "Team Operations",
+      comment: "Transitioned 6 cross-functional squads to TaskFlow in a single sprint. The interactive Kanban boards, automated velocity burn-downs, and customizable task fields gave our executives immediate visibility.",
+      helpfulCount: 24,
+    },
+    {
+      id: "rev-3",
+      name: "Jason Thorne",
+      role: "Principal Architect at CloudGrid",
+      avatarBg: "linear-gradient(135deg, #2563EB, #60A5FA)",
+      initials: "JT",
+      rating: 4,
+      date: "Verified 1 week ago",
+      tag: "Architecture & Scale",
+      comment: "Rock-solid uptime, robust RBAC permissions, and verified enterprise security SLAs. Support team helped us configure custom SAML SSO with Okta within 20 minutes.",
+      helpfulCount: 19,
+    },
+  ]);
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewerName.trim() || !reviewComment.trim()) return;
+
+    const newComment = {
+      id: `rev-${Date.now()}`,
+      name: reviewerName.trim(),
+      role: reviewerRole.trim() || "Verified Enterprise Buyer",
+      avatarBg: "linear-gradient(135deg, #6366F1, #A855F7)",
+      initials:
+        reviewerName
+          .trim()
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2) || "U",
+      rating: userRating,
+      date: "Just now",
+      tag: reviewCategory,
+      comment: reviewComment.trim(),
+      helpfulCount: 1,
+    };
+
+    setCommentsList([newComment, ...commentsList]);
+    setReviewSubmitted(true);
+    setReviewerName("");
+    setReviewerRole("");
+    setReviewComment("");
+    setShowReviewForm(false);
+
+    setTimeout(() => {
+      setReviewSubmitted(false);
+    }, 6000);
+  };
+
+  const handleHelpfulToggle = (id: string) => {
+    if (userVoted[id]) return;
+    setUserVoted((prev) => ({ ...prev, [id]: true }));
+    setHelpfulVotes((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  };
+
   return (
     <PageLayout activeNav="products" noContainer>
       <div className="pdetails-page-wrapper">
@@ -1040,6 +1133,207 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Rating & Comments Action Header */}
+                  <div className="pdetails-reviews-action-header">
+                    <div>
+                      <h3 className="pdetails-card-title" style={{ fontSize: "1.25rem", margin: 0 }}>
+                        User Comments &amp; Community Feedback ({commentsList.length + 5120})
+                      </h3>
+                      <p style={{ color: "#64748B", fontSize: "0.85rem", margin: "0.25rem 0 0 0" }}>
+                        Verified customer ratings, deployment feedback, and technical reviews.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="pdetails-btn-write-review"
+                      onClick={() => setShowReviewForm(!showReviewForm)}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M12 5v14M5 12h14" />
+                      </svg>
+                      {showReviewForm ? "Close Review Form" : "Give Rating & Comment"}
+                    </button>
+                  </div>
+
+                  {/* Submission Success Toast */}
+                  {reviewSubmitted && (
+                    <div className="pdetails-review-success">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                      </svg>
+                      <span>Thank you! Your verified rating and comment has been posted successfully.</span>
+                    </div>
+                  )}
+
+                  {/* Interactive Review Form */}
+                  {showReviewForm && (
+                    <form className="pdetails-review-form-card" onSubmit={handleReviewSubmit}>
+                      <h4 className="pdetails-form-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        Share Your Rating &amp; Review for {product.name}
+                      </h4>
+
+                      {/* Star Rating Picker */}
+                      <div className="pdetails-star-selector-row">
+                        <span className="pdetails-star-selector-label">Your Rating:</span>
+                        <div className="pdetails-star-buttons" onMouseLeave={() => setHoverRating(0)}>
+                          {[1, 2, 3, 4, 5].map((star) => {
+                            const isFilled = star <= (hoverRating || userRating);
+                            return (
+                              <button
+                                key={star}
+                                type="button"
+                                className={`pdetails-star-btn ${isFilled ? "pdetails-star-btn--filled" : "pdetails-star-btn--empty"}`}
+                                onClick={() => setUserRating(star)}
+                                onMouseEnter={() => setHoverRating(star)}
+                                aria-label={`Rate ${star} stars`}
+                              >
+                                ★
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <span className="pdetails-rating-text-hint">
+                          {hoverRating || userRating} / 5 Stars &bull;{" "}
+                          {(hoverRating || userRating) === 5
+                            ? "Outstanding"
+                            : (hoverRating || userRating) === 4
+                            ? "Very Good"
+                            : (hoverRating || userRating) === 3
+                            ? "Average"
+                            : "Needs Improvement"}
+                        </span>
+                      </div>
+
+                      {/* Inputs Grid */}
+                      <div className="pdetails-form-grid">
+                        <div className="pdetails-form-group">
+                          <label htmlFor="reviewer-name">Full Name *</label>
+                          <input
+                            id="reviewer-name"
+                            type="text"
+                            className="pdetails-form-input"
+                            placeholder="e.g. Alex Miller"
+                            value={reviewerName}
+                            onChange={(e) => setReviewerName(e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        <div className="pdetails-form-group">
+                          <label htmlFor="reviewer-role">Your Role &amp; Company</label>
+                          <input
+                            id="reviewer-role"
+                            type="text"
+                            className="pdetails-form-input"
+                            placeholder="e.g. Lead Engineer at CloudTech"
+                            value={reviewerRole}
+                            onChange={(e) => setReviewerRole(e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pdetails-form-grid">
+                        <div className="pdetails-form-group">
+                          <label htmlFor="review-category">Review Topic</label>
+                          <select
+                            id="review-category"
+                            className="pdetails-form-select"
+                            value={reviewCategory}
+                            onChange={(e) => setReviewCategory(e.target.value)}
+                          >
+                            <option value="Overall Experience">Overall Experience</option>
+                            <option value="Engineering & Sprints">Engineering &amp; Sprints</option>
+                            <option value="Team Operations">Team Operations &amp; Collaboration</option>
+                            <option value="Architecture & Scale">Architecture &amp; Reliability</option>
+                            <option value="Customer Support">Customer Support &amp; SLAs</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="pdetails-form-group">
+                        <label htmlFor="review-comment">Your Comment &amp; Feedback *</label>
+                        <textarea
+                          id="review-comment"
+                          className="pdetails-form-textarea"
+                          rows={4}
+                          placeholder="What did you like most about this product? How has it improved your team's workflow and sprint efficiency?"
+                          value={reviewComment}
+                          onChange={(e) => setReviewComment(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <div className="pdetails-form-submit-row">
+                        <button
+                          type="button"
+                          className="pdetails-btn-cancel-review"
+                          onClick={() => setShowReviewForm(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button type="submit" className="pdetails-btn-submit">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                          Publish Review &amp; Rating
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* Comments Feed List */}
+                  <div className="pdetails-comments-list">
+                    {commentsList.map((item) => {
+                      const votes = item.helpfulCount + (helpfulVotes[item.id] || 0);
+                      const hasVoted = !!userVoted[item.id];
+                      return (
+                        <div key={item.id} className="pdetails-comment-card">
+                          <div className="pdetails-comment-header">
+                            <div className="pdetails-comment-user">
+                              <div className="pdetails-comment-avatar" style={{ background: item.avatarBg }}>
+                                {item.initials}
+                              </div>
+                              <div className="pdetails-comment-user-info">
+                                <div className="pdetails-comment-name-row">
+                                  <span>{item.name}</span>
+                                  <span className="pdetails-verified-badge">✓ Verified Buyer</span>
+                                </div>
+                                <span className="pdetails-comment-role">{item.role}</span>
+                              </div>
+                            </div>
+                            <div className="pdetails-comment-rating-box">
+                              <span className="pdetails-comment-stars">
+                                {"★".repeat(item.rating)}
+                                {"☆".repeat(5 - item.rating)}
+                              </span>
+                              <span className="pdetails-comment-date">{item.date}</span>
+                            </div>
+                          </div>
+
+                          <p className="pdetails-comment-body">{item.comment}</p>
+
+                          <div className="pdetails-comment-footer">
+                            <span className="pdetails-comment-tag">{item.tag}</span>
+                            <button
+                              type="button"
+                              className={`pdetails-helpful-btn ${hasVoted ? "pdetails-helpful-btn--active" : ""}`}
+                              onClick={() => handleHelpfulToggle(item.id)}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                              </svg>
+                              <span>{hasVoted ? `Helpful (${votes})` : `Helpful (${votes})`}</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
