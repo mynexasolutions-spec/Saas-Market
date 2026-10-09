@@ -451,44 +451,19 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
           <div className="pdetails-content-body">
             {activeTab === "overview" && (
               <div className="pdetails-tab-pane">
-                {/* 2-Column Split: Left Image, Right About */}
-                <div className="pdetails-overview-split">
-                  {/* Left Column: Image */}
-                  <div className="pdetails-split-image-col">
-                    <div className="pdetails-media-block pdetails-split-media">
-                      <div className="pdetails-media-wrapper">
-                        <Image
-                          src={
-                            product.id === "prod-taskflow" || !product.image
-                              ? "/images/taskflow-agile-board-light.jpg"
-                              : product.image
-                          }
-                          alt={`${product.name} Production Workspace Interface`}
-                          width={1280}
-                          height={720}
-                          className="pdetails-media-img"
-                          priority
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Column: About */}
-                  <div className="pdetails-split-about-col">
-                    <div className="pdetails-about-card pdetails-split-about-card">
-                      <span className="pdetails-about-badge">About Project</span>
-                      <h2 className="pdetails-card-title">About {product.name}</h2>
-                      <p className="pdetails-about-paragraph">
-                        {product.name} is a comprehensive, production-grade {product.category?.toLowerCase() || "software"} platform engineered to streamline mission-critical operations for {product.targetAudience?.toLowerCase() || "modern software and engineering organizations"}. Built from the ground up to eliminate tool fragmentation and administrative friction, the platform unifies real-time collaborative documentation, agile sprint tracking, automated continuous delivery workflows, and cross-functional team coordination into a single cohesive interface.
-                      </p>
-                      <p className="pdetails-about-paragraph">
-                        {product.aboutText ? `${product.aboutText} ` : ""}{product.tagline ? `${product.tagline}. ` : ""}With seamless integrations across developer ecosystems, automated webhook synchronization, and interactive telemetry analytics, teams can accelerate their product delivery cycles, reduce context switching, and maintain transparent audit trails across every milestone.
-                      </p>
-                      <p className="pdetails-about-paragraph">
-                        At its core, the platform incorporates a modern microservices-driven architecture backed by distributed caching layers, low-latency database sharding, and real-time event streaming.
-                      </p>
-                    </div>
-                  </div>
+                {/* About Section */}
+                <div className="pdetails-about-card">
+                  <span className="pdetails-about-badge">About Project</span>
+                  <h2 className="pdetails-card-title">About {product.name}</h2>
+                  <p className="pdetails-about-paragraph">
+                    {product.name} is a comprehensive, production-grade {product.category?.toLowerCase() || "software"} platform engineered to streamline mission-critical operations for {product.targetAudience?.toLowerCase() || "modern software and engineering organizations"}. Built from the ground up to eliminate tool fragmentation and administrative friction, the platform unifies real-time collaborative documentation, agile sprint tracking, automated continuous delivery workflows, and cross-functional team coordination into a single cohesive interface.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    {product.aboutText ? `${product.aboutText} ` : ""}{product.tagline ? `${product.tagline}. ` : ""}With seamless integrations across developer ecosystems, automated webhook synchronization, and interactive telemetry analytics, teams can accelerate their product delivery cycles, reduce context switching, and maintain transparent audit trails across every milestone.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    At its core, the platform incorporates a modern microservices-driven architecture backed by distributed caching layers, low-latency database sharding, and real-time event streaming.
+                  </p>
                 </div>
 
                 {/* Connecting Text Card Between Upper and Lower Sections */}
