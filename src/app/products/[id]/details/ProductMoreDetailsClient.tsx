@@ -483,12 +483,6 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                       <p className="pdetails-about-paragraph">
                         At its core, the platform incorporates a modern microservices-driven architecture backed by distributed caching layers, low-latency database sharding, and real-time event streaming.
                       </p>
-                      <p className="pdetails-about-paragraph">
-                        Real-time synchronization guarantees that distributed engineering squads, product managers, and executive stakeholders stay aligned on roadmap milestones without async communication gaps. Multiplayer collaborative document editors, live bidirectional Git branch linking, and instant sprint velocity burndown telemetry enable development teams to transition seamlessly from product discovery to continuous deployment.
-                      </p>
-                      <p className="pdetails-about-paragraph">
-                        Engineered for enterprise governance and compliance, the platform provides automated audit trails, tenant-isolated cryptographic workspaces, and granular role-based permissions (RBAC) out of the box. Pre-configured webhook connectors for Slack, Linear, GitHub, and Jira allow rapid integration into existing corporate developer toolchains with zero migration downtime.
-                      </p>
                     </div>
                   </div>
                 </div>
