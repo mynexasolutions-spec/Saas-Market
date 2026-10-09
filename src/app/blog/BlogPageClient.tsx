@@ -234,8 +234,9 @@ export default function BlogPageClient() {
 
   return (
     <PageLayout activeNav="resources" noContainer>
-      {/* Hero / Page Header */}
-      <section className="blog-hero">
+      <div className="blog-page-wrapper">
+        {/* Hero / Page Header */}
+        <section className="blog-hero">
         <div className="container">
           <div className="blog-hero-content">
             <div className="section-badge">BLOG & RESOURCES</div>
@@ -489,6 +490,7 @@ export default function BlogPageClient() {
           </div>
         </div>
       </section>
+      </div>
     </PageLayout>
   );
 }
