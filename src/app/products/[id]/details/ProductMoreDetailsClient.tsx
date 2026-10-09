@@ -468,6 +468,12 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                         The platform exhibits strong cohort retention dynamics with a Net Retention Rate (NRR) of 108.5% and sustained gross margins exceeding 84%. Low customer acquisition costs (CAC) paired with automated self-serve expansion tiers ensure healthy lifetime value to customer acquisition cost (LTV:CAC) ratios across both mid-market and enterprise customer tiers.
                       </p>
                       <p className="pdetails-about-paragraph">
+                        Subscription billing is managed via an automated multi-currency checkout engine with automated dunning workflows and merchant-of-record reconciliation. Over 70% of annualized contract value (ACV) is collected upfront through annual prepayments, generating positive working capital and mitigating monthly volatility with an involuntary churn recovery rate above 68%.
+                      </p>
+                      <p className="pdetails-about-paragraph">
+                        Operating overhead remains exceptionally lean, with cloud infrastructure and database hosting expenses representing less than 4.8% of gross monthly recurring revenue (MRR). Vendor agreements, third-party software subscriptions, and developer tooling licenses are maintained under transferable commercial agreements to ensure friction-free ownership handoff.
+                      </p>
+                      <p className="pdetails-about-paragraph">
                         With zero long-term debt, audited profit-and-loss (P&amp;L) statements, and automated banking reconciliation feeds, the business maintains a transparent financial profile optimized for seamless escrow closing and risk-free post-acquisition handover.
                       </p>
                     </div>
