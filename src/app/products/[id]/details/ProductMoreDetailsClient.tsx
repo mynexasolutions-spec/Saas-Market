@@ -460,7 +460,7 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                         <Image
                           src={
                             product.id === "prod-taskflow" || !product.image
-                              ? "/images/taskflow-command-center-dark.jpg"
+                              ? "/images/taskflow-agile-board-light.jpg"
                               : product.image
                           }
                           alt={`${product.name} Production Workspace Interface`}
