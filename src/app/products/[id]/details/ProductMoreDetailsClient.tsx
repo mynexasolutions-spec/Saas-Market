@@ -390,10 +390,7 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [userRating, setUserRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
-  const [reviewerName, setReviewerName] = useState("");
-  const [reviewerRole, setReviewerRole] = useState("");
   const [reviewComment, setReviewComment] = useState("");
-  const [reviewCategory, setReviewCategory] = useState("Overall Experience");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [helpfulVotes, setHelpfulVotes] = useState<Record<string, number>>({});
   const [userVoted, setUserVoted] = useState<Record<string, boolean>>({});
@@ -439,32 +436,23 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
 
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reviewerName.trim() || !reviewComment.trim()) return;
+    if (!reviewComment.trim()) return;
 
     const newComment = {
       id: `rev-${Date.now()}`,
-      name: reviewerName.trim(),
-      role: reviewerRole.trim() || "Verified Enterprise Buyer",
+      name: "Verified User",
+      role: "Verified Buyer",
       avatarBg: "linear-gradient(135deg, #6366F1, #A855F7)",
-      initials:
-        reviewerName
-          .trim()
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2) || "U",
+      initials: "VU",
       rating: userRating,
       date: "Just now",
-      tag: reviewCategory,
+      tag: "Verified Feedback",
       comment: reviewComment.trim(),
       helpfulCount: 1,
     };
 
     setCommentsList([newComment, ...commentsList]);
     setReviewSubmitted(true);
-    setReviewerName("");
-    setReviewerRole("");
     setReviewComment("");
     setShowReviewForm(false);
 
@@ -1153,51 +1141,6 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                         </span>
                       </div>
 
-                      {/* Inputs Grid */}
-                      <div className="pdetails-form-grid">
-                        <div className="pdetails-form-group">
-                          <label htmlFor="reviewer-name">Full Name *</label>
-                          <input
-                            id="reviewer-name"
-                            type="text"
-                            className="pdetails-form-input"
-                            placeholder="e.g. Alex Miller"
-                            value={reviewerName}
-                            onChange={(e) => setReviewerName(e.target.value)}
-                            required
-                          />
-                        </div>
-
-                        <div className="pdetails-form-group">
-                          <label htmlFor="reviewer-role">Your Role &amp; Company</label>
-                          <input
-                            id="reviewer-role"
-                            type="text"
-                            className="pdetails-form-input"
-                            placeholder="e.g. Lead Engineer at CloudTech"
-                            value={reviewerRole}
-                            onChange={(e) => setReviewerRole(e.target.value)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="pdetails-form-grid">
-                        <div className="pdetails-form-group">
-                          <label htmlFor="review-category">Review Topic</label>
-                          <select
-                            id="review-category"
-                            className="pdetails-form-select"
-                            value={reviewCategory}
-                            onChange={(e) => setReviewCategory(e.target.value)}
-                          >
-                            <option value="Overall Experience">Overall Experience</option>
-                            <option value="Engineering & Sprints">Engineering &amp; Sprints</option>
-                            <option value="Team Operations">Team Operations &amp; Collaboration</option>
-                            <option value="Architecture & Scale">Architecture &amp; Reliability</option>
-                            <option value="Customer Support">Customer Support &amp; SLAs</option>
-                          </select>
-                        </div>
-                      </div>
 
                       <div className="pdetails-form-group">
                         <label htmlFor="review-comment">Your Comment &amp; Feedback *</label>
