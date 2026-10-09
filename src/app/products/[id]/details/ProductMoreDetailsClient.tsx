@@ -456,13 +456,9 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                   {/* Left Column: Image */}
                   <div className="pdetails-split-image-col">
                     <div className="pdetails-media-block pdetails-split-media">
-                      <div className="pdetails-media-header">
-                        <span className="pdetails-media-tag">Workspace UI</span>
-                        <span className="pdetails-media-title">Interactive Sprint Dashboard</span>
-                      </div>
                       <div className="pdetails-media-wrapper">
                         <Image
-                          src="/images/taskflow-dashboard-preview.jpg"
+                          src={product.image || "/images/manage360.jpg"}
                           alt={`${product.name} Interactive Dashboard Interface`}
                           width={1280}
                           height={720}
