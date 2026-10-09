@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import IdeaExplainer from "@/components/IdeaExplainer";
 import Categories from "@/components/Categories";
 import HowItWorks from "@/components/HowItWorks";
 import PlatformShowcase from "@/components/PlatformShowcase";
@@ -108,6 +109,9 @@ export default function Home() {
       <main id="main-content">
         {/* Hero Section (Contains Integrated Bottom Metrics Bar) */}
         <Hero onExploreScroll={handleExploreScroll} />
+
+        {/* Idea explainer: what SaaS MRKT is, old way vs new way, interactive tour */}
+        <IdeaExplainer />
 
         {/* Browse by Category (10 cards) */}
         <Categories
