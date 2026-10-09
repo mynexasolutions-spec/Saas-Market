@@ -312,7 +312,7 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
         </div>
       </header>
 
-      <main className={noContainer ? undefined : "container"} style={{ paddingBottom: '4rem', minHeight: 'calc(100vh - 400px)' }}>
+      <main className={noContainer ? undefined : "container"} style={{ paddingBottom: noContainer ? 0 : '4rem', minHeight: 'calc(100vh - 400px)' }}>
         {children}
       </main>
 

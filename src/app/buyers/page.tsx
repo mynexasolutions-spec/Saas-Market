@@ -79,15 +79,17 @@ export default function BuyersPage() {
   ];
 
   return (
-    <PageLayout activeNav="buyers">
-      <div className="section-header" style={{ textAlign: "center", marginBottom: "4rem", marginTop: "3.5rem" }}>
-        <h1 className="section-title">Built for&nbsp;<span className="section-title-highlight">Software Buyers</span></h1>
-        <p className="section-subtitle" style={{ maxWidth: "800px", marginLeft: "auto", marginRight: "auto" }}>
-          We remove the guesswork from buying software. Discover verified tools, compare features side-by-side, and make confident decisions for your team.
-        </p>
-      </div>
+    <PageLayout activeNav="buyers" noContainer>
+      <div className="buyers-page-wrapper">
+        <div className="container">
+          <div className="section-header" style={{ textAlign: "center", marginBottom: "3.5rem", marginTop: "1rem" }}>
+            <h1 className="section-title">Built for&nbsp;<span className="section-title-highlight">Software Buyers</span></h1>
+            <p className="section-subtitle" style={{ maxWidth: "800px", marginLeft: "auto", marginRight: "auto" }}>
+              We remove the guesswork from buying software. Discover verified tools, compare features side-by-side, and make confident decisions for your team.
+            </p>
+          </div>
 
-      {/* Hero Overview */}
+          {/* Hero Overview */}
       <div className="overview-hero-grid buyers-hero-grid">
         <div className="overview-hero-card">
           <div className="overview-hero-card-glow"></div>
@@ -178,7 +180,7 @@ export default function BuyersPage() {
       </section>
 
       {/* Buyer Advantages Grid */}
-      <section className="page-padded-section" style={{ marginBottom: "5.5rem", background: "var(--slate-50)", padding: "3.5rem 2.5rem", borderRadius: "24px", border: "1px solid var(--slate-200)" }}>
+      <section className="page-padded-section buyer-advantages-panel" style={{ marginBottom: "5.5rem", padding: "3.5rem 2.5rem", borderRadius: "24px" }}>
         <div className="section-header" style={{ textAlign: "center", marginBottom: "2.75rem" }}>
           <div className="section-badge" style={{ display: "inline-block", marginBottom: "0.75rem" }}>UNBIASED &amp; TRANSPARENT</div>
           <h2 style={{ fontSize: "2.25rem", fontWeight: "800", color: "var(--slate-900)", marginBottom: "1rem" }}>
@@ -227,12 +229,9 @@ export default function BuyersPage() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem", maxWidth: "1000px", marginLeft: "auto", marginRight: "auto" }}>
           {faqs.map((faq, idx) => (
-            <div key={idx} style={{
-              background: "var(--white)",
-              border: "1px solid var(--slate-200)",
+            <div key={idx} className="buyer-faq-card" style={{
               borderRadius: "16px",
               padding: "1.75rem",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.02)"
             }}>
               <h3 style={{ fontSize: "1.05rem", fontWeight: "700", color: "var(--slate-900)", marginBottom: "0.6rem" }}>
                 {faq.q}
@@ -252,7 +251,7 @@ export default function BuyersPage() {
         padding: "2.75rem 2rem",
         textAlign: "center",
         color: "white",
-        marginBottom: "4rem",
+        marginBottom: "1.5rem",
         position: "relative",
         overflow: "hidden"
       }}>
@@ -281,6 +280,8 @@ export default function BuyersPage() {
           </div>
         </div>
       </section>
+        </div>
+      </div>
     </PageLayout>
   );
 }
