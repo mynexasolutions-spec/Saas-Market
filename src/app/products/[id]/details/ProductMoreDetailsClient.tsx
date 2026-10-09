@@ -122,48 +122,53 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                   </div>
                 </div>
 
-                <div className="pdetails-about-card" style={{ marginTop: "2rem" }}>
-                  <h3 className="pdetails-card-title" style={{ fontSize: "1.3rem" }}>Enterprise Architecture &amp; Team Ergonomics</h3>
-                  <p className="pdetails-about-paragraph">
-                    Furthermore, the system emphasizes frictionless onboarding and team ergonomics. Built-in permission matrices, granular role-based access controls (RBAC), and multi-tenant isolation patterns allow administrators to safely partition datasets across departments or external contractors. Detailed audit logging, automated weekly digest summaries, and customizable Kanban or sprint perspectives ensure both technical leads and executive stakeholders maintain comprehensive visibility over development throughput and product milestones.
-                  </p>
-                  <p className="pdetails-about-paragraph">
-                    Engineered with long-term maintainability in mind, the codebase adheres to strict automated testing standards, comprehensive OpenAPI specifications, and containerized Docker CI/CD pipelines. This rigorous engineering foundation makes {product.name} an exceptionally stable asset for teams seeking immediate operational efficiency and an attractive proposition for buyers demanding transparent technical diligence and zero tech-debt overhead.
-                  </p>
-                </div>
-
-                  {/* Team Work Session & Operational Collaboration */}
-                  <div className="pdetails-media-block">
-                    <div className="pdetails-media-header">
-                      <span className="pdetails-media-tag">Team Operations</span>
-                      <span className="pdetails-media-title">Cross-Functional Sprint Planning &amp; Agile Rituals</span>
-                    </div>
-                    <div className="pdetails-media-wrapper">
-                      <Image
-                        src="/images/taskflow-team-work.jpg"
-                        alt={`${product.name} Engineering and Product Team Sprint Planning`}
-                        width={1280}
-                        height={720}
-                        className="pdetails-media-img"
-                      />
-                    </div>
-                    <div className="pdetails-media-caption">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                      </svg>
-                      <span>Figure 2: Active Team Work Session — Distributed squad leads conducting synchronized sprint 08 grooming and backlog capacity planning.</span>
+                {/* 2-Column Split: Left Para, Right Image */}
+                <div className="pdetails-overview-split pdetails-overview-split--reverse" style={{ marginTop: "2rem" }}>
+                  {/* Left Column: Para */}
+                  <div className="pdetails-split-about-col">
+                    <div className="pdetails-about-card pdetails-split-about-card">
+                      <span className="pdetails-about-badge" style={{ background: "#ECFDF5", color: "#059669" }}>Team Operations</span>
+                      <h3 className="pdetails-card-title" style={{ fontSize: "1.35rem" }}>Cross-Functional Sprint Planning &amp; Agile Collaboration</h3>
+                      <p className="pdetails-about-paragraph">
+                        In active daily operations, {product.name} serves as the operational nerve center for cross-functional sprint planning sessions and collaborative backlog grooming. Whether teams gather in synchronous conference rooms or coordinate across global time zones, the platform&apos;s multi-display compatibility and live interactive boards facilitate high-engagement grooming rituals with zero latency.
+                      </p>
+                      <p className="pdetails-about-paragraph">
+                        Furthermore, the system emphasizes frictionless onboarding and team ergonomics. Built-in permission matrices, granular role-based access controls (RBAC), and multi-tenant isolation patterns allow administrators to safely partition datasets across departments or external contractors.
+                      </p>
+                      <p className="pdetails-about-paragraph">
+                        By replacing scattered spreadsheets and disconnected chat threads with structured, audit-ready development workflows, teams report significant reductions in planning overhead and an average 40% increase in sprint delivery velocity.
+                      </p>
                     </div>
                   </div>
 
-                  <p className="pdetails-about-paragraph">
-                    In active daily operations, {product.name} serves as the operational nerve center for cross-functional sprint planning sessions and collaborative backlog grooming. Whether teams gather in synchronous conference rooms or coordinate across global time zones, the platform&apos;s multi-display compatibility and live interactive boards facilitate high-engagement grooming rituals with zero latency.
-                  </p>
-                  <p className="pdetails-about-paragraph">
-                    By replacing scattered spreadsheets and disconnected chat threads with structured, audit-ready development workflows, teams report significant reductions in planning overhead and an average 40% increase in sprint delivery velocity. With integrated retrospective tools and historical burn-down telemetry, engineering organizations continuously iterate on delivery quality while maintaining sustainable velocity across every development cycle.
-                  </p>
+                  {/* Right Column: Image */}
+                  <div className="pdetails-split-image-col">
+                    <div className="pdetails-media-block pdetails-split-media">
+                      <div className="pdetails-media-header">
+                        <span className="pdetails-media-tag" style={{ background: "#ECFDF5", color: "#059669" }}>Team Operations</span>
+                        <span className="pdetails-media-title">Sprint Planning &amp; Agile Rituals</span>
+                      </div>
+                      <div className="pdetails-media-wrapper">
+                        <Image
+                          src="/images/taskflow-team-work.jpg"
+                          alt={`${product.name} Engineering and Product Team Sprint Planning`}
+                          width={1280}
+                          height={720}
+                          className="pdetails-media-img"
+                        />
+                      </div>
+                      <div className="pdetails-media-caption">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                          <circle cx="9" cy="7" r="4"/>
+                          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <span>Active Team Work Session — Distributed squad sprint grooming</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="pdetails-specs-grid">
                   <div className="pdetails-spec-card">

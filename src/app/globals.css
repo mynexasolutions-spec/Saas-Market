@@ -12727,6 +12727,10 @@ body:has(.product-detail-page-container) {
   margin-bottom: 2rem;
 }
 
+.pdetails-overview-split--reverse {
+  grid-template-columns: 1fr 1.15fr;
+}
+
 .pdetails-split-image-col {
   display: flex;
   flex-direction: column;
