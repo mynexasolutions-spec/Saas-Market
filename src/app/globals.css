@@ -12694,7 +12694,7 @@ body:has(.product-detail-page-container) {
   min-height: 100vh;
   padding: 2.25rem 0 6rem 0;
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
 }
 
 /* Breadcrumb in Page Details */
@@ -12729,20 +12729,24 @@ body:has(.product-detail-page-container) {
   font-weight: 700;
 }
 
-/* Nav Tabs */
+/* Nav Tabs - Sticky on Scroll */
 .pdetails-nav-tabs {
+  position: sticky;
+  top: 84px;
+  z-index: 50;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 1.15rem;
   padding: 0.45rem;
   margin-bottom: 2rem;
   overflow-x: auto;
-  box-shadow: 0 8px 30px rgba(79, 70, 229, 0.08);
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+  transition: all 0.2s ease;
 }
 
 .pdetails-tab {
@@ -12845,6 +12849,12 @@ body:has(.product-detail-page-container) {
 }
 
 @media (max-width: 768px) {
+  .pdetails-nav-tabs {
+    top: 76px;
+    border-radius: 0.85rem;
+    padding: 0.35rem;
+  }
+
   .pdetails-split-media {
     height: 250px !important;
   }
