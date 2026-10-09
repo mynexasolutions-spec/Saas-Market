@@ -788,57 +788,50 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
 
             {activeTab === "financials" && (
               <div className="pdetails-tab-pane">
-                {/* 2-Column Split: Left Image, Right Para */}
-                <div className="pdetails-overview-split">
-                  {/* Left Column: Image */}
-                  <div className="pdetails-split-image-col">
-                    <div className="pdetails-media-block pdetails-split-media">
-                      <div className="pdetails-media-header">
-                        <span className="pdetails-media-tag" style={{ background: "#ECFDF5", color: "#059669" }}>Financial Telemetry</span>
-                        <span className="pdetails-media-title">Verified Revenue &amp; Growth Metrics</span>
-                      </div>
-                      <div className="pdetails-media-wrapper">
-                        <Image
-                          src="/images/finmate.jpg"
-                          alt={`${product.name} Verified Financial Analytics & Revenue Telemetry`}
-                          width={1280}
-                          height={720}
-                          className="pdetails-media-img"
-                          priority
-                        />
-                      </div>
-                      <div className="pdetails-media-caption">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                          <circle cx="9" cy="9" r="2"/>
-                          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                        </svg>
-                        <span>Stripe &amp; Banking Verified Diligence Data Telemetry</span>
-                      </div>
-                    </div>
-                  </div>
+                {/* Text First */}
+                <div className="pdetails-about-card">
+                  <span className="pdetails-about-badge">Financial Diligence</span>
+                  <h2 className="pdetails-card-title">{product.name} Financial Performance, Unit Economics &amp; Growth Telemetry</h2>
+                  <p className="pdetails-about-paragraph">
+                    {product.name} operates on a capital-efficient software subscription model characterized by predictable monthly and annual recurring revenue streams. All operational revenue data, cohort churn metrics, and customer acquisition telemetry are verified directly through native Stripe billing integrations and audited accounting ledgers, providing acquiring parties and investors with institutional-grade diligence transparency.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    The platform exhibits strong cohort retention dynamics with a Net Retention Rate (NRR) of 108.5% and sustained gross margins exceeding 84%. Low customer acquisition costs (CAC) paired with automated self-serve expansion tiers ensure healthy lifetime value to customer acquisition cost (LTV:CAC) ratios across both mid-market and enterprise customer tiers.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    Subscription billing is managed via an automated multi-currency checkout engine with automated dunning workflows and merchant-of-record reconciliation. Over 70% of annualized contract value (ACV) is collected upfront through annual prepayments, generating positive working capital and mitigating monthly volatility with an involuntary churn recovery rate above 68%.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    Operating overhead remains exceptionally lean, with cloud infrastructure and database hosting expenses representing less than 4.8% of gross monthly recurring revenue (MRR). Vendor agreements, third-party software subscriptions, and developer tooling licenses are maintained under transferable commercial agreements to ensure friction-free ownership handoff.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    With zero long-term debt, audited profit-and-loss (P&amp;L) statements, and automated banking reconciliation feeds, the business maintains a transparent financial profile optimized for seamless escrow closing and risk-free post-acquisition handover.
+                  </p>
+                </div>
 
-                  {/* Right Column: Para */}
-                  <div className="pdetails-split-about-col">
-                    <div className="pdetails-about-card pdetails-split-about-card">
-                      <span className="pdetails-about-badge">Financial Diligence</span>
-                      <h2 className="pdetails-card-title">{product.name} Financial Performance, Unit Economics &amp; Growth Telemetry</h2>
-                      <p className="pdetails-about-paragraph">
-                        {product.name} operates on a capital-efficient software subscription model characterized by predictable monthly and annual recurring revenue streams. All operational revenue data, cohort churn metrics, and customer acquisition telemetry are verified directly through native Stripe billing integrations and audited accounting ledgers, providing acquiring parties and investors with institutional-grade diligence transparency.
-                      </p>
-                      <p className="pdetails-about-paragraph">
-                        The platform exhibits strong cohort retention dynamics with a Net Retention Rate (NRR) of 108.5% and sustained gross margins exceeding 84%. Low customer acquisition costs (CAC) paired with automated self-serve expansion tiers ensure healthy lifetime value to customer acquisition cost (LTV:CAC) ratios across both mid-market and enterprise customer tiers.
-                      </p>
-                      <p className="pdetails-about-paragraph">
-                        Subscription billing is managed via an automated multi-currency checkout engine with automated dunning workflows and merchant-of-record reconciliation. Over 70% of annualized contract value (ACV) is collected upfront through annual prepayments, generating positive working capital and mitigating monthly volatility with an involuntary churn recovery rate above 68%.
-                      </p>
-                      <p className="pdetails-about-paragraph">
-                        Operating overhead remains exceptionally lean, with cloud infrastructure and database hosting expenses representing less than 4.8% of gross monthly recurring revenue (MRR). Vendor agreements, third-party software subscriptions, and developer tooling licenses are maintained under transferable commercial agreements to ensure friction-free ownership handoff.
-                      </p>
-                      <p className="pdetails-about-paragraph">
-                        With zero long-term debt, audited profit-and-loss (P&amp;L) statements, and automated banking reconciliation feeds, the business maintains a transparent financial profile optimized for seamless escrow closing and risk-free post-acquisition handover.
-                      </p>
-                    </div>
+                {/* Then Show Image */}
+                <div className="pdetails-media-block" style={{ marginTop: "2rem" }}>
+                  <div className="pdetails-media-header">
+                    <span className="pdetails-media-tag" style={{ background: "#ECFDF5", color: "#059669" }}>Financial Telemetry</span>
+                    <span className="pdetails-media-title">Verified Revenue &amp; Growth Metrics</span>
+                  </div>
+                  <div className="pdetails-media-wrapper">
+                    <Image
+                      src="/images/finmate.jpg"
+                      alt={`${product.name} Verified Financial Analytics & Revenue Telemetry`}
+                      width={1280}
+                      height={720}
+                      className="pdetails-media-img"
+                      priority
+                    />
+                  </div>
+                  <div className="pdetails-media-caption">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                      <circle cx="9" cy="9" r="2"/>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                    <span>Stripe &amp; Banking Verified Diligence Data Telemetry</span>
                   </div>
                 </div>
               </div>
