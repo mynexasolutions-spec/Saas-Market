@@ -441,41 +441,7 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                   </p>
                 </div>
 
-                <div className="pdetails-unlocked-banner">
-                  <div className="pdetails-banner-top">
-                    <span className="pdetails-banner-pill">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "4px" }}>
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                      VERIFIED FINANCIAL METRICS
-                    </span>
-                    <h2>Verified Diligence Financial Data</h2>
-                    <p>All metrics below have been audited and verified through Stripe and bank integration.</p>
-                  </div>
 
-                  <div className="pdetails-fin-cards">
-                    <div className="pdetails-fin-card">
-                      <span className="pdetails-fin-label">Annual Recurring Revenue</span>
-                      <strong className="pdetails-fin-num">$148,500 / yr</strong>
-                      <span className="pdetails-fin-badge">Stripe Verified</span>
-                    </div>
-                    <div className="pdetails-fin-card">
-                      <span className="pdetails-fin-label">Monthly Growth Rate</span>
-                      <strong className="pdetails-fin-num">+12.4% MoM</strong>
-                      <span className="pdetails-fin-badge">TTM Verified</span>
-                    </div>
-                    <div className="pdetails-fin-card">
-                      <span className="pdetails-fin-label">Gross Margin</span>
-                      <strong className="pdetails-fin-num">84.2%</strong>
-                      <span className="pdetails-fin-badge">Audited P&amp;L</span>
-                    </div>
-                    <div className="pdetails-fin-card">
-                      <span className="pdetails-fin-label">Net Retention Rate</span>
-                      <strong className="pdetails-fin-num">108.5%</strong>
-                      <span className="pdetails-fin-badge">Cohort Analysis</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
 
