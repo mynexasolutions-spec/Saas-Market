@@ -834,6 +834,28 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     <span>Stripe &amp; Banking Verified Diligence Data Telemetry</span>
                   </div>
                 </div>
+
+                {/* Post-Telemetry Diligence & Transaction Governance */}
+                <div className="pdetails-about-card" style={{ marginTop: "2rem" }}>
+                  <span className="pdetails-about-badge" style={{ background: "#EEF2FF", color: "#4F46E5" }}>
+                    Transaction Diligence &amp; Asset Handover
+                  </span>
+                  <h2 className="pdetails-card-title">
+                    Escrow Protocols, Merchant Account Transfer &amp; Post-Closing Continuity
+                  </h2>
+                  <p className="pdetails-about-paragraph">
+                    During asset acquisition, {product.name}&apos;s billing infrastructure facilitates seamless ownership reassignment with zero payment disruption for active subscribers. Native merchant-of-record and Stripe Connect integrations allow direct administrative transfer of customer tokens, historical billing records, recurring subscription schedules, and banked account feeds without triggering re-authentication friction or involuntary subscriber churn.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    Transaction settlement is structured through industry-standard SaaS escrow workflows, ensuring mutual protection throughout the technical inspection and migration escrow period. Comprehensive diligence packages include audited month-over-month Profit &amp; Loss (P&amp;L) ledgers, GAAP-compliant revenue recognition summaries, verified Stripe customer cohort retention reports, and third-party bank reconciliation statements spanning the preceding 24 months.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    From an operational efficiency standpoint, customer payback periods remain exceptionally rapid at under 5.2 months, supported by organic acquisition channels, word-of-mouth referral velocity, and product-led growth (PLG) expansion tiers. Customer Lifetime Value (LTV) continues to compound through enterprise tier upsells and annual prepaid contract commitments, delivering robust cash flow predictability and substantial downside protection for acquiring operators.
+                  </p>
+                  <p className="pdetails-about-paragraph" style={{ marginBottom: 0 }}>
+                    Post-closing transition governance includes up to 90 days of structured founder advisory support, detailed standard operating procedures (SOPs) for continuous integration and automated deployments, and transferred vendor accounts across hosting, logging, and security compliance tools to guarantee seamless, uninterrupted day-one operational continuity.
+                  </p>
+                </div>
               </div>
             )}
 
