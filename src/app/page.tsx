@@ -1,21 +1,29 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import IdeaExplainer from "@/components/IdeaExplainer";
 import Categories from "@/components/Categories";
 import HowItWorks from "@/components/HowItWorks";
+import PlatformShowcase from "@/components/PlatformShowcase";
+import ClientRelationBanner from "@/components/ClientRelationBanner";
 import FeaturedProducts, { ProductItem } from "@/components/FeaturedProducts";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import DualBanners from "@/components/DualBanners";
 import Testimonials from "@/components/Testimonials";
+import SplitFeatureShowcase from "@/components/SplitFeatureShowcase";
 import BlogArticles from "@/components/BlogArticles";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import ProductModal from "@/components/ProductModal";
 import AuthModal from "@/components/AuthModal";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const router = useRouter();
+  const { isAuthOpen, authMode, openAuth, closeAuth } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
@@ -24,8 +32,6 @@ export default function Home() {
   
   // Modals state
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<"login" | "signup">("signup");
   
   // Toast state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -76,11 +82,6 @@ export default function Home() {
     }
   };
 
-  const handleOpenAuth = (mode: "login" | "signup") => {
-    setAuthMode(mode);
-    setAuthModalOpen(true);
-  };
-
   const handleAuthSuccess = (email: string) => {
     showToast(`Welcome! Logged in as ${email}`);
   };
@@ -98,7 +99,7 @@ export default function Home() {
     <>
       {/* Navigation Header with Inline Expanding Search */}
       <Navbar
-        onOpenAuth={handleOpenAuth}
+        onOpenAuth={openAuth}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onSearchSubmit={handleSearchSubmit}
@@ -109,18 +110,27 @@ export default function Home() {
         {/* Hero Section (Contains Integrated Bottom Metrics Bar) */}
         <Hero onExploreScroll={handleExploreScroll} />
 
+        {/* Idea explainer: what SaaS MRKT is, old way vs new way, interactive tour */}
+        <IdeaExplainer />
+
         {/* Browse by Category (10 cards) */}
         <Categories
           onSelectCategory={handleCategorySelect}
           activeCategory={activeCategory}
         />
 
+        {/* Live Platform Handover Showcase Banner */}
+        <PlatformShowcase />
+
         {/* How SaaS MRKT Works (3 steps flow) */}
         <HowItWorks />
 
+        {/* SaaS & Client Relationship Partnership Showcase */}
+        <ClientRelationBanner />
+
         {/* Featured Products (5 cards with screenshots) */}
         <FeaturedProducts
-          onViewProduct={(product) => setSelectedProduct(product)}
+          onViewProduct={(product) => router.push(`/products/${product.id}`)}
           searchFilter={searchQuery}
           categoryFilter={activeCategory}
         />
@@ -131,11 +141,14 @@ export default function Home() {
         {/* Dual Banners (For Buyers & For Sellers) */}
         <DualBanners
           onExploreProducts={handleExploreScroll}
-          onBecomeSeller={() => handleOpenAuth("signup")}
+          onBecomeSeller={() => openAuth("signup")}
         />
 
         {/* What Our Users Say (Testimonials) */}
         <Testimonials />
+
+        {/* Enterprise Split Showcase (Image Left, Text Right) */}
+        <SplitFeatureShowcase onExplore={handleExploreScroll} />
 
         {/* Latest Articles & Resources (Blog) */}
         <BlogArticles
@@ -161,9 +174,9 @@ export default function Home() {
 
       {/* Authentication Modal */}
       <AuthModal
-        isOpen={authModalOpen}
+        isOpen={isAuthOpen}
         initialMode={authMode}
-        onClose={() => setAuthModalOpen(false)}
+        onClose={closeAuth}
         onSuccess={handleAuthSuccess}
       />
 

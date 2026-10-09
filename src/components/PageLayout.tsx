@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
+import { useAuth } from "@/context/AuthContext";
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -15,14 +16,14 @@ interface PageLayoutProps {
 
 export default function PageLayout({ children, activeNav, noContainer }: PageLayoutProps) {
   const pathname = usePathname();
+  const { user, logout, isAuthOpen, authMode, openAuth, closeAuth } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<"login" | "signup">("signup");
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  const handleOpenAuth = (mode: "login" | "signup") => {
-    setAuthMode(mode);
-    setAuthModalOpen(true);
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3500);
   };
 
   const navLinks = [
@@ -30,7 +31,6 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
     { href: "/categories", label: "Categories", id: "categories" },
     { href: "/buyers", label: "For Buyers", id: "buyers" },
     { href: "/sellers", label: "For Sellers", id: "sellers" },
-    { href: "/pricing", label: "Pricing", id: "pricing" },
   ];
 
   return (
@@ -129,13 +129,64 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
 
             {/* Right Actions */}
             <div className="nav-actions">
-              <Link href="/blog" className="login-link nav-desktop-auth" id="nav-blog-link">Blog</Link>
-              <button className="login-link nav-desktop-auth" onClick={() => handleOpenAuth("login")} id="nav-login-btn">
-                Login
-              </button>
-              <button className="btn-primary nav-desktop-auth" onClick={() => handleOpenAuth("signup")} id="nav-get-started-btn">
-                Get Started
-              </button>
+              {user ? (
+                <div className="nav-user-logged-wrap">
+                  <div className="nav-user-badge" title={user.email}>
+                    <span className="nav-user-avatar" aria-hidden="true">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </span>
+                    <span className="nav-user-name">{user.name}</span>
+                    <span className="nav-user-indicator" title="Active"></span>
+                  </div>
+                  <button
+                    type="button"
+                    className="nav-logout-btn"
+                    onClick={() => {
+                      logout();
+                      showToast("Signed out successfully.");
+                    }}
+                    title="Sign out of account"
+                    id="page-layout-logout-btn"
+                  >
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button className="login-link nav-desktop-auth" onClick={() => openAuth("login")} id="nav-login-btn">
+                    Login
+                  </button>
+                  <button className="btn-primary nav-desktop-auth" onClick={() => openAuth("signup")} id="nav-get-started-btn">
+                    Get Started
+                  </button>
+                </>
+              )}
               <button
                 className="mobile-menu-btn"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -177,30 +228,84 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
                 <Link href="/contact" className={`mobile-nav-item${pathname === "/contact" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Contact</Link>
               </div>
               <div className="mobile-nav-auth-section">
-                <button
-                  className="mobile-btn-login"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleOpenAuth("login");
-                  }}
-                  id="mobile-nav-login-btn"
-                >
-                  Login
-                </button>
-                <button
-                  className="btn-primary mobile-btn-signup"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleOpenAuth("signup");
-                  }}
-                  id="mobile-nav-get-started-btn"
-                >
-                  Get Started
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </button>
+                {user ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
+                    <div className="nav-user-badge" style={{ width: "fit-content" }} title={user.email}>
+                      <span className="nav-user-avatar" aria-hidden="true">
+                        <svg
+                          width="15"
+                          height="15"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                      </span>
+                      <span className="nav-user-name">{user.name}</span>
+                      <span className="nav-user-indicator" title="Active"></span>
+                    </div>
+                    <button
+                      type="button"
+                      className="nav-logout-btn"
+                      style={{ width: "100%", justifyContent: "center" }}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        logout();
+                        showToast("Signed out successfully.");
+                      }}
+                    >
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                      </svg>
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="mobile-btn-login"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        openAuth("login");
+                      }}
+                      id="mobile-nav-login-btn"
+                    >
+                      Login
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-primary mobile-btn-signup"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        openAuth("signup");
+                      }}
+                      id="mobile-nav-get-started-btn"
+                    >
+                      Get Started
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -214,11 +319,22 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
       <Footer />
 
       <AuthModal
-        isOpen={authModalOpen}
+        isOpen={isAuthOpen}
         initialMode={authMode}
-        onClose={() => setAuthModalOpen(false)}
-        onSuccess={() => setAuthModalOpen(false)}
+        onClose={closeAuth}
+        onSuccess={(email) => {
+          closeAuth();
+          showToast(`Welcome! You are signed in as ${email}`);
+        }}
       />
+
+      {/* Toast Notification */}
+      {toastMsg && (
+        <div className="toast-notice" role="status">
+          <span>⚡</span>
+          <span>{toastMsg}</span>
+        </div>
+      )}
     </>
   );
 }

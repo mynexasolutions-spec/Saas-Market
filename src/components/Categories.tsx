@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 interface CategoriesProps {
   onSelectCategory: (catName: string) => void;
@@ -171,9 +172,9 @@ export default function Categories({ onSelectCategory, activeCategory }: Categor
               Explore SaaS products across different categories and find the perfect tools for your business.
             </p>
           </div>
-          <a href="#featured" className="view-all-link" id="view-all-categories-link">
+          <Link href="/categories" className="view-all-link" id="view-all-categories-link">
             <span>View All Categories</span>
-          </a>
+          </Link>
         </div>
 
         {/* 10-Item Grid (2 rows x 5 columns) */}
@@ -200,8 +201,6 @@ export default function Categories({ onSelectCategory, activeCategory }: Categor
                     <span className="category-count">{cat.count}</span>
                   </div>
                 </div>
-                <span className="category-arrow">
-                </span>
               </div>
             );
           })}

@@ -1,85 +1,72 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 interface NewsletterProps {
-  onSubscribe: (email: string) => void;
+  onSubscribe?: (email: string) => void;
 }
 
 export default function Newsletter({ onSubscribe }: NewsletterProps) {
-  const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !email.includes("@")) return;
-    onSubscribe(email);
-    setIsSubscribed(true);
-    setEmail("");
-    setTimeout(() => {
-      setIsSubscribed(false);
-    }, 4000);
-  };
-
   return (
     <section className="newsletter-section" id="newsletter">
       <div className="container">
         <div className="newsletter-box">
           {/* Left Text */}
           <div className="newsletter-left">
-            <span className="newsletter-badge">STAY UPDATED</span>
+            <span className="newsletter-badge">PLATFORM PROMISE</span>
             <h2 className="newsletter-title">
-              Get the Latest SaaS Deals &amp; Insights
+              Built for Modern Teams Scaling Faster
             </h2>
             <p className="newsletter-subtitle">
-              Join thousands of businesses and discover the best SaaS tools today.
+              Discover, compare, and deploy verified SaaS products with full transparency and zero hidden fees.
             </p>
           </div>
 
-          {/* Right Form */}
+          {/* Right Text Features (replacing subscription form) */}
           <div className="newsletter-right">
-            {isSubscribed ? (
-              <div
-                style={{
-                  background: "rgba(16, 185, 129, 0.15)",
-                  border: "1px solid rgba(16, 185, 129, 0.4)",
-                  color: "#34D399",
-                  padding: "0.85rem 1.25rem",
-                  borderRadius: "var(--radius-full)",
-                  textAlign: "center",
-                  fontWeight: 600,
-                  fontSize: "0.9rem",
-                }}
-              >
-                ✓ Thanks for subscribing! You are on the VIP list.
+            <div className="newsletter-text-features">
+              <div className="newsletter-text-card">
+                <div className="newsletter-text-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <div className="newsletter-text-info">
+                  <h4 className="newsletter-text-head">Verified Vendors &amp; Security</h4>
+                  <p className="newsletter-text-body">
+                    Every product passes strict performance, SLA, and security checks before listing.
+                  </p>
+                </div>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit}>
-                <div className="newsletter-form">
-                  <input
-                    type="email"
-                    required
-                    placeholder="Enter your email address..."
-                    className="newsletter-input"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    id="newsletter-email-input"
-                    aria-label="Email for SaaS newsletter"
-                  />
-                  <button
-                    type="submit"
-                    className="newsletter-btn"
-                    id="newsletter-submit-btn"
-                  >
-                    <span>Subscribe</span>
-                    
-                  </button>
+
+              <div className="newsletter-text-card">
+                <div className="newsletter-text-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
                 </div>
-                <div className="newsletter-disclaimer">
-                  No spam. Unsubscribe anytime.
+                <div className="newsletter-text-info">
+                  <h4 className="newsletter-text-head">Exclusive Direct Deals</h4>
+                  <p className="newsletter-text-body">
+                    Access special founder discounts and flexible tier upgrades directly from creators.
+                  </p>
                 </div>
-              </form>
-            )}
+              </div>
+
+              <div className="newsletter-text-card">
+                <div className="newsletter-text-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <div className="newsletter-text-info">
+                  <h4 className="newsletter-text-head">Zero Spam, Zero Lock-In</h4>
+                  <p className="newsletter-text-body">
+                    Evaluate tools transparently with real user reviews, verified ratings, and clean handoffs.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

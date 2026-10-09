@@ -118,7 +118,7 @@ const MILESTONES = [
 
 export default function AboutPageClient() {
   return (
-    <PageLayout>
+    <PageLayout noContainer>
       {/* Hero */}
       <section className="about-hero">
         <div className="container">
