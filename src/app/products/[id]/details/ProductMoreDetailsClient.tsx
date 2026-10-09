@@ -4,7 +4,27 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
-import { ProductItem } from "@/data/products";
+import { ALL_PRODUCTS, ProductItem } from "@/data/products";
+
+export interface ComparableOption {
+  id: string;
+  name: string;
+  sub: string;
+  letter: string;
+  color: string;
+  category: string;
+  isMarketplace: boolean;
+  price: string;
+  rating: number;
+  reviews: string;
+  ipTransfer: string;
+  edgeLatency: string;
+  sla: string;
+  soc2: string;
+  support: string;
+  hosting: string;
+  api: string;
+}
 
 interface ProductMoreDetailsClientProps {
   product: ProductItem;
@@ -27,189 +47,344 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
   const sellerName = product.sellerName || "Elena Rostova";
   const techStack = product.techStack || ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "AWS"];
 
-  // Dynamic competitor benchmarking data based on category
-  const competitors = React.useMemo(() => {
+  // Marketplace comparable options from ALL_PRODUCTS
+  const marketplaceOptions = React.useMemo<ComparableOption[]>(() => {
+    return ALL_PRODUCTS.filter((p) => p.id !== product.id).map((p) => ({
+      id: p.id,
+      name: p.name,
+      sub: `SaaS MRKT • ${p.category}`,
+      letter: p.brandLetter || p.name.charAt(0),
+      color: p.brandColor || "#4F46E5",
+      category: p.category,
+      isMarketplace: true,
+      price: `$${p.price}/mo`,
+      rating: p.rating || 4.8,
+      reviews: (p.reviewCount || 1250).toLocaleString(),
+      ipTransfer: "✓ 100% Full IP Transfer via Escrow",
+      edgeLatency: "< 110ms Edge Routing",
+      sla: "99.98% High-Availability",
+      soc2: "Pre-audited SOC 2 & GDPR",
+      support: "45-Day 1-on-1 Founder Transition",
+      hosting: p.techStack && p.techStack.length > 0 ? p.techStack.slice(0, 3).join(", ") : "Next.js, Node, AWS",
+      api: "OpenAPI 3.0 + Webhooks",
+    }));
+  }, [product.id]);
+
+  // Industry alternatives pool
+  const industryOptions = React.useMemo<ComparableOption[]>(() => [
+    {
+      id: "ext-bamboohr",
+      name: "BambooHR",
+      sub: "Legacy SMB HR Platform",
+      letter: "B",
+      color: "#16A34A",
+      category: "HR & Payroll",
+      isMarketplace: false,
+      price: "$108/mo (min 20 seats)",
+      rating: 4.5,
+      reviews: "2,410",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "240ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Add-on ($$$)",
+      support: "Standard Ticket Queue",
+      hosting: "Proprietary Cloud",
+      api: "REST API (Rate limited)",
+    },
+    {
+      id: "ext-rippling",
+      name: "Rippling",
+      sub: "All-in-one Workforce Cloud",
+      letter: "R",
+      color: "#E11D48",
+      category: "HR & Payroll",
+      isMarketplace: false,
+      price: "$140/mo (Base + seat fees)",
+      rating: 4.6,
+      reviews: "1,980",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "210ms P95",
+      sla: "99.90% SLA",
+      soc2: "Annual Add-on Fee",
+      support: "Chat / 48h SLA",
+      hosting: "Proprietary Cloud",
+      api: "REST API Only",
+    },
+    {
+      id: "ext-gusto",
+      name: "Gusto",
+      sub: "Payroll & Benefits Cloud",
+      letter: "G",
+      color: "#F43F5E",
+      category: "HR & Payroll",
+      isMarketplace: false,
+      price: "$80/mo + $6/user",
+      rating: 4.5,
+      reviews: "3,200",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "220ms P95",
+      sla: "99.90% SLA",
+      soc2: "Standard",
+      support: "Email & Phone Support",
+      hosting: "Ruby/Rails Cloud",
+      api: "Partner API",
+    },
+    {
+      id: "ext-monday",
+      name: "Monday.com",
+      sub: "Enterprise Work OS",
+      letter: "M",
+      color: "#F59E0B",
+      category: "Project Management",
+      isMarketplace: false,
+      price: "$48/mo (min 3 seats)",
+      rating: 4.6,
+      reviews: "3,890",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "220ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Plan Only",
+      support: "Tiered Ticket Support",
+      hosting: "Shared AWS Cloud",
+      api: "GraphQL (Limited)",
+    },
+    {
+      id: "ext-asana",
+      name: "Asana",
+      sub: "Team Task Management",
+      letter: "A",
+      color: "#E11D48",
+      category: "Project Management",
+      isMarketplace: false,
+      price: "$32.99/user/mo",
+      rating: 4.5,
+      reviews: "4,120",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "190ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Plan Only",
+      support: "Forum & Ticket",
+      hosting: "AWS Monolith",
+      api: "REST API v1",
+    },
+    {
+      id: "ext-linear",
+      name: "Linear",
+      sub: "High-Speed Issue Tracking",
+      letter: "L",
+      color: "#5E6AD2",
+      category: "Project Management",
+      isMarketplace: false,
+      price: "$10/user/mo",
+      rating: 4.8,
+      reviews: "1,850",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "120ms P95",
+      sla: "99.95% SLA",
+      soc2: "Standard",
+      support: "Slack & Email",
+      hosting: "Modern Cloud",
+      api: "GraphQL Realtime",
+    },
+    {
+      id: "ext-hubspot",
+      name: "HubSpot CRM",
+      sub: "Inbound Marketing & CRM",
+      letter: "H",
+      color: "#F97316",
+      category: "CRM & Sales",
+      isMarketplace: false,
+      price: "$50/mo (Starter Tier)",
+      rating: 4.5,
+      reviews: "4,500",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "250ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Tier ($$$)",
+      support: "Phone & Chat",
+      hosting: "Proprietary Cloud",
+      api: "REST API (Strict caps)",
+    },
+    {
+      id: "ext-salesforce",
+      name: "Salesforce Essentials",
+      sub: "Small Business CRM",
+      letter: "S",
+      color: "#0284C7",
+      category: "CRM & Sales",
+      isMarketplace: false,
+      price: "$30/user/mo",
+      rating: 4.4,
+      reviews: "3,200",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "280ms P95",
+      sla: "99.85% SLA",
+      soc2: "Requires Add-on",
+      support: "Tiered Support",
+      hosting: "Salesforce Cloud",
+      api: "SOAP & REST API",
+    },
+    {
+      id: "ext-quickbooks",
+      name: "QuickBooks Online",
+      sub: "Small Business Bookkeeping",
+      letter: "Q",
+      color: "#10B981",
+      category: "Finance & Accounting",
+      isMarketplace: false,
+      price: "$38/mo (Simple Start)",
+      rating: 4.4,
+      reviews: "5,800",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "290ms P95",
+      sla: "99.80% SLA",
+      soc2: "Standard",
+      support: "Chat Support",
+      hosting: "Intuit Cloud",
+      api: "Intuit Developer API",
+    },
+    {
+      id: "ext-xero",
+      name: "Xero",
+      sub: "Cloud Accounting Platform",
+      letter: "X",
+      color: "#0EA5E9",
+      category: "Finance & Accounting",
+      isMarketplace: false,
+      price: "$47/mo (Growing)",
+      rating: 4.5,
+      reviews: "3,100",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "260ms P95",
+      sla: "99.85% SLA",
+      soc2: "Standard",
+      support: "Email Support",
+      hosting: "AWS Cloud",
+      api: "REST API v2",
+    },
+    {
+      id: "ext-zendesk",
+      name: "Zendesk",
+      sub: "Enterprise Customer Helpdesk",
+      letter: "Z",
+      color: "#03363D",
+      category: "Customer Support",
+      isMarketplace: false,
+      price: "$69/user/mo",
+      rating: 4.4,
+      reviews: "4,800",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "240ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Tier",
+      support: "Ticket Queue",
+      hosting: "Zendesk Cloud",
+      api: "REST API",
+    },
+    {
+      id: "ext-intercom",
+      name: "Intercom",
+      sub: "AI Customer Communications",
+      letter: "I",
+      color: "#1F8CEB",
+      category: "Customer Support",
+      isMarketplace: false,
+      price: "$74/mo + AI fees",
+      rating: 4.5,
+      reviews: "2,600",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "210ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Tier",
+      support: "Fin AI Bot First",
+      hosting: "AWS Cloud",
+      api: "REST & Webhooks",
+    },
+    {
+      id: "ext-klaviyo",
+      name: "Klaviyo",
+      sub: "Lifecycle Marketing Automation",
+      letter: "K",
+      color: "#2563EB",
+      category: "Marketing & Automation",
+      isMarketplace: false,
+      price: "$60/mo + list fees",
+      rating: 4.6,
+      reviews: "2,900",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "200ms P95",
+      sla: "99.90% SLA",
+      soc2: "Standard",
+      support: "Email & Chat",
+      hosting: "AWS Cloud",
+      api: "REST API v3",
+    },
+    {
+      id: "ext-mailchimp",
+      name: "Mailchimp",
+      sub: "Email & Campaign Marketing",
+      letter: "M",
+      color: "#CA8A04",
+      category: "Marketing & Automation",
+      isMarketplace: false,
+      price: "$45/mo (Standard)",
+      rating: 4.4,
+      reviews: "6,200",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "250ms P95",
+      sla: "99.85% SLA",
+      soc2: "Standard",
+      support: "Ticket Support",
+      hosting: "Intuit Cloud",
+      api: "Marketing API v3",
+    },
+  ], []);
+
+  // All combined options
+  const allComparableOptions = React.useMemo<ComparableOption[]>(() => {
+    return [...marketplaceOptions, ...industryOptions];
+  }, [marketplaceOptions, industryOptions]);
+
+  // Compute default initial choices based on product category
+  const defaultChoices = React.useMemo(() => {
     const cat = (product.category || "").toLowerCase();
     if (cat.includes("hr") || cat.includes("payroll")) {
-      return [
-        {
-          name: "BambooHR",
-          sub: "Legacy SMB HR Platform",
-          letter: "B",
-          color: "#16A34A",
-          price: "$108/mo (min 20 seats)",
-          rating: 4.5,
-          reviews: "2,410",
-          ipTransfer: "No (Vendor Lock-in)",
-          edgeLatency: "240ms P95",
-          sla: "99.90% SLA",
-          soc2: "Enterprise Add-on ($$$)",
-          support: "Standard Ticket Queue",
-          hosting: "Proprietary Cloud",
-          api: "REST API (Rate limited)",
-        },
-        {
-          name: "Rippling",
-          sub: "All-in-one Workforce Cloud",
-          letter: "R",
-          color: "#E11D48",
-          price: "$140/mo (Base + seat fees)",
-          rating: 4.6,
-          reviews: "1,980",
-          ipTransfer: "No (Vendor Lock-in)",
-          edgeLatency: "210ms P95",
-          sla: "99.90% SLA",
-          soc2: "Annual Add-on Fee",
-          support: "Chat / 48h SLA",
-          hosting: "Proprietary Cloud",
-          api: "REST API Only",
-        },
-      ];
+      return { comp1: "ext-bamboohr", comp2: "ext-rippling" };
     }
     if (cat.includes("project") || cat.includes("collab") || cat.includes("task")) {
-      return [
-        {
-          name: "Monday.com",
-          sub: "Enterprise Work OS",
-          letter: "M",
-          color: "#F59E0B",
-          price: "$48/mo (min 3 seats)",
-          rating: 4.6,
-          reviews: "3,890",
-          ipTransfer: "No (Vendor Lock-in)",
-          edgeLatency: "220ms P95",
-          sla: "99.90% SLA",
-          soc2: "Enterprise Plan Only",
-          support: "Tiered Ticket Support",
-          hosting: "Shared AWS Cloud",
-          api: "GraphQL (Limited)",
-        },
-        {
-          name: "Asana",
-          sub: "Team Task Management",
-          letter: "A",
-          color: "#F43F5E",
-          price: "$32.99/user/mo",
-          rating: 4.5,
-          reviews: "4,120",
-          ipTransfer: "No (Vendor Lock-in)",
-          edgeLatency: "190ms P95",
-          sla: "99.90% SLA",
-          soc2: "Enterprise Plan Only",
-          support: "Forum & Ticket",
-          hosting: "AWS Monolith",
-          api: "REST API v1",
-        },
-      ];
+      return { comp1: "ext-monday", comp2: "ext-asana" };
     }
     if (cat.includes("crm") || cat.includes("sales")) {
-      return [
-        {
-          name: "HubSpot CRM",
-          sub: "Inbound Marketing & CRM",
-          letter: "H",
-          color: "#F97316",
-          price: "$50/mo (Starter Tier)",
-          rating: 4.5,
-          reviews: "4,500",
-          ipTransfer: "No (Vendor Lock-in)",
-          edgeLatency: "250ms P95",
-          sla: "99.90% SLA",
-          soc2: "Enterprise Tier ($$$)",
-          support: "Phone & Chat",
-          hosting: "Proprietary Cloud",
-          api: "REST API (Strict caps)",
-        },
-        {
-          name: "Salesforce Essentials",
-          sub: "Small Business CRM",
-          letter: "S",
-          color: "#0284C7",
-          price: "$30/user/mo",
-          rating: 4.4,
-          reviews: "3,200",
-          ipTransfer: "No (Vendor Lock-in)",
-          edgeLatency: "280ms P95",
-          sla: "99.85% SLA",
-          soc2: "Requires Add-on",
-          support: "Tiered Support",
-          hosting: "Salesforce Cloud",
-          api: "SOAP & REST API",
-        },
-      ];
+      return { comp1: "ext-hubspot", comp2: "ext-salesforce" };
     }
     if (cat.includes("finance") || cat.includes("accounting")) {
-      return [
-        {
-          name: "QuickBooks Online",
-          sub: "Small Business Bookkeeping",
-          letter: "Q",
-          color: "#10B981",
-          price: "$38/mo (Simple Start)",
-          rating: 4.4,
-          reviews: "5,800",
-          ipTransfer: "No (Vendor Lock-in)",
-          edgeLatency: "290ms P95",
-          sla: "99.80% SLA",
-          soc2: "Standard",
-          support: "Chat Support",
-          hosting: "Intuit Cloud",
-          api: "Intuit Developer API",
-        },
-        {
-          name: "Xero",
-          sub: "Cloud Accounting Platform",
-          letter: "X",
-          color: "#0EA5E9",
-          price: "$47/mo (Growing)",
-          rating: 4.5,
-          reviews: "3,100",
-          ipTransfer: "No (Vendor Lock-in)",
-          edgeLatency: "260ms P95",
-          sla: "99.85% SLA",
-          soc2: "Standard",
-          support: "Email Support",
-          hosting: "AWS Cloud",
-          api: "REST API v2",
-        },
-      ];
+      return { comp1: "ext-quickbooks", comp2: "ext-xero" };
     }
-    // Default fallback competitors
-    return [
-      {
-        name: "Industry Competitor A",
-        sub: "Closed Enterprise SaaS",
-        letter: "C",
-        color: "#64748B",
-        price: "$89/user/mo",
-        rating: 4.5,
-        reviews: "2,200",
-        ipTransfer: "No (Vendor Lock-in)",
-        edgeLatency: "230ms P95",
-        sla: "99.90% SLA",
-        soc2: "Enterprise Only",
-        support: "Ticket Queue",
-        hosting: "Multi-tenant Cloud",
-        api: "REST API",
-      },
-      {
-        name: "Legacy Alternative B",
-        sub: "Traditional On-Premise / Hosted",
-        letter: "L",
-        color: "#94A3B8",
-        price: "$65/mo + Setup Fee",
-        rating: 4.4,
-        reviews: "1,750",
-        ipTransfer: "No (Vendor Lock-in)",
-        edgeLatency: "260ms P95",
-        sla: "99.85% SLA",
-        soc2: "Available as Add-on",
-        support: "Email / Forum",
-        hosting: "Shared Cloud",
-        api: "Legacy Webhook",
-      },
-    ];
-  }, [product.category]);
+    if (cat.includes("support") || cat.includes("customer")) {
+      return { comp1: "ext-zendesk", comp2: "ext-intercom" };
+    }
+    if (cat.includes("marketing")) {
+      return { comp1: "ext-klaviyo", comp2: "ext-mailchimp" };
+    }
+    const sameCatMkt = marketplaceOptions.filter((m) => m.category === product.category);
+    if (sameCatMkt.length >= 2) {
+      return { comp1: sameCatMkt[0].id, comp2: sameCatMkt[1].id };
+    }
+    return { comp1: marketplaceOptions[0]?.id || "ext-monday", comp2: "ext-bamboohr" };
+  }, [product.category, marketplaceOptions]);
+
+  // Selected competitor states
+  const [comp1Id, setComp1Id] = useState<string>(defaultChoices.comp1);
+  const [comp2Id, setComp2Id] = useState<string>(defaultChoices.comp2);
+
+  // Resolved active competitors
+  const comp1 = React.useMemo(() => {
+    return allComparableOptions.find((c) => c.id === comp1Id) || allComparableOptions[0] || industryOptions[0];
+  }, [allComparableOptions, comp1Id, industryOptions]);
+
+  const comp2 = React.useMemo(() => {
+    return allComparableOptions.find((c) => c.id === comp2Id) || allComparableOptions[1] || industryOptions[1];
+  }, [allComparableOptions, comp2Id, industryOptions]);
 
   return (
     <PageLayout activeNav="products" noContainer>
@@ -746,13 +921,125 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                       </p>
                     </div>
 
+                    {/* Interactive Product Chooser Toolbar */}
+                    <div className="pdetails-compare-toolbar">
+                      <div className="pdetails-compare-toolbar-top">
+                        <div className="pdetails-compare-toolbar-title">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 16v-4" />
+                            <path d="M12 8h.01" />
+                          </svg>
+                          <span>Customize Comparison: Choose Which Products You Want to Compare</span>
+                        </div>
+                      </div>
+
+                      <div className="pdetails-compare-pickers-grid">
+                        <div className="pdetails-compare-picker-box">
+                          <label className="pdetails-compare-picker-label" htmlFor="compare-slot-1">
+                            <span>Slot 1: Choose Product</span>
+                            <span style={{ color: comp1.isMarketplace ? "#059669" : "#4F46E5", fontSize: "0.75rem", textTransform: "none" }}>
+                              {comp1.isMarketplace ? "✓ SaaS MRKT" : "External Alternative"}
+                            </span>
+                          </label>
+                          <select
+                            id="compare-slot-1"
+                            className="pdetails-compare-picker-select"
+                            value={comp1Id}
+                            onChange={(e) => setComp1Id(e.target.value)}
+                          >
+                            <optgroup label="Popular Industry Alternatives">
+                              {industryOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.name} ({opt.category})
+                                </option>
+                              ))}
+                            </optgroup>
+                            <optgroup label="SaaS MRKT Verified Listings">
+                              {marketplaceOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.name} ({opt.category})
+                                </option>
+                              ))}
+                            </optgroup>
+                          </select>
+                        </div>
+
+                        <div className="pdetails-compare-picker-box">
+                          <label className="pdetails-compare-picker-label" htmlFor="compare-slot-2">
+                            <span>Slot 2: Choose Product</span>
+                            <span style={{ color: comp2.isMarketplace ? "#059669" : "#4F46E5", fontSize: "0.75rem", textTransform: "none" }}>
+                              {comp2.isMarketplace ? "✓ SaaS MRKT" : "External Alternative"}
+                            </span>
+                          </label>
+                          <select
+                            id="compare-slot-2"
+                            className="pdetails-compare-picker-select"
+                            value={comp2Id}
+                            onChange={(e) => setComp2Id(e.target.value)}
+                          >
+                            <optgroup label="Popular Industry Alternatives">
+                              {industryOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.name} ({opt.category})
+                                </option>
+                              ))}
+                            </optgroup>
+                            <optgroup label="SaaS MRKT Verified Listings">
+                              {marketplaceOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.name} ({opt.category})
+                                </option>
+                              ))}
+                            </optgroup>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="pdetails-compare-pills-row">
+                        <span className="pdetails-compare-pills-label">Quick presets:</span>
+                        <button
+                          type="button"
+                          className="pdetails-compare-quick-btn"
+                          onClick={() => {
+                            setComp1Id(defaultChoices.comp1);
+                            setComp2Id(defaultChoices.comp2);
+                          }}
+                        >
+                          Category Peers ({product.category})
+                        </button>
+                        {marketplaceOptions.length >= 2 && (
+                          <button
+                            type="button"
+                            className="pdetails-compare-quick-btn"
+                            onClick={() => {
+                              setComp1Id(marketplaceOptions[0].id);
+                              setComp2Id(marketplaceOptions[1].id);
+                            }}
+                          >
+                            Marketplace Listings
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="pdetails-compare-quick-btn"
+                          onClick={() => {
+                            setComp1Id("ext-monday");
+                            setComp2Id("ext-bamboohr");
+                          }}
+                        >
+                          Industry Giants
+                        </button>
+                      </div>
+                    </div>
+
                     {/* Comparison Matrix Table */}
                     <div className="pdetails-compare-table-container">
                       <table className="pdetails-compare-table">
                         <thead>
                           <tr>
-                            <th style={{ width: "25%" }}>Feature / Dimension</th>
-                            <th className="pdetails-compare-col-featured" style={{ width: "31%" }}>
+                            <th style={{ width: "24%" }}>Feature / Dimension</th>
+                            <th className="pdetails-compare-col-featured" style={{ width: "32%" }}>
                               <div className="pdetails-compare-product-cell">
                                 <div
                                   className="pdetails-compare-avatar"
@@ -762,7 +1049,7 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                                 </div>
                                 <div className="pdetails-compare-product-info">
                                   <span className="pdetails-compare-product-name">{product.name}</span>
-                                  <span className="pdetails-compare-pill-verified">✓ Verified Marketplace Listing</span>
+                                  <span className="pdetails-compare-pill-verified">✓ This Product (Verified)</span>
                                 </div>
                               </div>
                             </th>
@@ -770,29 +1057,67 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                               <div className="pdetails-compare-product-cell">
                                 <div
                                   className="pdetails-compare-avatar"
-                                  style={{ backgroundColor: competitors[0].color }}
+                                  style={{ backgroundColor: comp1.color }}
                                 >
-                                  {competitors[0].letter}
+                                  {comp1.letter}
                                 </div>
                                 <div className="pdetails-compare-product-info">
-                                  <span className="pdetails-compare-product-name">{competitors[0].name}</span>
-                                  <span className="pdetails-compare-pill-competitor">{competitors[0].sub}</span>
+                                  <span className="pdetails-compare-product-name">{comp1.name}</span>
+                                  <span className={comp1.isMarketplace ? "pdetails-compare-pill-verified" : "pdetails-compare-pill-competitor"}>
+                                    {comp1.sub}
+                                  </span>
                                 </div>
                               </div>
+                              <select
+                                className="pdetails-compare-col-header-select"
+                                value={comp1Id}
+                                onChange={(e) => setComp1Id(e.target.value)}
+                                aria-label="Switch Slot 1 product"
+                              >
+                                <optgroup label="Industry Alternatives">
+                                  {industryOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>Switch: {opt.name}</option>
+                                  ))}
+                                </optgroup>
+                                <optgroup label="SaaS MRKT Listings">
+                                  {marketplaceOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>Switch: {opt.name}</option>
+                                  ))}
+                                </optgroup>
+                              </select>
                             </th>
                             <th style={{ width: "22%" }}>
                               <div className="pdetails-compare-product-cell">
                                 <div
                                   className="pdetails-compare-avatar"
-                                  style={{ backgroundColor: competitors[1].color }}
+                                  style={{ backgroundColor: comp2.color }}
                                 >
-                                  {competitors[1].letter}
+                                  {comp2.letter}
                                 </div>
                                 <div className="pdetails-compare-product-info">
-                                  <span className="pdetails-compare-product-name">{competitors[1].name}</span>
-                                  <span className="pdetails-compare-pill-competitor">{competitors[1].sub}</span>
+                                  <span className="pdetails-compare-product-name">{comp2.name}</span>
+                                  <span className={comp2.isMarketplace ? "pdetails-compare-pill-verified" : "pdetails-compare-pill-competitor"}>
+                                    {comp2.sub}
+                                  </span>
                                 </div>
                               </div>
+                              <select
+                                className="pdetails-compare-col-header-select"
+                                value={comp2Id}
+                                onChange={(e) => setComp2Id(e.target.value)}
+                                aria-label="Switch Slot 2 product"
+                              >
+                                <optgroup label="Industry Alternatives">
+                                  {industryOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>Switch: {opt.name}</option>
+                                  ))}
+                                </optgroup>
+                                <optgroup label="SaaS MRKT Listings">
+                                  {marketplaceOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>Switch: {opt.name}</option>
+                                  ))}
+                                </optgroup>
+                              </select>
                             </th>
                           </tr>
                         </thead>
@@ -800,8 +1125,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                           <tr>
                             <td className="pdetails-compare-feature-label">Category</td>
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">{product.category || "Enterprise SaaS"}</td>
-                            <td>{product.category || "Enterprise SaaS"}</td>
-                            <td>{product.category || "Enterprise SaaS"}</td>
+                            <td>{comp1.category}</td>
+                            <td>{comp2.category}</td>
                           </tr>
 
                           <tr>
@@ -809,8 +1134,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <strong>{product.rating || 4.9} ★</strong> <span className="pdetails-compare-val-muted">({(product.reviewCount || 5120).toLocaleString()} reviews)</span>
                             </td>
-                            <td>{competitors[0].rating} ★ <span className="pdetails-compare-val-muted">({competitors[0].reviews} reviews)</span></td>
-                            <td>{competitors[1].rating} ★ <span className="pdetails-compare-val-muted">({competitors[1].reviews} reviews)</span></td>
+                            <td>{comp1.rating} ★ <span className="pdetails-compare-val-muted">({comp1.reviews} reviews)</span></td>
+                            <td>{comp2.rating} ★ <span className="pdetails-compare-val-muted">({comp2.reviews} reviews)</span></td>
                           </tr>
 
                           <tr>
@@ -818,8 +1143,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <span style={{ color: "#059669", fontWeight: 700 }}>✓ 100% Full IP Transfer via Escrow</span>
                             </td>
-                            <td className="pdetails-compare-val-muted">{competitors[0].ipTransfer}</td>
-                            <td className="pdetails-compare-val-muted">{competitors[1].ipTransfer}</td>
+                            <td className={comp1.isMarketplace ? "pdetails-compare-val-highlight" : "pdetails-compare-val-muted"}>{comp1.ipTransfer}</td>
+                            <td className={comp2.isMarketplace ? "pdetails-compare-val-highlight" : "pdetails-compare-val-muted"}>{comp2.ipTransfer}</td>
                           </tr>
 
                           <tr>
@@ -827,8 +1152,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <strong>${product.price}/mo</strong> <span className="pdetails-compare-val-muted">or Full Asset Acquisition</span>
                             </td>
-                            <td>{competitors[0].price}</td>
-                            <td>{competitors[1].price}</td>
+                            <td>{comp1.price}</td>
+                            <td>{comp2.price}</td>
                           </tr>
 
                           <tr>
@@ -836,8 +1161,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <strong>&lt; 110ms Edge Routing</strong>
                             </td>
-                            <td>{competitors[0].edgeLatency}</td>
-                            <td>{competitors[1].edgeLatency}</td>
+                            <td>{comp1.edgeLatency}</td>
+                            <td>{comp2.edgeLatency}</td>
                           </tr>
 
                           <tr>
@@ -845,8 +1170,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <strong>99.98% High-Availability</strong>
                             </td>
-                            <td>{competitors[0].sla}</td>
-                            <td>{competitors[1].sla}</td>
+                            <td>{comp1.sla}</td>
+                            <td>{comp2.sla}</td>
                           </tr>
 
                           <tr>
@@ -854,8 +1179,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <strong>Pre-audited SOC 2 Type II &amp; GDPR</strong>
                             </td>
-                            <td>{competitors[0].soc2}</td>
-                            <td>{competitors[1].soc2}</td>
+                            <td>{comp1.soc2}</td>
+                            <td>{comp2.soc2}</td>
                           </tr>
 
                           <tr>
@@ -863,8 +1188,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <strong>{techStack.slice(0, 4).join(", ")}</strong>
                             </td>
-                            <td>{competitors[0].hosting}</td>
-                            <td>{competitors[1].hosting}</td>
+                            <td>{comp1.hosting}</td>
+                            <td>{comp2.hosting}</td>
                           </tr>
 
                           <tr>
@@ -872,8 +1197,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <strong>45-Day 1-on-1 Transition Support</strong>
                             </td>
-                            <td className="pdetails-compare-val-muted">{competitors[0].support}</td>
-                            <td className="pdetails-compare-val-muted">{competitors[1].support}</td>
+                            <td className={comp1.isMarketplace ? "pdetails-compare-val-highlight" : "pdetails-compare-val-muted"}>{comp1.support}</td>
+                            <td className={comp2.isMarketplace ? "pdetails-compare-val-highlight" : "pdetails-compare-val-muted"}>{comp2.support}</td>
                           </tr>
 
                           <tr>
@@ -881,8 +1206,8 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                             <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
                               <strong>OpenAPI 3.0 + Webhook Subscriptions</strong>
                             </td>
-                            <td>{competitors[0].api}</td>
-                            <td>{competitors[1].api}</td>
+                            <td>{comp1.api}</td>
+                            <td>{comp2.api}</td>
                           </tr>
                         </tbody>
                       </table>
