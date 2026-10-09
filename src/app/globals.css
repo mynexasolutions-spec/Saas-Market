@@ -12862,6 +12862,22 @@ body:has(.product-detail-page-container) {
   margin-bottom: 0;
 }
 
+/* Bridge Card Between Upper and Lower Sections */
+.pdetails-bridge-card {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 1.25rem;
+  padding: 2rem 2.25rem;
+  margin: 2.25rem 0;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+}
+
+.pdetails-bridge-header {
+  margin-bottom: 0.75rem;
+}
+
 /* Media Showcase Blocks */
 .pdetails-media-block {
   margin: 2.25rem 0 1.75rem 0;
