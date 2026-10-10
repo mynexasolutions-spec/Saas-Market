@@ -161,17 +161,19 @@ export default function Categories({ onSelectCategory, activeCategory }: Categor
   return (
     <section className="categories-section" id="categories">
       <div className="container">
-        {/* Section Header */}
-        <div className="section-header-row">
-          <div>
-            <div className="section-badge" id="categories-badge">
-              EXPLORE
-            </div>
-            <h2 className="section-title">Browse by Category</h2>
-            <p className="section-subtitle">
-              Explore SaaS products across different categories and find the perfect tools for your business.
-            </p>
+        {/* Centered Section Header */}
+        <div className="categories-header-center">
+          <div className="section-badge" id="categories-badge">
+            EXPLORE
           </div>
+          <h2 className="section-title">Browse by Category</h2>
+          <p className="section-subtitle">
+            Explore SaaS products across different categories and find the perfect tools for your business.
+          </p>
+        </div>
+
+        {/* Top Action Bar */}
+        <div className="categories-top-action-bar">
           <Link href="/categories" className="view-all-link" id="view-all-categories-link">
             <span>View All Categories</span>
           </Link>
