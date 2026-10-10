@@ -38,6 +38,7 @@ export default function ProductsPageClient() {
   const [sortBy, setSortBy] = useState("popular");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -159,12 +160,43 @@ export default function ProductsPageClient() {
 
               {/* Product Grid */}
               <div className="products-content">
+                {/* Mobile Horizontal Category Pills Bar */}
+                <div className="products-mobile-category-bar" aria-label="Filter by category">
+                  <div className="products-mobile-category-scroll">
+                    {CATEGORIES.map((cat) => (
+                      <button
+                        key={cat.value}
+                        type="button"
+                        className={`products-mobile-category-chip${selectedCategory === cat.value ? " active" : ""}`}
+                        onClick={() => handleCategorySelect(cat.value)}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Top Bar with Integrated Search & Sort */}
                 <div className="products-topbar" id="products-content-top">
                   <p className="products-result-count">
                     <span className="result-count-indicator" />
                     Showing&nbsp;<strong>{filtered.length > 0 ? startIndex + 1 : 0}–{Math.min(startIndex + ITEMS_PER_PAGE, filtered.length)}</strong>&nbsp;of&nbsp;<strong>{filtered.length}</strong>&nbsp;products
                   </p>
+
+                  <button
+                    type="button"
+                    className="products-mobile-filter-trigger"
+                    onClick={() => setMobileFiltersOpen(true)}
+                    aria-label="Open filter drawer"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
+                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                    <span>Filters</span>
+                    {selectedCategory && (
+                      <span className="mobile-filter-active-dot" />
+                    )}
+                  </button>
 
                   <div className="products-topbar-search">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="topbar-search-icon">
@@ -416,6 +448,91 @@ export default function ProductsPageClient() {
         <div className="toast-notice" role="status">
           <span>⚡</span>
           <span>{toastMsg}</span>
+        </div>
+      )}
+      {/* Mobile Filters Drawer Modal */}
+      {mobileFiltersOpen && (
+        <div className="products-filter-drawer-overlay" onClick={() => setMobileFiltersOpen(false)}>
+          <div className="products-filter-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="drawer-header">
+              <div>
+                <h3 className="drawer-title">Filter Products</h3>
+                <p className="drawer-subtitle">Refine by category, price, and ratings</p>
+              </div>
+              <button
+                type="button"
+                className="drawer-close-btn"
+                onClick={() => setMobileFiltersOpen(false)}
+                aria-label="Close filters"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="drawer-body">
+              <div className="products-filter-card">
+                <h3 className="products-filter-title">Categories</h3>
+                <ul className="products-filter-list">
+                  {CATEGORIES.map((cat) => (
+                    <li key={cat.value}>
+                      <button
+                        className={`products-filter-item${selectedCategory === cat.value ? " products-filter-item--active" : ""}`}
+                        onClick={() => {
+                          handleCategorySelect(cat.value);
+                          setMobileFiltersOpen(false);
+                        }}
+                      >
+                        <span>{cat.label}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="products-filter-card">
+                <h3 className="products-filter-title">Price Range</h3>
+                <div className="products-price-range">
+                  <div className="products-price-row">
+                    <input type="number" placeholder="Min $" className="products-price-input" defaultValue={0} min={0} />
+                    <span>–</span>
+                    <input type="number" placeholder="Max $" className="products-price-input" defaultValue={200} min={0} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="products-filter-card">
+                <h3 className="products-filter-title">Rating</h3>
+                {[4.5, 4, 3.5].map((r) => (
+                  <label key={r} className="products-rating-label">
+                    <input type="radio" name="mobile-rating-filter" />
+                    <span style={{ color: "#F59E0B" }}>{"★".repeat(Math.floor(r))}</span>
+                    <span> {r}+ stars</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="drawer-footer">
+              <button
+                type="button"
+                className="drawer-reset-btn"
+                onClick={() => {
+                  setSelectedCategory("");
+                  setSearchQuery("");
+                  setMobileFiltersOpen(false);
+                }}
+              >
+                Reset All
+              </button>
+              <button
+                type="button"
+                className="btn-primary drawer-apply-btn"
+                onClick={() => setMobileFiltersOpen(false)}
+              >
+                Show {filtered.length} Products
+              </button>
+            </div>
+          </div>
         </div>
       )}
       </div>
