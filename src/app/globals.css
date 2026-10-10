@@ -3378,24 +3378,105 @@ textarea {
   }
 
   .featured-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     width: 100%;
-    row-gap: 1.5rem;
-    column-gap: 0;
+    row-gap: 1.15rem;
+    column-gap: 0.75rem;
   }
 
   .product-card {
-    padding: 1.15rem;
-    border-radius: 16px;
+    padding: 0.85rem;
+    border-radius: 14px;
   }
 
   .saas-discovery-card {
     padding: 0;
-    border-radius: 16px;
+    border-radius: 14px;
   }
 
   .saas-discovery-card .discovery-card-body {
-    padding: 1.1rem 1.15rem 1.25rem;
+    padding: 0.75rem 0.65rem 0.85rem;
+  }
+
+  .discovery-card-header-row {
+    gap: 0.35rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .discovery-card-brand-group {
+    gap: 0.4rem;
+  }
+
+  .discovery-card-logo-wrap,
+  .discovery-card-logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+  }
+
+  .discovery-card-title {
+    font-size: 0.82rem;
+  }
+
+  .discovery-top-badge {
+    font-size: 0.56rem;
+    padding: 0.12rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  .discovery-card-desc {
+    font-size: 0.7rem;
+    line-height: 1.35;
+    margin-bottom: 0.45rem;
+    min-height: 1.9rem;
+    -webkit-line-clamp: 2;
+  }
+
+  .discovery-badges-row {
+    margin-bottom: 0.45rem;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .discovery-tag-pill {
+    font-size: 0.6rem;
+    padding: 0.12rem 0.38rem;
+  }
+
+  .discovery-meta-row {
+    margin-bottom: 0.55rem;
+    min-height: 18px;
+    gap: 0.35rem;
+  }
+
+  .discovery-price-amount {
+    font-size: 0.86rem;
+    font-weight: 800;
+  }
+
+  .discovery-rating-inline {
+    font-size: 0.68rem;
+    gap: 0.15rem;
+  }
+
+  .discovery-stars {
+    font-size: 0.7rem;
+  }
+
+  .discovery-rating-score {
+    font-size: 0.68rem;
+  }
+
+  .discovery-rating-count {
+    font-size: 0.62rem;
+  }
+
+  .discovery-btn-primary {
+    padding: 0.46rem 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 8px;
   }
 }
 
@@ -6994,7 +7075,8 @@ textarea {
 
 @media (max-width: 680px) {
   .products-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
   .products-search-header-card {
     padding: 1.25rem 1rem;
@@ -12140,7 +12222,8 @@ body:has(.product-detail-page-container) {
     grid-template-columns: repeat(2, 1fr);
   }
   .detail-similar-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 }
 
