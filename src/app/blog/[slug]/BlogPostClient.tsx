@@ -614,11 +614,28 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
             <div className="blog-grid blog-grid--related">
               {relatedPosts.map((rp) => (
                 <Link href={`/blog/${rp.slug}`} key={rp.slug} className="blog-card" id={`related-${rp.slug}`}>
-                  <div className="blog-card-banner" style={{ background: rp.gradient }}>
-                    <svg viewBox="0 0 400 160" fill="none" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-                      <path d="M0,60 C100,120 220,20 320,80 C370,110 400,70 400,70 L400,160 L0,160 Z" fill="rgba(255,255,255,0.08)" />
-                    </svg>
-                    <span className="blog-tag-badge">{rp.tag}</span>
+                  <div className="blog-card-banner" style={{ background: rp.gradient, position: "relative", overflow: "hidden" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={rp.image || `/images/blog/${rp.slug}.jpg`}
+                      alt={rp.title}
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.6) 100%)",
+                        pointerEvents: "none",
+                      }}
+                    />
+                    <span className="blog-tag-badge" style={{ position: "relative", zIndex: 2 }}>{rp.tag}</span>
                   </div>
                   <div className="blog-card-body">
                     <h3 className="blog-card-title">{rp.title}</h3>
