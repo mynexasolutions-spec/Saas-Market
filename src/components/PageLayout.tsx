@@ -131,7 +131,17 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
             <div className="nav-actions">
               {user ? (
                 <div className="nav-user-logged-wrap">
-                  <div className="nav-user-badge" title={user.email}>
+                  <div
+                    className="nav-user-badge"
+                    title={user.email}
+                    onClick={() => {
+                      if (typeof window !== "undefined" && window.innerWidth <= 992) {
+                        setMobileMenuOpen(!mobileMenuOpen);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                  >
                     <span className="nav-user-avatar" aria-hidden="true">
                       <svg
                         width="15"
