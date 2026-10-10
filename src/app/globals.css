@@ -430,6 +430,23 @@ textarea {
    Navbar Inline Expanded Search Bar
    ========================================================================== */
 
+/* When search is active, remove SaaS MRKT logo and let search bar expand to full width */
+.navbar.navbar-search-active .brand-logo,
+.brand-logo.brand-logo-hidden {
+  display: none !important;
+}
+
+.navbar.navbar-search-active {
+  justify-content: stretch;
+}
+
+.navbar.navbar-search-active .nav-expanded-search-bar {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
 .nav-expanded-search-bar {
   display: flex;
   align-items: center;
@@ -451,6 +468,33 @@ textarea {
     opacity: 1;
     transform: scaleX(1);
     transform-origin: right center;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar.navbar-search-active .nav-expanded-search-bar {
+    gap: 0.4rem;
+    width: 100%;
+    margin: 0;
+  }
+
+  .navbar.navbar-search-active .nav-search-form {
+    padding: 0.28rem 0.35rem 0.28rem 0.85rem;
+    gap: 0.35rem;
+  }
+
+  .navbar.navbar-search-active .nav-search-input-field {
+    font-size: 0.86rem;
+  }
+
+  .navbar.navbar-search-active .nav-search-submit-btn {
+    padding: 0.42rem 0.85rem;
+    font-size: 0.78rem;
+  }
+
+  .navbar.navbar-search-active .nav-search-close-btn {
+    width: 34px;
+    height: 34px;
   }
 }
 
