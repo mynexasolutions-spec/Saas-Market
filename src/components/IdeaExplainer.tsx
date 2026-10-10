@@ -352,17 +352,14 @@ export default function IdeaExplainer() {
         <div className="idea-header">
           <div className="section-badge idea-badge" data-reveal style={delay(0)}>
             <span className="idea-badge-dot" />
-            THE IDEA BEHIND SaaS MRKT
+            TWO WAYS TO TRANSACT
           </div>
           <h2 className="section-title idea-title" id="idea-heading" data-reveal style={delay(80)}>
-            The marketplace to buy and sell SaaS
+            Built for Buyers &amp; Sellers
           </h2>
           <p className="section-subtitle idea-subtitle" data-reveal style={delay(160)}>
-            SaaS MRKT is where founders sell the software they&apos;ve built and anyone can buy it.
-            Listings are verified, products can be tested in a sandbox, and payments are protected
-            by escrow, so both sides deal with confidence.
+            Whether you&apos;re acquiring profitable software or exiting your startup, we provide escrow protection, verified metrics, and smooth handover.
           </p>
-
         </div>
 
         {/* Two sides of the marketplace (For Buyers & For Sellers) */}

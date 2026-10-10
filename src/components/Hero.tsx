@@ -304,6 +304,19 @@ export default function Hero({ onExploreScroll }: HeroProps) {
               Explore Products
             </button>
           </div>
+
+          {/* Mobile Trust Proof Row (Crisp trust pills below CTA on mobile) */}
+          <div className="hero-mobile-trust-row">
+            <span className="hero-trust-chip">
+              <span className="trust-check">✓</span> 2,000+ Verified SaaS
+            </span>
+            <span className="hero-trust-chip">
+              <span className="trust-check">✓</span> 0% Seller Fee
+            </span>
+            <span className="hero-trust-chip">
+              <span className="trust-check">✓</span> Escrow Protected
+            </span>
+          </div>
         </div>
 
         {/* Right Column: 3D Isometric Continuous Infinite Moving Cards */}
