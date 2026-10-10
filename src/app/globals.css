@@ -10014,9 +10014,7 @@ body {
 
   .blog-card-read-now svg,
   .blog-read-more-btn svg {
-    width: 12px !important;
-    height: 12px !important;
-    flex-shrink: 0 !important;
+    display: none !important;
   }
 
   .blog-author-avatar {
