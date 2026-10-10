@@ -780,25 +780,29 @@ textarea {
     gap: 0.35rem;
   }
 
-  .nav-user-badge {
-    padding: 0.25rem 0.6rem 0.25rem 0.32rem;
-    gap: 0.4rem;
+  /* In mobile navbar, only show the user avatar icon - hide name and indicator */
+  .navbar .nav-user-name,
+  .navbar .nav-user-indicator {
+    display: none !important;
+  }
+
+  .navbar .nav-user-badge {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
     cursor: pointer;
   }
 
-  .nav-user-avatar {
-    width: 28px;
-    height: 28px;
+  .navbar .nav-user-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
   }
 
-  .nav-user-avatar svg {
-    width: 13px;
-    height: 13px;
-  }
-
-  .nav-user-name {
-    font-size: 0.8rem;
-    max-width: 75px;
+  .navbar .nav-user-avatar svg {
+    width: 16px !important;
+    height: 16px !important;
   }
 
   .search-trigger-btn {
@@ -823,12 +827,8 @@ textarea {
     height: 28px;
   }
 
-  .nav-user-name {
-    max-width: 60px;
-  }
-
   .nav-actions {
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 }
 
