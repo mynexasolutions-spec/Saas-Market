@@ -13,7 +13,6 @@ import FeaturedProducts, { ProductItem } from "@/components/FeaturedProducts";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import DualBanners from "@/components/DualBanners";
 import Testimonials from "@/components/Testimonials";
-import SplitFeatureShowcase from "@/components/SplitFeatureShowcase";
 import BlogArticles from "@/components/BlogArticles";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
@@ -146,9 +145,6 @@ export default function Home() {
 
         {/* What Our Users Say (Testimonials) */}
         <Testimonials />
-
-        {/* Enterprise Split Showcase (Image Left, Text Right) */}
-        <SplitFeatureShowcase onExplore={handleExploreScroll} />
 
         {/* Latest Articles & Resources (Blog) */}
         <BlogArticles
