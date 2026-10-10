@@ -14996,20 +14996,18 @@ body:has(.product-detail-page-container) {
 }
 
 .idea-title {
-  font-size: clamp(2.1rem, 4.4vw, 3.2rem);
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
+  font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--slate-900);
+  line-height: 1.25;
 }
 
 .idea-title-highlight {
-  background: linear-gradient(100deg, var(--primary) 0%, #7C3AED 55%, #8B7CF6 100%);
-  background-size: 180% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation: idea-gradient-shift 6s ease-in-out infinite alternate;
+  color: var(--slate-900);
+  background: none;
+  -webkit-text-fill-color: var(--slate-900);
+  animation: none;
 }
 
 @keyframes idea-gradient-shift {

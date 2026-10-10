@@ -419,8 +419,7 @@ export default function IdeaExplainer() {
             THE IDEA BEHIND SaaS MRKT
           </div>
           <h2 className="section-title idea-title" id="idea-heading" data-reveal style={delay(80)}>
-            The marketplace to{" "}
-            <span className="idea-title-highlight">buy and sell SaaS</span>
+            The marketplace to buy and sell SaaS
           </h2>
           <p className="section-subtitle idea-subtitle" data-reveal style={delay(160)}>
             SaaS MRKT is where founders sell the software they&apos;ve built and anyone can buy it.
