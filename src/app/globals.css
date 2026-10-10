@@ -1921,6 +1921,25 @@ textarea {
   }
 }
 
+@media (max-width: 768px) {
+  .hero-right-column {
+    display: none !important;
+  }
+
+  .hero-track-up,
+  .hero-track-down {
+    animation: none !important;
+  }
+
+  .hero-layout-container {
+    gap: 0;
+  }
+
+  .hero-section.upshift-hero-section {
+    padding-bottom: 2.25rem;
+  }
+}
+
 @media (max-width: 640px) {
   .hero-main-heading {
     font-size: 1.7rem;
@@ -1928,16 +1947,6 @@ textarea {
 
   .hero-description {
     font-size: 0.98rem;
-  }
-
-  .hero-isometric-grid {
-    transform: rotate(-8deg) scale(0.72);
-    width: 480px;
-  }
-
-  .hero-isometric-stage {
-    height: 480px;
-    min-height: 420px;
   }
 }
 
