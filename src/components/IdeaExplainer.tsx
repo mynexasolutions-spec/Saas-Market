@@ -4,19 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FEATURED_PRODUCTS_LIST } from "@/data/products";
 
-const OLD_WAY = [
-  "SaaS for sale scattered across forums and brokers",
-  "Revenue and traffic claims nobody can verify",
-  "Risky payments with no buyer protection",
-  "Sellers struggle to find serious buyers",
-];
-
-const NEW_WAY = [
-  "500+ verified SaaS listings in one place",
-  "Ownership and metrics verified before listing",
-  "Escrow-protected payments and a clean transfer",
-  "Sellers reach active buyers with 0% commission",
-];
 
 // `from`/`to` drive the count-up; stats without numbers render `text` as-is
 const STATS: { label: string; text: string; from?: number; to?: number; suffix?: string }[] = [
@@ -90,12 +77,6 @@ const CheckIcon = () => (
   </svg>
 );
 
-const CrossIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>
-);
 
 const LockIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -441,46 +422,7 @@ export default function IdeaExplainer() {
           </div>
         </div>
 
-        {/* Problem vs Solution */}
-        <div className="idea-compare">
-          <div className="idea-compare-card idea-compare-old idea-spot idea-from-left" data-reveal>
-            <span className="idea-compare-label">The old way</span>
-            <h3 className="idea-compare-title">Scattered, risky and slow</h3>
-            <ul className="idea-list">
-              {OLD_WAY.map((item, i) => (
-                <li key={item} className="idea-item" style={delay(200 + i * 90)}>
-                  <span className="idea-list-icon idea-icon-bad"><CrossIcon /></span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <span className="idea-vs" aria-hidden="true" data-reveal style={delay(300)}>VS</span>
-
-          <div className="idea-compare-card idea-compare-new idea-spot idea-from-right" data-reveal style={delay(120)}>
-            <span className="idea-compare-badge">Recommended</span>
-            <span className="idea-compare-label">The SaaS MRKT way</span>
-            <h3 className="idea-compare-title">Verified, protected and simple</h3>
-            <ul className="idea-list">
-              {NEW_WAY.map((item, i) => (
-                <li key={item} className="idea-item" style={delay(320 + i * 90)}>
-                  <span className="idea-list-icon idea-icon-good"><CheckIcon /></span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Interactive product tour */}
-        <div className="idea-tour-head" data-reveal>
-          <span className="idea-tour-kicker">See it in action</span>
-          <h3 className="idea-tour-title">From search to ownership in three steps</h3>
-        </div>
-        <ProductTour />
-
-        {/* Two sides of the marketplace */}
+        {/* Two sides of the marketplace (For Buyers & For Sellers) */}
         <div className="idea-audiences">
           {AUDIENCES.map((a, idx) => (
             <div
@@ -505,6 +447,13 @@ export default function IdeaExplainer() {
             </div>
           ))}
         </div>
+
+        {/* Interactive product tour */}
+        <div className="idea-tour-head" data-reveal>
+          <span className="idea-tour-kicker">See it in action</span>
+          <h3 className="idea-tour-title">From search to ownership in three steps</h3>
+        </div>
+        <ProductTour />
       </div>
     </section>
   );
