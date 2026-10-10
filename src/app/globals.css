@@ -3508,6 +3508,13 @@ textarea {
   }
 }
 
+@media (max-width: 768px) {
+  /* Mobile: Show only 2 rows of cards (4 cards total in 2-column grid) */
+  .featured-grid > *:nth-child(n+5) {
+    display: none !important;
+  }
+}
+
 @media (max-width: 600px) {
   .featured-top-action-bar {
     width: 100%;
