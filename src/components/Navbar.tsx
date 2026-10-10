@@ -56,10 +56,10 @@ export default function Navbar({
     <header className="navbar-wrapper">
       <div className="container">
         <nav className={`navbar${isSearchExpanded ? " navbar-search-active" : ""}`} aria-label="Main Navigation">
-          {/* Logo - Hidden when search is active to give search full width */}
+          {/* Logo */}
           <Link
             href="/"
-            className={`brand-logo${isSearchExpanded ? " brand-logo-hidden" : ""}`}
+            className="brand-logo"
             id="nav-brand-logo"
           >
             <span className="brand-icon">

@@ -430,52 +430,54 @@ textarea {
    Navbar Inline Expanded Search Bar
    ========================================================================== */
 
-/* When search is active, remove SaaS MRKT logo and let search bar expand to full width */
-.navbar.navbar-search-active .brand-logo,
-.brand-logo.brand-logo-hidden {
-  display: none !important;
-}
-
-.navbar.navbar-search-active {
-  justify-content: stretch;
-}
-
-.navbar.navbar-search-active .nav-expanded-search-bar {
-  flex: 1;
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-}
-
+/* Desktop: keep search bar properly sized and proportioned (just for search) */
 .nav-expanded-search-bar {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  flex: 1;
-  max-width: 640px;
-  margin: 0 1.25rem;
-  animation: navSearchExpand 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  flex: 0 1 440px;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  animation: navSearchExpand 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.navbar.navbar-search-active .nav-expanded-search-bar {
+  flex: 0 1 440px;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
 }
 
 @keyframes navSearchExpand {
   from {
     opacity: 0;
-    transform: scaleX(0.75);
-    transform-origin: right center;
+    transform: scale(0.95);
   }
 
   to {
     opacity: 1;
-    transform: scaleX(1);
-    transform-origin: right center;
+    transform: scale(1);
   }
 }
 
+/* Mobile: On phone screens, remove logo and make search bar fill the mobile width */
 @media (max-width: 768px) {
+  .navbar.navbar-search-active .brand-logo,
+  .brand-logo.brand-logo-hidden {
+    display: none !important;
+  }
+
+  .navbar.navbar-search-active {
+    justify-content: stretch !important;
+  }
+
   .navbar.navbar-search-active .nav-expanded-search-bar {
-    gap: 0.4rem;
-    width: 100%;
-    margin: 0;
+    flex: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    gap: 0.4rem !important;
   }
 
   .navbar.navbar-search-active .nav-search-form {
