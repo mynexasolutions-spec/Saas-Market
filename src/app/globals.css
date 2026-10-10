@@ -3174,16 +3174,19 @@ textarea {
 .discovery-card-image-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 10;
   border-radius: 0;
   overflow: hidden;
   background: #F8FAFC;
   border-bottom: 1px solid rgba(226, 232, 240, 0.85);
-  margin-bottom: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .discovery-card-img {
   object-fit: cover;
+  object-position: center;
+  transform: scale(1.08);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -6807,21 +6810,24 @@ textarea {
 .discovery-card-image-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 10;
   height: auto;
   background: #0F172A;
   overflow: hidden;
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  margin: 0;
+  padding: 0;
 }
 
 .discovery-card-img {
   object-fit: cover;
-  object-position: top center;
+  object-position: center;
+  transform: scale(1.08);
   transition: transform 0.45s ease;
 }
 
 .saas-discovery-card:hover .discovery-card-img {
-  transform: scale(1.05);
+  transform: scale(1.15);
 }
 
 /* Card Body - Compact & Sleek Height */
