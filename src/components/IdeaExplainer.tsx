@@ -5,12 +5,6 @@ import Link from "next/link";
 import { FEATURED_PRODUCTS_LIST } from "@/data/products";
 
 
-// `from`/`to` drive the count-up; stats without numbers render `text` as-is
-const STATS: { label: string; text: string; from?: number; to?: number; suffix?: string }[] = [
-  { label: "Verified listings", text: "500+", from: 0, to: 500, suffix: "+" },
-  { label: "Seller commission", text: "0%", from: 100, to: 0, suffix: "%" },
-  { label: "Protected payments", text: "Escrow" },
-];
 
 const TOUR = [
   {
@@ -91,45 +85,6 @@ const delay = (ms: number) => ({ "--d": `${ms}ms` }) as React.CSSProperties;
 const prefersReducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// Counts a number up/down once, when it scrolls into view. Writes to the DOM directly so the
-// server-rendered final value is what shows without JS and no state is needed.
-function CountUp({ from, to, suffix, text }: { from: number; to: number; suffix: string; text: string }) {
-  const ref = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined" || prefersReducedMotion()) return;
-
-    let frame = 0;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        const duration = 1400;
-        const start = performance.now();
-        const tick = (now: number) => {
-          const t = Math.min((now - start) / duration, 1);
-          const eased = 1 - Math.pow(1 - t, 3);
-          el.textContent = `${Math.round(from + (to - from) * eased)}${suffix}`;
-          if (t < 1) frame = requestAnimationFrame(tick);
-        };
-        frame = requestAnimationFrame(tick);
-      },
-      { threshold: 0.6 }
-    );
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
-    };
-  }, [from, to, suffix]);
-
-  return (
-    <strong ref={ref} className="idea-stat-value">
-      {text}
-    </strong>
-  );
-}
 
 // Interactive product tour: three steps, each with its own mock screen.
 // Nothing starts until the tour scrolls into view (`started`), and autoplay pauses while it is
@@ -408,18 +363,6 @@ export default function IdeaExplainer() {
             by escrow, so both sides deal with confidence.
           </p>
 
-          <div className="idea-stats" data-reveal style={delay(240)}>
-            {STATS.map((s) => (
-              <div key={s.label} className="idea-stat">
-                {s.to !== undefined && s.from !== undefined ? (
-                  <CountUp from={s.from} to={s.to} suffix={s.suffix ?? ""} text={s.text} />
-                ) : (
-                  <strong className="idea-stat-value">{s.text}</strong>
-                )}
-                <span className="idea-stat-label">{s.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Two sides of the marketplace (For Buyers & For Sellers) */}
