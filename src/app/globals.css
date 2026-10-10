@@ -466,7 +466,9 @@ textarea {
 /* Mobile: On phone screens, remove logo and make search bar fill the mobile width */
 @media (max-width: 768px) {
   .navbar.navbar-search-active .brand-logo,
-  .brand-logo.brand-logo-hidden {
+  .brand-logo.brand-logo-hidden,
+  .navbar.navbar-search-active .nav-actions,
+  .navbar.navbar-search-active .nav-user-logged-wrap {
     display: none !important;
   }
 
@@ -747,6 +749,10 @@ textarea {
   .nav-actions .btn-primary,
   .nav-desktop-auth,
   .nav-actions .nav-logout-btn {
+    display: none !important;
+  }
+
+  .navbar.navbar-search-active .nav-actions {
     display: none !important;
   }
 
