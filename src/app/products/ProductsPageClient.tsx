@@ -29,7 +29,7 @@ const SORT_OPTIONS = [
 
 const EXTENDED_PRODUCTS: ProductItem[] = ALL_PRODUCTS;
 
-const ITEMS_PER_PAGE = 18;
+const ITEMS_PER_PAGE = 24;
 
 export default function ProductsPageClient() {
   const router = useRouter();
