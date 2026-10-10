@@ -23,6 +23,76 @@ interface BlogPostClientProps {
   relatedPosts: BlogPost[];
 }
 
+// Converts cell text with emojis and markdown bold into React elements with SVG icons
+function renderFormattedCell(raw: string): React.ReactNode {
+  let text = raw.trim();
+
+  // If cell is completely wrapped in **bold**
+  const isAllBold = text.startsWith("**") && text.endsWith("**") && text.length > 4;
+  if (isAllBold) {
+    text = text.slice(2, -2).trim();
+  }
+
+  // Tokenize text to replace emojis (✅, ❌, ⚠️, ⭐) with SVG icons
+  const tokens = text.split(/([✅❌⚠️⭐])/g);
+
+  const content = tokens.map((token, idx) => {
+    if (token === "✅") {
+      return (
+        <span key={idx} className="table-status-icon table-status-icon--check" aria-label="Yes / Included">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </span>
+      );
+    }
+    if (token === "❌") {
+      return (
+        <span key={idx} className="table-status-icon table-status-icon--cross" aria-label="No / Not included">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </span>
+      );
+    }
+    if (token === "⚠️") {
+      return (
+        <span key={idx} className="table-status-icon table-status-icon--warning" aria-label="Notice / Partial">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+        </span>
+      );
+    }
+    if (token === "⭐") {
+      return (
+        <span key={idx} className="table-status-icon table-status-icon--star" aria-label="Rating">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+        </span>
+      );
+    }
+
+    if (!token) return null;
+
+    // Check for inline **bold**
+    if (token.includes("**")) {
+      const bParts = token.split(/\*\*([^*]+)\*\*/g);
+      return bParts.map((bText, bIdx) =>
+        bIdx % 2 === 1 ? <strong key={`${idx}-${bIdx}`}>{bText}</strong> : bText
+      );
+    }
+
+    return token;
+  });
+
+  return isAllBold ? <strong>{content}</strong> : <>{content}</>;
+}
+
 // Enhanced markdown-to-JSX renderer with connected timeline markers
 function renderMarkdown(md: string) {
   const lines = md.trim().split("\n");
@@ -75,11 +145,11 @@ function renderMarkdown(md: string) {
         <div key={`table-${i}`} className="prose-table-wrapper">
           <table className="prose-table">
             <thead>
-              <tr>{rows[0].map((cell, ci) => <th key={ci}>{cell}</th>)}</tr>
+              <tr>{rows[0].map((cell, ci) => <th key={ci}>{renderFormattedCell(cell)}</th>)}</tr>
             </thead>
             <tbody>
               {rows.slice(1).map((row, ri) => (
-                <tr key={ri}>{row.map((cell, ci) => <td key={ci}>{cell.replace(/[✅❌]/g, (m) => m)}</td>)}</tr>
+                <tr key={ri}>{row.map((cell, ci) => <td key={ci}>{renderFormattedCell(cell)}</td>)}</tr>
               ))}
             </tbody>
           </table>
@@ -101,7 +171,7 @@ function renderMarkdown(md: string) {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </span>
-              <span>{item.replace(/\*\*([^*]+)\*\*/g, "$1")}</span>
+              <span>{renderFormattedCell(item)}</span>
             </li>
           ))}
         </ul>
@@ -114,7 +184,7 @@ function renderMarkdown(md: string) {
       }
       elements.push(
         <ol key={`ol-${i}`} className="prose-ol">
-          {listItems.map((item, li) => <li key={li}>{item.replace(/\*\*([^*]+)\*\*/g, "$1")}</li>)}
+          {listItems.map((item, li) => <li key={li}>{renderFormattedCell(item)}</li>)}
         </ol>
       );
     } else if (line.startsWith("---")) {
@@ -327,9 +397,24 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
                 </div>
                 {post.excerpt && <p className="post-takeaways-excerpt">{post.excerpt}</p>}
                 <div className="post-takeaways-chips">
-                  <span className="post-takeaway-chip">⚡ Verified SaaS Analysis</span>
-                  <span className="post-takeaway-chip">📊 2026 Procurement Guide</span>
-                  <span className="post-takeaway-chip">🎯 Actionable Buyer Takeaways</span>
+                  <span className="post-takeaway-chip">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    Verified SaaS Analysis
+                  </span>
+                  <span className="post-takeaway-chip">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
+                    </svg>
+                    2026 Procurement Guide
+                  </span>
+                  <span className="post-takeaway-chip">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
+                    </svg>
+                    Actionable Buyer Takeaways
+                  </span>
                 </div>
               </div>
 

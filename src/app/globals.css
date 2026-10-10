@@ -6237,33 +6237,87 @@ textarea {
   overflow-x: auto;
   margin: 2rem 0;
   border: 1px solid var(--slate-200);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  background: var(--white);
 }
 
 .prose-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   text-align: left;
-  font-size: 0.95rem;
+  font-size: 0.925rem;
 }
 
 .prose-table th {
-  background: var(--slate-50);
-  padding: 0.85rem 1.15rem;
-  font-weight: 700;
-  color: var(--slate-800);
-  border-bottom: 1px solid var(--slate-200);
+  background: #F8FAFC;
+  padding: 0.95rem 1.25rem;
+  font-weight: 750;
+  color: var(--slate-900);
+  border-bottom: 1.5px solid var(--slate-200);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
 .prose-table td {
-  padding: 0.85rem 1.15rem;
+  padding: 0.95rem 1.25rem;
   border-bottom: 1px solid var(--slate-150);
   color: var(--slate-700);
+  vertical-align: middle;
+}
+
+.prose-table tr:hover td {
+  background: rgba(248, 250, 252, 0.65);
 }
 
 .prose-table tr:last-child td {
   border-bottom: none;
+}
+
+/* Table Status Icons (replacing raw emojis) */
+.table-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  margin-right: 0.45rem;
+  flex-shrink: 0;
+}
+
+.table-status-icon--check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: #DCFCE7;
+  color: #16A34A;
+}
+
+.table-status-icon--cross {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.table-status-icon--warning {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+.table-status-icon--star {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #F59E0B;
+}
+
+.table-status-icon--star svg {
+  filter: drop-shadow(0 1px 2px rgba(245, 158, 11, 0.3));
 }
 
 .prose-ul,
