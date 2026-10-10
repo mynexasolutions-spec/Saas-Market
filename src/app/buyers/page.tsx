@@ -3,8 +3,17 @@ import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 
 export const metadata = {
-  title: "For Buyers | SaaS MRKT",
-  description: "Discover how SaaS MRKT helps buyers find, compare, and purchase the best software.",
+  title: "B2B SaaS Marketplace for Software Buyers | SaaS MRKT",
+  description:
+    "Discover how our multi-vendor B2B SaaS marketplace platform helps software buyers evaluate, compare, and acquire verified SaaS products with flexible payment gateways and zero lock-in.",
+  keywords: [
+    "B2B SaaS marketplace",
+    "marketplace for SaaS products",
+    "SaaS marketplace platform",
+    "multi vendor marketplace SaaS",
+    "SaaS payment gateways alternatives",
+    "SaaS buyer guide",
+  ],
 };
 
 export default function BuyersPage() {

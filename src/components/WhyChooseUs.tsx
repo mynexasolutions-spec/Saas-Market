@@ -2,8 +2,8 @@ import React from "react";
 
 const WHY_FEATURES = [
   {
-    title: "Wide Selection",
-    desc: "500+ verified products",
+    title: "B2B SaaS Marketplace",
+    desc: "500+ verified cloud tools & software solutions",
     bg: "#EFF6FF",
     color: "#3B82F6",
     icon: (
@@ -15,8 +15,8 @@ const WHY_FEATURES = [
     ),
   },
   {
-    title: "Trusted Reviews",
-    desc: "Real user feedback",
+    title: "Multi-Vendor Platform",
+    desc: "Direct founder access & verified reviews",
     bg: "#ECFEFF",
     color: "#06B6D4",
     icon: (
@@ -29,8 +29,8 @@ const WHY_FEATURES = [
     ),
   },
   {
-    title: "Secure Payments",
-    desc: "Safe & reliable",
+    title: "Payment Gateway Alternatives",
+    desc: "Safe checkouts with zero credit lock-in",
     bg: "#ECFDF5",
     color: "#10B981",
     icon: (
@@ -41,8 +41,8 @@ const WHY_FEATURES = [
     ),
   },
   {
-    title: "Easy Comparison",
-    desc: "Compare features & pricing",
+    title: "Cloud & AWS Alternatives",
+    desc: "Fast onboarding without complex listing rules",
     bg: "#FEF2F2",
     color: "#EF4444",
     icon: (
@@ -60,8 +60,8 @@ const WHY_FEATURES = [
     ),
   },
   {
-    title: "Instant Access",
-    desc: "Start using immediately",
+    title: "SaaS vs Marketplace Metrics",
+    desc: "Transparent revenue multiples & benchmarks",
     bg: "#EFF6FF",
     color: "#2563EB",
     icon: (
@@ -71,8 +71,8 @@ const WHY_FEATURES = [
     ),
   },
   {
-    title: "Support for Founders",
-    desc: "Tools to grow your business",
+    title: "Fintech & Developer Tools",
+    desc: "From XBERT fintech to modern cloud APIs",
     bg: "#F5F3FF",
     color: "#8B5CF6",
     icon: (
@@ -95,14 +95,14 @@ export default function WhyChooseUs({ onExploreClick }: WhyChooseUsProps) {
           {/* Left Column */}
           <div className="why-left-content">
             <div className="section-badge" id="why-choose-badge" style={{ alignSelf: "flex-start" }}>
-              WHY CHOOSE SaaS MRKT
+              B2B SAAS MARKETPLACE PLATFORM
             </div>
             <h2 className="why-heading">
-              Everything You Need in One{" "}
-              <span className="section-title-highlight">Marketplace</span>
+              The Premier Multi-Vendor{" "}
+              <span className="section-title-highlight">SaaS Marketplace</span>
             </h2>
             <p className="why-desc">
-              Explore, compare and buy from a curated collection of the best SaaS products.
+              Discover, compare, and acquire from a curated marketplace for SaaS products. Experience flexible SaaS payment gateway alternatives, verified cloud software solutions, and 0% commission founder listings.
             </p>
             <div className="why-btn-group">
               <button

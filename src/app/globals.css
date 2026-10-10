@@ -4731,6 +4731,47 @@ textarea {
   padding-left: 2px;
 }
 
+.footer-seo-cluster {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.65rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+  font-size: 0.8rem;
+  color: var(--slate-500);
+}
+
+.footer-seo-label {
+  font-weight: 700;
+  color: var(--slate-700);
+  margin-right: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.footer-seo-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.55rem;
+}
+
+.footer-seo-tag {
+  color: var(--slate-600);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.footer-seo-tag:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.footer-seo-dot {
+  color: var(--slate-300);
+}
+
 .footer-bottom-bar {
   display: flex;
   align-items: center;

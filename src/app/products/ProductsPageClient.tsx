@@ -416,19 +416,17 @@ export default function ProductsPageClient() {
         <div className="container">
           <div className="products-directory-info-card">
             <h2 className="products-directory-info-title">
-              About Our Verified SaaS Marketplace Directory
+              About Our B2B SaaS Marketplace Platform &amp; Multi-Vendor Directory
             </h2>
             <div className="products-directory-info-content">
               <p>
-                SaaS MRKT is built to simplify how modern teams discover, evaluate, and acquire top-tier business software. 
-                Instead of navigating fragmented pricing tiers and biased sponsor listings, our directory curates high-impact SaaS tools 
-                across core operational departments including HR &amp; Payroll, CRM &amp; Sales, Project Management, Developer Tools, 
-                and Finance.
+                <strong>SaaS MRKT</strong> is a modern, high-converting <strong>B2B SaaS marketplace platform</strong> engineered to simplify how businesses discover, compare, and acquire top-tier cloud software. As a dedicated <strong>marketplace for SaaS products</strong>, we provide buyers with an open, multi-vendor SaaS marketplace experience featuring transparent pricing, verified customer reviews, and direct founder access with 0% listing commission.
               </p>
               <p>
-                Each software application featured on our platform includes real-time user ratings, transparent pricing details, 
-                and verified user feedback. Whether you are an early-stage startup looking for your first productivity stack or an enterprise 
-                streamlining software expenditures, SaaS MRKT empowers your team to make confident, data-backed software choices with speed.
+                Unlike legacy platforms like AWS Marketplace SaaS or Azure SaaS Marketplace that require restrictive enterprise commitments and complex marketplace credits, SaaS MRKT offers flexible <strong>SaaS payment gateway alternatives</strong>, seamless sandboxes, and transparent billing. Explore verified software across CRM &amp; Sales, HR &amp; Payroll, Project Management, Developer APIs, and XBERT fintech marketplace tools.
+              </p>
+              <p>
+                Whether you are evaluating <strong>SaaS vs marketplace revenue multiples</strong>, researching marketplace entry strategy, or auditing your team&apos;s cloud stack, our <strong>multi-vendor marketplace SaaS software</strong> gives your team the verified data and insights needed to scale efficiently.
               </p>
             </div>
           </div>

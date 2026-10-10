@@ -16,7 +16,7 @@ export default function Footer() {
               <span>SaaS MRKT</span>
             </Link>
             <p className="footer-desc">
-              A modern marketplace for SaaS products. Where buyers can discover, compare and purchase, and sellers can grow their business.
+              The leading B2B SaaS marketplace platform. Discover, compare, and acquire verified multi-vendor SaaS products with flexible payment gateway alternatives, and scale your software business with 0% listing commission.
             </p>
             <div className="footer-social-row">
               {/* Twitter / X */}
@@ -93,6 +93,28 @@ export default function Footer() {
               <li><Link href="/contact" className="footer-link-item">Privacy Policy</Link></li>
               <li><Link href="/contact" className="footer-link-item">Terms of Service</Link></li>
             </ul>
+          </div>
+        </div>
+
+        {/* SEO Keyword Cluster Strip */}
+        <div className="footer-seo-cluster">
+          <span className="footer-seo-label">Trending Marketplace Searches:</span>
+          <div className="footer-seo-tags">
+            <Link href="/products" className="footer-seo-tag">B2B SaaS Marketplace</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">SaaS Marketplace Platform</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">Marketplace for SaaS Products</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">Multi-Vendor Marketplace SaaS</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">AWS &amp; Azure SaaS Alternatives</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">SaaS Payment Gateways Alternatives</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/blog" className="footer-seo-tag">SaaS vs Marketplace Multiples</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">XBERT Fintech Marketplace</Link>
           </div>
         </div>
 

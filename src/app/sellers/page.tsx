@@ -3,8 +3,18 @@ import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 
 export const metadata = {
-  title: "For Sellers | SaaS MRKT",
-  description: "Learn how to list, showcase, and grow your software business on SaaS MRKT.",
+  title: "Multi-Vendor SaaS Marketplace for Sellers & Founders | SaaS MRKT",
+  description:
+    "List, showcase, and grow your software on our multi-vendor B2B SaaS marketplace platform. An open alternative to AWS and Azure marketplaces with 0% listing commission and direct buyer access.",
+  keywords: [
+    "multi vendor marketplace SaaS",
+    "SaaS marketplace platform",
+    "marketplace for SaaS products",
+    "B2B SaaS marketplace",
+    "AWS marketplace SaaS alternative",
+    "Azure marketplace SaaS alternative",
+    "list SaaS product",
+  ],
 };
 
 export default function SellersPage() {
