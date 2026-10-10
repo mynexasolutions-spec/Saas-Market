@@ -54,17 +54,19 @@ export default function BlogArticles({ onArticleClick }: BlogArticlesProps) {
   return (
     <section className="articles-section" id="resources">
       <div className="container">
-        {/* Header */}
-        <div className="section-badge" id="articles-badge">
-          LATEST INSIGHTS
-        </div>
-        <div className="section-header-row">
-          <div>
-            <h2 className="section-title">Latest Articles &amp; Resources</h2>
-            <p className="section-subtitle">
-              Stay updated with the latest insights, tips and trends in the SaaS industry.
-            </p>
+        {/* Centered Section Header */}
+        <div className="articles-header-center">
+          <div className="section-badge" id="articles-badge">
+            LATEST INSIGHTS
           </div>
+          <h2 className="section-title">Latest Articles &amp; Resources</h2>
+          <p className="section-subtitle">
+            Stay updated with the latest insights, tips and trends in the SaaS industry.
+          </p>
+        </div>
+
+        {/* Top Action Bar */}
+        <div className="articles-top-action-bar">
           <Link href="/blog" className="view-all-link" id="view-all-articles-link">
             <span>View All Articles</span>
           </Link>

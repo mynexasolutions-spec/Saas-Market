@@ -4101,6 +4101,41 @@ textarea {
   padding: 2.5rem 0 5.5rem;
 }
 
+.articles-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.articles-header-center .section-badge {
+  margin-bottom: 0.85rem;
+}
+
+.articles-header-center .section-title {
+  margin-bottom: 0.65rem;
+}
+
+.articles-header-center .section-subtitle {
+  margin: 0 auto;
+  text-align: center;
+  max-width: 620px;
+}
+
+.articles-top-action-bar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin: 0 0 1.75rem auto;
+}
+
+@media (max-width: 600px) {
+  .articles-top-action-bar {
+    justify-content: center;
+  }
+}
+
 .articles-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
