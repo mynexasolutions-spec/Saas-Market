@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useAuth, UserRole } from "@/context/AuthContext";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -16,23 +17,38 @@ export default function AuthModal({
   onClose,
   onSuccess,
 }: AuthModalProps) {
-  const { login, signup } = useAuth();
+  const router = useRouter();
+  const { login, signup, authDefaultRole } = useAuth();
   const [mode, setMode] = useState<"login" | "signup">(initialMode);
+  const [selectedRole, setSelectedRole] = useState<UserRole>(authDefaultRole || "buyer");
   const [email, setEmail] = useState("alex@company.com");
   const [password, setPassword] = useState("••••••••");
   const [name, setName] = useState("Alex Morgan");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Set default credentials whenever selected role changes
+  useEffect(() => {
+    if (selectedRole === "buyer") {
+      setEmail("alex@company.com");
+      setName("Alex Morgan");
+    } else if (selectedRole === "vendor") {
+      setEmail("vendor@saasmrkt.com");
+      setName("David Miller");
+    } else if (selectedRole === "admin") {
+      setEmail("admin@saasmrkt.com");
+      setName("Admin");
+    }
+  }, [selectedRole]);
+
   useEffect(() => {
     if (isOpen) {
       setMode(initialMode);
       setIsSubmitting(false);
-      // Ensure default values are populated if fields were cleared
-      setEmail((prev) => prev || "alex@company.com");
-      setName((prev) => prev || "Alex Morgan");
-      setPassword((prev) => prev || "••••••••");
+      if (authDefaultRole) {
+        setSelectedRole(authDefaultRole);
+      }
     }
-  }, [isOpen, initialMode]);
+  }, [isOpen, initialMode, authDefaultRole]);
 
   // Handle escape key
   useEffect(() => {
@@ -47,29 +63,34 @@ export default function AuthModal({
 
   if (!isOpen) return null;
 
-  const performAuth = (authEmail: string, authName: string) => {
+  const performAuth = (authEmail: string, authName: string, role: UserRole) => {
     setIsSubmitting(true);
     setTimeout(() => {
       if (mode === "signup") {
-        signup(authEmail, authName);
+        signup(authEmail, authName, role);
       } else {
-        login(authEmail, authName);
+        login(authEmail, authName, role);
       }
       setIsSubmitting(false);
       onClose();
       onSuccess(authEmail);
+
+      // Route to the respective dashboard
+      if (role === "admin") {
+        router.push("/admin");
+      } else if (role === "vendor") {
+        router.push("/vendor");
+      } else {
+        router.push("/profile");
+      }
     }, 250);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const effectiveEmail = email.trim() || "alex@company.com";
-    const effectiveName = name.trim() || "Alex Morgan";
-    performAuth(effectiveEmail, effectiveName);
-  };
-
-  const handleInstantDemoLogin = () => {
-    performAuth("alex@company.com", "Alex Morgan");
+    const effectiveEmail = email.trim() || (selectedRole === "admin" ? "admin@saasmrkt.com" : selectedRole === "vendor" ? "vendor@saasmrkt.com" : "alex@company.com");
+    const effectiveName = name.trim() || (selectedRole === "admin" ? "Sarah Connor" : selectedRole === "vendor" ? "David Miller" : "Alex Morgan");
+    performAuth(effectiveEmail, effectiveName, selectedRole);
   };
 
   return (
@@ -81,8 +102,8 @@ export default function AuthModal({
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(15, 23, 42, 0.6)",
-        backdropFilter: "blur(4px)",
+        backgroundColor: "rgba(15, 23, 42, 0.65)",
+        backdropFilter: "blur(6px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -94,7 +115,7 @@ export default function AuthModal({
         className="modal-container"
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxWidth: "440px",
+          maxWidth: "460px",
           width: "100%",
           backgroundColor: "#ffffff",
           borderRadius: "1.25rem",
@@ -142,7 +163,7 @@ export default function AuthModal({
         </button>
 
         {/* Brand Header */}
-        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
           <div
             style={{
               width: "48px",
@@ -153,7 +174,7 @@ export default function AuthModal({
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              marginBottom: "0.85rem",
+              marginBottom: "0.75rem",
               boxShadow: "0 8px 16px rgba(99, 102, 241, 0.3)",
             }}
           >
@@ -172,30 +193,142 @@ export default function AuthModal({
           </div>
           <h2
             style={{
-              fontSize: "1.5rem",
+              fontSize: "1.45rem",
               fontWeight: 800,
               color: "#0F172A",
               margin: 0,
               letterSpacing: "-0.02em",
             }}
           >
-            {mode === "login" ? "Welcome Back" : "Create SaaS Account"}
+            {mode === "login" ? "Sign In to SaaS MRKT" : "Create Account"}
           </h2>
           <p
             style={{
-              fontSize: "0.875rem",
+              fontSize: "0.85rem",
               color: "#64748B",
-              marginTop: "0.35rem",
+              marginTop: "0.3rem",
               marginBottom: 0,
             }}
           >
-            {mode === "login"
-              ? "Access your purchased products & saved tools"
-              : "Discover and launch SaaS tools in minutes"}
+            Select your account type to access your dedicated portal
           </p>
         </div>
 
-        {/* Tab Switcher */}
+        {/* Distinct Role Selector Tabs */}
+        <div style={{ marginBottom: "1rem" }}>
+          <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.45rem" }}>
+            Select Account Role:
+          </label>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: "6px",
+              background: "#F1F5F9",
+              padding: "4px",
+              borderRadius: "12px",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setSelectedRole("buyer")}
+              style={{
+                padding: "0.5rem 0.25rem",
+                borderRadius: "9px",
+                fontSize: "0.785rem",
+                fontWeight: 700,
+                border: "none",
+                cursor: "pointer",
+                backgroundColor: selectedRole === "buyer" ? "#FFFFFF" : "transparent",
+                color: selectedRole === "buyer" ? "#4F46E5" : "#64748B",
+                boxShadow: selectedRole === "buyer" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
+                transition: "all 0.15s ease",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "2px",
+              }}
+            >
+              <span>👤 User</span>
+              <span style={{ fontSize: "0.68rem", fontWeight: 500 }}>Buyer Profile</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedRole("vendor")}
+              style={{
+                padding: "0.5rem 0.25rem",
+                borderRadius: "9px",
+                fontSize: "0.785rem",
+                fontWeight: 700,
+                border: "none",
+                cursor: "pointer",
+                backgroundColor: selectedRole === "vendor" ? "#FFFFFF" : "transparent",
+                color: selectedRole === "vendor" ? "#059669" : "#64748B",
+                boxShadow: selectedRole === "vendor" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
+                transition: "all 0.15s ease",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "2px",
+              }}
+            >
+              <span>🏢 Vendor</span>
+              <span style={{ fontSize: "0.68rem", fontWeight: 500 }}>SaaS Seller</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedRole("admin")}
+              style={{
+                padding: "0.5rem 0.25rem",
+                borderRadius: "9px",
+                fontSize: "0.785rem",
+                fontWeight: 700,
+                border: "none",
+                cursor: "pointer",
+                backgroundColor: selectedRole === "admin" ? "#FFFFFF" : "transparent",
+                color: selectedRole === "admin" ? "#D97706" : "#64748B",
+                boxShadow: selectedRole === "admin" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
+                transition: "all 0.15s ease",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "2px",
+              }}
+            >
+              <span>🛡️ Admin</span>
+              <span style={{ fontSize: "0.68rem", fontWeight: 500 }}>Platform Ops</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Role Description Banner */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.6rem 0.85rem",
+            backgroundColor: selectedRole === "admin" ? "#FFFBEB" : selectedRole === "vendor" ? "#ECFDF5" : "#EEF2FF",
+            border: `1px solid ${selectedRole === "admin" ? "#FDE68A" : selectedRole === "vendor" ? "#A7F3D0" : "#C7D2FE"}`,
+            borderRadius: "0.65rem",
+            marginBottom: "1rem",
+            fontSize: "0.8rem",
+            color: selectedRole === "admin" ? "#92400E" : selectedRole === "vendor" ? "#065F46" : "#3730A3",
+          }}
+        >
+          <span>⚡</span>
+          <span>
+            {selectedRole === "admin"
+              ? "Administrator login (admin@saasmrkt.com). Accesses Admin Console."
+              : selectedRole === "vendor"
+              ? "Vendor login (vendor@saasmrkt.com). Accesses Vendor Hub & Listings."
+              : "User login (alex@company.com). Accesses Buyer Profile & Licenses."}
+          </span>
+        </div>
+
+        {/* Tab Switcher (Login vs Sign Up) */}
         <div
           style={{
             display: "grid",
@@ -203,16 +336,16 @@ export default function AuthModal({
             background: "#F1F5F9",
             padding: "4px",
             borderRadius: "9999px",
-            marginBottom: "1.5rem",
+            marginBottom: "1.25rem",
           }}
         >
           <button
             type="button"
             onClick={() => setMode("login")}
             style={{
-              padding: "0.5rem",
+              padding: "0.45rem",
               borderRadius: "9999px",
-              fontSize: "0.875rem",
+              fontSize: "0.85rem",
               fontWeight: 600,
               border: "none",
               cursor: "pointer",
@@ -228,9 +361,9 @@ export default function AuthModal({
             type="button"
             onClick={() => setMode("signup")}
             style={{
-              padding: "0.5rem",
+              padding: "0.45rem",
               borderRadius: "9999px",
-              fontSize: "0.875rem",
+              fontSize: "0.85rem",
               fontWeight: 600,
               border: "none",
               cursor: "pointer",
@@ -244,53 +377,10 @@ export default function AuthModal({
           </button>
         </div>
 
-        {/* Demo Mode Banner */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0.65rem 0.85rem",
-            backgroundColor: "#EEF2FF",
-            border: "1px solid #C7D2FE",
-            borderRadius: "0.75rem",
-            marginBottom: "1rem",
-            fontSize: "0.825rem",
-            color: "#3730A3",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-            <span>⚡</span>
-            <span>
-              <strong>Demo mode:</strong> Alex Morgan credentials loaded
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setName("Alex Morgan");
-              setEmail("alex@company.com");
-              setPassword("••••••••");
-            }}
-            style={{
-              background: "#4F46E5",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "0.4rem",
-              padding: "0.25rem 0.6rem",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Reset
-          </button>
-        </div>
-
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "0.95rem" }}
+          style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}
         >
           {mode === "signup" && (
             <div>
@@ -303,11 +393,10 @@ export default function AuthModal({
                   marginBottom: "0.35rem",
                 }}
               >
-                Full Name
+                Full Name / Organization
               </label>
               <input
                 type="text"
-                placeholder="Alex Morgan"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 style={{
@@ -334,11 +423,10 @@ export default function AuthModal({
                 marginBottom: "0.35rem",
               }}
             >
-              Work Email
+              Email Address ({selectedRole === "admin" ? "Admin" : selectedRole === "vendor" ? "Vendor" : "Work"})
             </label>
             <input
-              type="text"
-              placeholder="alex@company.com"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{
@@ -351,6 +439,7 @@ export default function AuthModal({
                 boxSizing: "border-box",
                 backgroundColor: "#F8FAFC",
               }}
+              required
             />
           </div>
 
@@ -368,7 +457,6 @@ export default function AuthModal({
             </label>
             <input
               type="password"
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{
@@ -381,6 +469,7 @@ export default function AuthModal({
                 boxSizing: "border-box",
                 backgroundColor: "#F8FAFC",
               }}
+              required
             />
           </div>
 
@@ -392,14 +481,19 @@ export default function AuthModal({
               width: "100%",
               marginTop: "0.35rem",
               padding: "0.85rem",
-              background: "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
+              background:
+                selectedRole === "admin"
+                  ? "linear-gradient(135deg, #D97706 0%, #B45309 100%)"
+                  : selectedRole === "vendor"
+                  ? "linear-gradient(135deg, #059669 0%, #047857 100%)"
+                  : "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
               color: "#ffffff",
               border: "none",
               borderRadius: "0.75rem",
               fontWeight: 700,
               fontSize: "0.95rem",
               cursor: isSubmitting ? "not-allowed" : "pointer",
-              boxShadow: "0 4px 14px rgba(79, 70, 229, 0.35)",
+              boxShadow: "0 4px 14px rgba(0, 0, 0, 0.15)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -408,56 +502,12 @@ export default function AuthModal({
             }}
           >
             {isSubmitting ? (
-              <>
-                <svg
-                  style={{ animation: "spin 1s linear infinite" }}
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeDasharray="30 60"
-                  />
-                </svg>
-                {mode === "login" ? "Signing In..." : "Creating Account..."}
-              </>
+              <span>Signing in...</span>
             ) : mode === "login" ? (
-              "Sign In to SaaS MRKT"
+              `Sign In as ${selectedRole === "admin" ? "Admin" : selectedRole === "vendor" ? "Vendor" : "User"}`
             ) : (
-              "Create Account"
+              `Create ${selectedRole === "admin" ? "Admin" : selectedRole === "vendor" ? "Vendor" : "User"} Account`
             )}
-          </button>
-
-          {/* Quick Demo Access Button */}
-          <button
-            type="button"
-            onClick={handleInstantDemoLogin}
-            disabled={isSubmitting}
-            style={{
-              width: "100%",
-              padding: "0.7rem",
-              background: "#F8FAFC",
-              color: "#475569",
-              border: "1px dashed #CBD5E1",
-              borderRadius: "0.75rem",
-              fontWeight: 600,
-              fontSize: "0.85rem",
-              cursor: isSubmitting ? "not-allowed" : "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.4rem",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <span>⚡</span>
-            <span>Instant Demo Sign In (1-Click)</span>
           </button>
         </form>
       </div>

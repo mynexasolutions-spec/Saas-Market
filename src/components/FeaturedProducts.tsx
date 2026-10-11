@@ -212,7 +212,23 @@ export default function FeaturedProducts({
   searchFilter,
   categoryFilter,
 }: FeaturedProductsProps) {
+  const [productsList, setProductsList] = useState<ProductItem[]>(FEATURED_PRODUCTS_LIST);
   const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
+
+  // Sync with dynamic products managed by Admin Console
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("saas_mrkt_featured_products");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProductsList(parsed);
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
 
   const toggleBookmark = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -223,7 +239,7 @@ export default function FeaturedProducts({
   };
 
   // Filter based on search query or category
-  const filteredProducts = FEATURED_PRODUCTS_LIST.filter((p) => {
+  const filteredProducts = productsList.filter((p) => {
     const matchesSearch =
       !searchFilter ||
       p.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
