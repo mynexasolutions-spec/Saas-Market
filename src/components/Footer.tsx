@@ -16,7 +16,7 @@ export default function Footer() {
               <span>SaaS MRKT</span>
             </Link>
             <p className="footer-desc">
-              A modern marketplace for SaaS products. Where buyers can discover, compare and purchase, and sellers can grow their business.
+              The leading B2B SaaS marketplace platform. Discover, compare, and acquire verified multi-vendor SaaS products with flexible payment gateway alternatives, and scale your software business with 0% listing commission.
             </p>
             <div className="footer-social-row">
               {/* Twitter / X */}
@@ -56,7 +56,6 @@ export default function Footer() {
               <li><Link href="/categories" className="footer-link-item">Categories</Link></li>
               <li><Link href="/compare" className="footer-link-item">Compare Tools</Link></li>
               <li><Link href="/deals" className="footer-link-item">Deals &amp; Offers</Link></li>
-              <li><Link href="/pricing" className="footer-link-item">Pricing Plans</Link></li>
             </ul>
           </div>
 
@@ -67,8 +66,7 @@ export default function Footer() {
               <li><Link href="/how-it-works" className="footer-link-item">How it Works</Link></li>
               <li><Link href="/buyers" className="footer-link-item">Buyer Guide</Link></li>
               <li><Link href="/trust" className="footer-link-item">Trust &amp; Security</Link></li>
-              <li><Link href="/pricing#faq" className="footer-link-item">FAQs</Link></li>
-              <li><Link href="/contact" className="footer-link-item">Support</Link></li>
+              <li><Link href="/contact" className="footer-link-item">Support &amp; FAQs</Link></li>
             </ul>
           </div>
 
@@ -78,7 +76,6 @@ export default function Footer() {
             <ul className="footer-links-list">
               <li><Link href="/submit-product" className="footer-link-item">List Your Product</Link></li>
               <li><Link href="/sellers" className="footer-link-item">Seller Guide</Link></li>
-              <li><Link href="/pricing" className="footer-link-item">Pricing</Link></li>
               <li><Link href="/blog" className="footer-link-item">Seller Resources</Link></li>
               <li><Link href="/contact" className="footer-link-item">Contact Sales</Link></li>
             </ul>
@@ -94,6 +91,28 @@ export default function Footer() {
               <li><Link href="/privacy" className="footer-link-item">Privacy Policy</Link></li>
               <li><Link href="/terms" className="footer-link-item">Terms of Service</Link></li>
             </ul>
+          </div>
+        </div>
+
+        {/* SEO Keyword Cluster Strip */}
+        <div className="footer-seo-cluster">
+          <span className="footer-seo-label">Trending Marketplace Searches:</span>
+          <div className="footer-seo-tags">
+            <Link href="/products" className="footer-seo-tag">B2B SaaS Marketplace</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">SaaS Marketplace Platform</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">Marketplace for SaaS Products</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">Multi-Vendor Marketplace SaaS</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">AWS &amp; Azure SaaS Alternatives</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">SaaS Payment Gateways Alternatives</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/blog" className="footer-seo-tag">SaaS vs Marketplace Multiples</Link>
+            <span className="footer-seo-dot">·</span>
+            <Link href="/products" className="footer-seo-tag">XBERT Fintech Marketplace</Link>
           </div>
         </div>
 

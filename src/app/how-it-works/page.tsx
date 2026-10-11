@@ -9,8 +9,12 @@ export const metadata = {
 
 export default function HowItWorksPage() {
   return (
-    <PageLayout activeNav="resources">
-      <HowItWorksClient />
+    <PageLayout activeNav="resources" noContainer>
+      <div className="hiw-page-wrapper">
+        <div className="container">
+          <HowItWorksClient />
+        </div>
+      </div>
     </PageLayout>
   );
 }

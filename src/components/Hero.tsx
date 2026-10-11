@@ -284,13 +284,13 @@ export default function Hero({ onExploreScroll }: HeroProps) {
 
           {/* Main Headline */}
           <h1 className="hero-main-heading">
-            A beautiful Startup &amp;<br />
-            <span className="hero-heading-highlight">SaaS Discovery Market.</span>
+            The Leading B2B SaaS &amp;<br />
+            <span className="hero-heading-highlight">Cloud Marketplace Platform.</span>
           </h1>
 
           {/* Subtitle */}
           <p className="hero-description">
-            Discover, compare, and deploy verified B2B software solutions. Transparent pricing, authentic reviews, and instant sandbox access.
+            Your premier multi-vendor SaaS marketplace to discover, compare, and acquire verified B2B software solutions. Built as an open, high-converting alternative to AWS, Azure, and legacy marketplaces with 0% commission.
           </p>
 
           {/* Action CTA */}
@@ -303,6 +303,19 @@ export default function Hero({ onExploreScroll }: HeroProps) {
             >
               Explore Products
             </button>
+          </div>
+
+          {/* Mobile Trust Proof Row (Crisp trust pills below CTA on mobile) */}
+          <div className="hero-mobile-trust-row">
+            <span className="hero-trust-chip">
+              <span className="trust-check">✓</span> 2,000+ Verified SaaS
+            </span>
+            <span className="hero-trust-chip">
+              <span className="trust-check">✓</span> 0% Seller Fee
+            </span>
+            <span className="hero-trust-chip">
+              <span className="trust-check">✓</span> Escrow Protected
+            </span>
           </div>
         </div>
 

@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/context/AuthContext";
+import UserNavDropdown from "@/components/UserNavDropdown";
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -16,7 +17,7 @@ interface PageLayoutProps {
 
 export default function PageLayout({ children, activeNav, noContainer }: PageLayoutProps) {
   const pathname = usePathname();
-  const { user, logout, isAuthOpen, authMode, openAuth, closeAuth } = useAuth();
+  const { user, requestLogout, isAuthOpen, authMode, openAuth, closeAuth } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -157,51 +158,10 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
             <div className="nav-actions">
               {user ? (
                 <div className="nav-user-logged-wrap">
-                  <div className="nav-user-badge" title={user.email}>
-                    <span className="nav-user-avatar" aria-hidden="true">
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                    </span>
-                    <span className="nav-user-name">{user.name}</span>
-                    <span className="nav-user-indicator" title="Active"></span>
-                  </div>
-                  <button
-                    type="button"
-                    className="nav-logout-btn"
-                    onClick={() => {
-                      logout();
-                      showToast("Signed out successfully.");
-                    }}
-                    title="Sign out of account"
-                    id="page-layout-logout-btn"
-                  >
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                      <polyline points="16 17 21 12 16 7" />
-                      <line x1="21" y1="12" x2="9" y2="12" />
-                    </svg>
-                    <span>Log Out</span>
-                  </button>
+                  <UserNavDropdown
+                    user={user}
+                    onLogout={requestLogout}
+                  />
                 </div>
               ) : (
                 <>
@@ -252,11 +212,29 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
                 <Link href="/how-it-works" className={`mobile-nav-item${pathname === "/how-it-works" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>How It Works</Link>
                 <Link href="/about" className={`mobile-nav-item${pathname === "/about" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>About Us</Link>
                 <Link href="/contact" className={`mobile-nav-item${pathname === "/contact" ? " active" : ""}`} onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+                <div style={{ height: "1px", background: "var(--slate-200)", margin: "0.5rem 0" }} />
+                {user?.role === "admin" && (
+                  <Link href="/admin" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>🛡️ Admin Console</Link>
+                )}
+                {user?.role === "vendor" && (
+                  <Link href="/vendor" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>🏢 Vendor Portal</Link>
+                )}
+                {user?.role === "buyer" && (
+                  <Link href="/profile" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                    👤 My Profile
+                  </Link>
+                )}
               </div>
               <div className="mobile-nav-auth-section">
                 {user ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
-                    <div className="nav-user-badge" style={{ width: "fit-content" }} title={user.email}>
+                    <Link
+                      href={user.role === "admin" ? "/admin" : user.role === "vendor" ? "/vendor" : "/profile"}
+                      className="nav-user-badge"
+                      style={{ width: "fit-content", textDecoration: "none" }}
+                      title={user.email}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       <span className="nav-user-avatar" aria-hidden="true">
                         <svg
                           width="15"
@@ -272,17 +250,16 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
                           <circle cx="12" cy="7" r="4" />
                         </svg>
                       </span>
-                      <span className="nav-user-name">{user.name}</span>
+                      <span className="nav-user-name">{user.role === "admin" ? "Admin" : user.name}</span>
                       <span className="nav-user-indicator" title="Active"></span>
-                    </div>
+                    </Link>
                     <button
                       type="button"
                       className="nav-logout-btn"
                       style={{ width: "100%", justifyContent: "center" }}
                       onClick={() => {
                         setMobileMenuOpen(false);
-                        logout();
-                        showToast("Signed out successfully.");
+                        requestLogout();
                       }}
                     >
                       <svg
@@ -338,7 +315,7 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
         </div>
       </header>
 
-      <main className={noContainer ? undefined : "container"} style={{ paddingBottom: '4rem', minHeight: 'calc(100vh - 400px)' }}>
+      <main className={noContainer ? undefined : "container"} style={{ paddingBottom: noContainer ? 0 : '4rem', minHeight: 'calc(100vh - 400px)' }}>
         {children}
       </main>
 

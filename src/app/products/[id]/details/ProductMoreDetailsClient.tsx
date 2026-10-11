@@ -4,17 +4,468 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
-import { ProductItem } from "@/data/products";
+import { ALL_PRODUCTS, ProductItem } from "@/data/products";
+
+export interface ComparableOption {
+  id: string;
+  name: string;
+  sub: string;
+  letter: string;
+  color: string;
+  category: string;
+  isMarketplace: boolean;
+  price: string;
+  rating: number;
+  reviews: string;
+  ipTransfer: string;
+  edgeLatency: string;
+  sla: string;
+  soc2: string;
+  support: string;
+  hosting: string;
+  api: string;
+}
 
 interface ProductMoreDetailsClientProps {
   product: ProductItem;
+  initialTab?: "overview" | "architecture" | "security" | "financials" | "reviews" | "compare";
 }
 
-export default function ProductMoreDetailsClient({ product }: ProductMoreDetailsClientProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "architecture" | "security" | "financials" | "reviews">("overview");
+export default function ProductMoreDetailsClient({ product, initialTab = "overview" }: ProductMoreDetailsClientProps) {
+  const [activeTab, setActiveTab] = useState<"overview" | "architecture" | "security" | "financials" | "reviews" | "compare">(initialTab);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab");
+      if (tabParam && ["overview", "architecture", "security", "financials", "reviews", "compare"].includes(tabParam)) {
+        setActiveTab(tabParam as any);
+      }
+    }
+  }, []);
 
   const sellerName = product.sellerName || "Elena Rostova";
   const techStack = product.techStack || ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "AWS"];
+
+  // Marketplace comparable options from ALL_PRODUCTS
+  const marketplaceOptions = React.useMemo<ComparableOption[]>(() => {
+    return ALL_PRODUCTS.filter((p) => p.id !== product.id).map((p) => ({
+      id: p.id,
+      name: p.name,
+      sub: `SaaS MRKT • ${p.category}`,
+      letter: p.brandLetter || p.name.charAt(0),
+      color: p.brandColor || "#4F46E5",
+      category: p.category,
+      isMarketplace: true,
+      price: `$${p.price}/mo`,
+      rating: p.rating || 4.8,
+      reviews: (p.reviewCount || 1250).toLocaleString(),
+      ipTransfer: "✓ 100% Full IP Transfer via Escrow",
+      edgeLatency: "< 110ms Edge Routing",
+      sla: "99.98% High-Availability",
+      soc2: "Pre-audited SOC 2 & GDPR",
+      support: "45-Day 1-on-1 Founder Transition",
+      hosting: p.techStack && p.techStack.length > 0 ? p.techStack.slice(0, 3).join(", ") : "Next.js, Node, AWS",
+      api: "OpenAPI 3.0 + Webhooks",
+    }));
+  }, [product.id]);
+
+  // Industry alternatives pool
+  const industryOptions = React.useMemo<ComparableOption[]>(() => [
+    {
+      id: "ext-bamboohr",
+      name: "BambooHR",
+      sub: "Legacy SMB HR Platform",
+      letter: "B",
+      color: "#16A34A",
+      category: "HR & Payroll",
+      isMarketplace: false,
+      price: "$108/mo (min 20 seats)",
+      rating: 4.5,
+      reviews: "2,410",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "240ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Add-on ($$$)",
+      support: "Standard Ticket Queue",
+      hosting: "Proprietary Cloud",
+      api: "REST API (Rate limited)",
+    },
+    {
+      id: "ext-rippling",
+      name: "Rippling",
+      sub: "All-in-one Workforce Cloud",
+      letter: "R",
+      color: "#E11D48",
+      category: "HR & Payroll",
+      isMarketplace: false,
+      price: "$140/mo (Base + seat fees)",
+      rating: 4.6,
+      reviews: "1,980",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "210ms P95",
+      sla: "99.90% SLA",
+      soc2: "Annual Add-on Fee",
+      support: "Chat / 48h SLA",
+      hosting: "Proprietary Cloud",
+      api: "REST API Only",
+    },
+    {
+      id: "ext-gusto",
+      name: "Gusto",
+      sub: "Payroll & Benefits Cloud",
+      letter: "G",
+      color: "#F43F5E",
+      category: "HR & Payroll",
+      isMarketplace: false,
+      price: "$80/mo + $6/user",
+      rating: 4.5,
+      reviews: "3,200",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "220ms P95",
+      sla: "99.90% SLA",
+      soc2: "Standard",
+      support: "Email & Phone Support",
+      hosting: "Ruby/Rails Cloud",
+      api: "Partner API",
+    },
+    {
+      id: "ext-monday",
+      name: "Monday.com",
+      sub: "Enterprise Work OS",
+      letter: "M",
+      color: "#F59E0B",
+      category: "Project Management",
+      isMarketplace: false,
+      price: "$48/mo (min 3 seats)",
+      rating: 4.6,
+      reviews: "3,890",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "220ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Plan Only",
+      support: "Tiered Ticket Support",
+      hosting: "Shared AWS Cloud",
+      api: "GraphQL (Limited)",
+    },
+    {
+      id: "ext-asana",
+      name: "Asana",
+      sub: "Team Task Management",
+      letter: "A",
+      color: "#E11D48",
+      category: "Project Management",
+      isMarketplace: false,
+      price: "$32.99/user/mo",
+      rating: 4.5,
+      reviews: "4,120",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "190ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Plan Only",
+      support: "Forum & Ticket",
+      hosting: "AWS Monolith",
+      api: "REST API v1",
+    },
+    {
+      id: "ext-linear",
+      name: "Linear",
+      sub: "High-Speed Issue Tracking",
+      letter: "L",
+      color: "#5E6AD2",
+      category: "Project Management",
+      isMarketplace: false,
+      price: "$10/user/mo",
+      rating: 4.8,
+      reviews: "1,850",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "120ms P95",
+      sla: "99.95% SLA",
+      soc2: "Standard",
+      support: "Slack & Email",
+      hosting: "Modern Cloud",
+      api: "GraphQL Realtime",
+    },
+    {
+      id: "ext-hubspot",
+      name: "HubSpot CRM",
+      sub: "Inbound Marketing & CRM",
+      letter: "H",
+      color: "#F97316",
+      category: "CRM & Sales",
+      isMarketplace: false,
+      price: "$50/mo (Starter Tier)",
+      rating: 4.5,
+      reviews: "4,500",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "250ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Tier ($$$)",
+      support: "Phone & Chat",
+      hosting: "Proprietary Cloud",
+      api: "REST API (Strict caps)",
+    },
+    {
+      id: "ext-salesforce",
+      name: "Salesforce Essentials",
+      sub: "Small Business CRM",
+      letter: "S",
+      color: "#0284C7",
+      category: "CRM & Sales",
+      isMarketplace: false,
+      price: "$30/user/mo",
+      rating: 4.4,
+      reviews: "3,200",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "280ms P95",
+      sla: "99.85% SLA",
+      soc2: "Requires Add-on",
+      support: "Tiered Support",
+      hosting: "Salesforce Cloud",
+      api: "SOAP & REST API",
+    },
+    {
+      id: "ext-quickbooks",
+      name: "QuickBooks Online",
+      sub: "Small Business Bookkeeping",
+      letter: "Q",
+      color: "#10B981",
+      category: "Finance & Accounting",
+      isMarketplace: false,
+      price: "$38/mo (Simple Start)",
+      rating: 4.4,
+      reviews: "5,800",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "290ms P95",
+      sla: "99.80% SLA",
+      soc2: "Standard",
+      support: "Chat Support",
+      hosting: "Intuit Cloud",
+      api: "Intuit Developer API",
+    },
+    {
+      id: "ext-xero",
+      name: "Xero",
+      sub: "Cloud Accounting Platform",
+      letter: "X",
+      color: "#0EA5E9",
+      category: "Finance & Accounting",
+      isMarketplace: false,
+      price: "$47/mo (Growing)",
+      rating: 4.5,
+      reviews: "3,100",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "260ms P95",
+      sla: "99.85% SLA",
+      soc2: "Standard",
+      support: "Email Support",
+      hosting: "AWS Cloud",
+      api: "REST API v2",
+    },
+    {
+      id: "ext-zendesk",
+      name: "Zendesk",
+      sub: "Enterprise Customer Helpdesk",
+      letter: "Z",
+      color: "#03363D",
+      category: "Customer Support",
+      isMarketplace: false,
+      price: "$69/user/mo",
+      rating: 4.4,
+      reviews: "4,800",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "240ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Tier",
+      support: "Ticket Queue",
+      hosting: "Zendesk Cloud",
+      api: "REST API",
+    },
+    {
+      id: "ext-intercom",
+      name: "Intercom",
+      sub: "AI Customer Communications",
+      letter: "I",
+      color: "#1F8CEB",
+      category: "Customer Support",
+      isMarketplace: false,
+      price: "$74/mo + AI fees",
+      rating: 4.5,
+      reviews: "2,600",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "210ms P95",
+      sla: "99.90% SLA",
+      soc2: "Enterprise Tier",
+      support: "Fin AI Bot First",
+      hosting: "AWS Cloud",
+      api: "REST & Webhooks",
+    },
+    {
+      id: "ext-klaviyo",
+      name: "Klaviyo",
+      sub: "Lifecycle Marketing Automation",
+      letter: "K",
+      color: "#2563EB",
+      category: "Marketing & Automation",
+      isMarketplace: false,
+      price: "$60/mo + list fees",
+      rating: 4.6,
+      reviews: "2,900",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "200ms P95",
+      sla: "99.90% SLA",
+      soc2: "Standard",
+      support: "Email & Chat",
+      hosting: "AWS Cloud",
+      api: "REST API v3",
+    },
+    {
+      id: "ext-mailchimp",
+      name: "Mailchimp",
+      sub: "Email & Campaign Marketing",
+      letter: "M",
+      color: "#CA8A04",
+      category: "Marketing & Automation",
+      isMarketplace: false,
+      price: "$45/mo (Standard)",
+      rating: 4.4,
+      reviews: "6,200",
+      ipTransfer: "No (Vendor Lock-in)",
+      edgeLatency: "250ms P95",
+      sla: "99.85% SLA",
+      soc2: "Standard",
+      support: "Ticket Support",
+      hosting: "Intuit Cloud",
+      api: "Marketing API v3",
+    },
+  ], []);
+
+  // All combined options
+  const allComparableOptions = React.useMemo<ComparableOption[]>(() => {
+    return [...marketplaceOptions, ...industryOptions];
+  }, [marketplaceOptions, industryOptions]);
+
+  // Compute default initial choices based on product category
+  const defaultChoices = React.useMemo(() => {
+    const cat = (product.category || "").toLowerCase();
+    if (cat.includes("hr") || cat.includes("payroll")) {
+      return { comp1: "ext-bamboohr", comp2: "ext-rippling" };
+    }
+    if (cat.includes("project") || cat.includes("collab") || cat.includes("task")) {
+      return { comp1: "ext-monday", comp2: "ext-asana" };
+    }
+    if (cat.includes("crm") || cat.includes("sales")) {
+      return { comp1: "ext-hubspot", comp2: "ext-salesforce" };
+    }
+    if (cat.includes("finance") || cat.includes("accounting")) {
+      return { comp1: "ext-quickbooks", comp2: "ext-xero" };
+    }
+    if (cat.includes("support") || cat.includes("customer")) {
+      return { comp1: "ext-zendesk", comp2: "ext-intercom" };
+    }
+    if (cat.includes("marketing")) {
+      return { comp1: "ext-klaviyo", comp2: "ext-mailchimp" };
+    }
+    const sameCatMkt = marketplaceOptions.filter((m) => m.category === product.category);
+    if (sameCatMkt.length >= 2) {
+      return { comp1: sameCatMkt[0].id, comp2: sameCatMkt[1].id };
+    }
+    return { comp1: marketplaceOptions[0]?.id || "ext-monday", comp2: "ext-bamboohr" };
+  }, [product.category, marketplaceOptions]);
+
+  // Selected competitor states
+  const [comp1Id, setComp1Id] = useState<string>(defaultChoices.comp1);
+  const [comp2Id, setComp2Id] = useState<string>(defaultChoices.comp2);
+
+  // Resolved active competitors
+  const comp1 = React.useMemo(() => {
+    return allComparableOptions.find((c) => c.id === comp1Id) || allComparableOptions[0] || industryOptions[0];
+  }, [allComparableOptions, comp1Id, industryOptions]);
+
+  const comp2 = React.useMemo(() => {
+    return allComparableOptions.find((c) => c.id === comp2Id) || allComparableOptions[1] || industryOptions[1];
+  }, [allComparableOptions, comp2Id, industryOptions]);
+
+  // Interactive Rating & Comment State
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [userRating, setUserRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [helpfulVotes, setHelpfulVotes] = useState<Record<string, number>>({});
+  const [userVoted, setUserVoted] = useState<Record<string, boolean>>({});
+
+  const [commentsList, setCommentsList] = useState([
+    {
+      id: "rev-1",
+      name: "Alex Rivers",
+      role: "CTO at DataPulse",
+      avatarBg: "linear-gradient(135deg, #4F46E5, #818CF8)",
+      initials: "AR",
+      rating: 5,
+      date: "Verified 2 days ago",
+      tag: "Engineering & Sprints",
+      comment: "The real-time collaborative documentation and live Git branch linking cut our sprint cycle times by more than 40%. The webhook synchronization with GitHub and Slack functioned flawlessly on day one.",
+      helpfulCount: 38,
+    },
+    {
+      id: "rev-2",
+      name: "Maya Patel",
+      role: "Product Operations Lead at HyperGrowth",
+      avatarBg: "linear-gradient(135deg, #059669, #34D399)",
+      initials: "MP",
+      rating: 5,
+      date: "Verified 5 days ago",
+      tag: "Team Operations",
+      comment: "Transitioned 6 cross-functional squads to TaskFlow in a single sprint. The interactive Kanban boards, automated velocity burn-downs, and customizable task fields gave our executives immediate visibility.",
+      helpfulCount: 24,
+    },
+    {
+      id: "rev-3",
+      name: "Jason Thorne",
+      role: "Principal Architect at CloudGrid",
+      avatarBg: "linear-gradient(135deg, #2563EB, #60A5FA)",
+      initials: "JT",
+      rating: 4,
+      date: "Verified 1 week ago",
+      tag: "Architecture & Scale",
+      comment: "Rock-solid uptime, robust RBAC permissions, and verified enterprise security SLAs. Support team helped us configure custom SAML SSO with Okta within 20 minutes.",
+      helpfulCount: 19,
+    },
+  ]);
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewComment.trim()) return;
+
+    const newComment = {
+      id: `rev-${Date.now()}`,
+      name: "Verified User",
+      role: "Verified Buyer",
+      avatarBg: "linear-gradient(135deg, #6366F1, #A855F7)",
+      initials: "VU",
+      rating: userRating,
+      date: "Just now",
+      tag: "Verified Feedback",
+      comment: reviewComment.trim(),
+      helpfulCount: 1,
+    };
+
+    setCommentsList([newComment, ...commentsList]);
+    setReviewSubmitted(true);
+    setReviewComment("");
+    setShowReviewForm(false);
+
+    setTimeout(() => {
+      setReviewSubmitted(false);
+    }, 6000);
+  };
+
+  const handleHelpfulToggle = (id: string) => {
+    if (userVoted[id]) return;
+    setUserVoted((prev) => ({ ...prev, [id]: true }));
+    setHelpfulVotes((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  };
 
   return (
     <PageLayout activeNav="products" noContainer>
@@ -66,7 +517,14 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
               className={`pdetails-tab ${activeTab === "reviews" ? "pdetails-tab--active" : ""}`}
               onClick={() => setActiveTab("reviews")}
             >
-              Customer Reviews
+              Company Ratings
+            </button>
+            <button
+              type="button"
+              className={`pdetails-tab ${activeTab === "compare" ? "pdetails-tab--active" : ""}`}
+              onClick={() => setActiveTab("compare")}
+            >
+              Compare
             </button>
           </div>
 
@@ -74,91 +532,85 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
           <div className="pdetails-content-body">
             {activeTab === "overview" && (
               <div className="pdetails-tab-pane">
-                {/* About Project Long Description */}
+                {/* About Section */}
                 <div className="pdetails-about-card">
                   <span className="pdetails-about-badge">About Project</span>
                   <h2 className="pdetails-card-title">About {product.name}</h2>
                   <p className="pdetails-about-paragraph">
-                    {product.name} is a comprehensive, production-grade {product.category?.toLowerCase() || "software"} platform engineered to streamline mission-critical operations for {product.targetAudience?.toLowerCase() || "modern software and engineering organizations"}. Built from the ground up to eliminate tool fragmentation and administrative friction, the platform unifies real-time collaborative documentation, agile sprint tracking, automated continuous delivery workflows, and cross-functional team coordination into a single cohesive interface. Backed by high-reliability cloud infrastructure, enterprise encryption standards, and strict SOC2 Type II compliance guarantees, {product.name} provides squads with the clarity, velocity, and governance required to execute high-impact initiatives without operational bottlenecks.
+                    {product.name} is a comprehensive, production-grade {product.category?.toLowerCase() || "software"} platform engineered to streamline mission-critical operations for {product.targetAudience?.toLowerCase() || "modern software and engineering organizations"}. Built from the ground up to eliminate tool fragmentation and administrative friction, the platform unifies real-time collaborative documentation, agile sprint tracking, automated continuous delivery workflows, and cross-functional team coordination into a single cohesive interface.
                   </p>
                   <p className="pdetails-about-paragraph">
                     {product.aboutText ? `${product.aboutText} ` : ""}{product.tagline ? `${product.tagline}. ` : ""}With seamless integrations across developer ecosystems, automated webhook synchronization, and interactive telemetry analytics, teams can accelerate their product delivery cycles, reduce context switching, and maintain transparent audit trails across every milestone.
                   </p>
                   <p className="pdetails-about-paragraph">
-                    At its core, the platform incorporates a modern microservices-driven architecture backed by distributed caching layers, low-latency database sharding, and real-time event streaming. This allows organizations to scale concurrent active sessions seamlessly from early-stage pilots to high-throughput enterprise deployments without degradation in response times. Native API extensibility and bi-directional synchronizations ensure that existing developer toolchains—including Git providers, issue trackers, and customer communication channels—stay completely synchronized without requiring manual intervention.
+                    At its core, the platform incorporates a modern microservices-driven architecture backed by distributed caching layers, low-latency database sharding, and real-time event streaming.
                   </p>
-                  <p className="pdetails-about-paragraph">
-                    Furthermore, the system emphasizes frictionless onboarding and team ergonomics. Built-in permission matrices, granular role-based access controls (RBAC), and multi-tenant isolation patterns allow administrators to safely partition datasets across departments or external contractors. Detailed audit logging, automated weekly digest summaries, and customizable Kanban or sprint perspectives ensure both technical leads and executive stakeholders maintain comprehensive visibility over development throughput and product milestones.
-                  </p>
-                  <p className="pdetails-about-paragraph">
-                    Engineered with long-term maintainability in mind, the codebase adheres to strict automated testing standards, comprehensive OpenAPI specifications, and containerized Docker CI/CD pipelines. This rigorous engineering foundation makes {product.name} an exceptionally stable asset for teams seeking immediate operational efficiency and an attractive proposition for buyers demanding transparent technical diligence and zero tech-debt overhead.
-                  </p>
+                </div>
 
-                  {/* Platform Interface Preview */}
-                  <div className="pdetails-media-block">
-                    <div className="pdetails-media-header">
-                      <span className="pdetails-media-tag">Workspace UI</span>
-                      <span className="pdetails-media-title">Interactive Sprint Dashboard &amp; Task Pipeline</span>
-                    </div>
-                    <div className="pdetails-media-wrapper">
-                      <Image
-                        src="/images/taskflow-dashboard-preview.jpg"
-                        alt={`${product.name} Interactive Dashboard Interface`}
-                        width={1280}
-                        height={720}
-                        className="pdetails-media-img"
-                        priority
-                      />
-                    </div>
-                    <div className="pdetails-media-caption">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                        <circle cx="9" cy="9" r="2"/>
-                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                      </svg>
-                      <span>Figure 1: {product.name} Production Workspace — Real-time sprint velocity graphs, interactive kanban columns, and automated backlog scoring.</span>
+                {/* Connecting Text Card Between Upper and Lower Sections */}
+                <div className="pdetails-bridge-card">
+                  <div className="pdetails-bridge-header">
+                    <span className="pdetails-about-badge" style={{ background: "#EEF2FF", color: "#4F46E5" }}>
+                      Multiplayer Workflows &amp; Enterprise Governance
+                    </span>
+                    <h3 className="pdetails-card-title" style={{ fontSize: "1.35rem", marginBottom: "0.75rem" }}>
+                      Continuous Delivery &amp; Real-Time Multi-Region Synchronization
+                    </h3>
+                  </div>
+                  <p className="pdetails-about-paragraph">
+                    Real-time synchronization guarantees that distributed engineering squads, product managers, and executive stakeholders stay aligned on roadmap milestones without async communication gaps. Multiplayer collaborative document editors, live bidirectional Git branch linking, and instant sprint velocity burndown telemetry enable development teams to transition seamlessly from product discovery to continuous deployment.
+                  </p>
+                  <p className="pdetails-about-paragraph" style={{ marginBottom: 0 }}>
+                    Engineered for enterprise governance and compliance, the platform provides automated audit trails, tenant-isolated cryptographic workspaces, and granular role-based permissions (RBAC) out of the box. Pre-configured webhook connectors for Slack, Linear, GitHub, and Jira allow rapid integration into existing corporate developer toolchains with zero migration downtime.
+                  </p>
+                </div>
+
+                {/* 2-Column Split: Left Para, Right Image */}
+                <div className="pdetails-overview-split pdetails-overview-split--reverse" style={{ marginTop: "2rem" }}>
+                  {/* Left Column: Para */}
+                  <div className="pdetails-split-about-col">
+                    <div className="pdetails-about-card pdetails-split-about-card">
+                      <span className="pdetails-about-badge" style={{ background: "#ECFDF5", color: "#059669" }}>Team Operations</span>
+                      <h3 className="pdetails-card-title" style={{ fontSize: "1.35rem" }}>Cross-Functional Sprint Planning &amp; Agile Collaboration</h3>
+                      <p className="pdetails-about-paragraph">
+                        In active daily operations, {product.name} serves as the operational nerve center for cross-functional sprint planning sessions and collaborative backlog grooming. Whether teams gather in synchronous conference rooms or coordinate across global time zones, the platform&apos;s multi-display compatibility and live interactive boards facilitate high-engagement grooming rituals with zero latency.
+                      </p>
+                      <p className="pdetails-about-paragraph">
+                        Furthermore, the system emphasizes frictionless onboarding and team ergonomics. Built-in permission matrices, granular role-based access controls (RBAC), and multi-tenant isolation patterns allow administrators to safely partition datasets across departments or external contractors.
+                      </p>
+                      <p className="pdetails-about-paragraph">
+                        By replacing scattered spreadsheets and disconnected chat threads with structured, audit-ready development workflows, teams report significant reductions in planning overhead and an average 40% increase in sprint delivery velocity.
+                      </p>
                     </div>
                   </div>
 
-                  <p className="pdetails-about-paragraph">
-                    The user interface shown above has been intentionally crafted around cognitive simplicity and rapid task completion. Featuring dynamic sprint velocity charts, live sprint progress meters, and drag-and-drop Kanban workflow boards, the interactive console offers engineering and product squads instantaneous visibility into project health. Real-time state synchronizations push automatically via WebSockets without requiring page reloads, ensuring distributed squad members remain completely synchronized on milestone progress and backlog priorities.
-                  </p>
-                  <p className="pdetails-about-paragraph">
-                    Customizable views enable team members to switch fluidly between high-level executive roadmaps and granular issue-level tracking. Built-in tagging systems, priority indicators, and multi-user assignment controls give leads the flexibility to structure complex development phases while maintaining transparency across team dependencies.
-                  </p>
-
-                  {/* Team Work Session & Operational Collaboration */}
-                  <div className="pdetails-media-block">
-                    <div className="pdetails-media-header">
-                      <span className="pdetails-media-tag">Team Operations</span>
-                      <span className="pdetails-media-title">Cross-Functional Sprint Planning &amp; Agile Rituals</span>
-                    </div>
-                    <div className="pdetails-media-wrapper">
-                      <Image
-                        src="/images/taskflow-team-work.jpg"
-                        alt={`${product.name} Engineering and Product Team Sprint Planning`}
-                        width={1280}
-                        height={720}
-                        className="pdetails-media-img"
-                      />
-                    </div>
-                    <div className="pdetails-media-caption">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                      </svg>
-                      <span>Figure 2: Active Team Work Session — Distributed squad leads conducting synchronized sprint 08 grooming and backlog capacity planning.</span>
+                  {/* Right Column: Image */}
+                  <div className="pdetails-split-image-col">
+                    <div className="pdetails-media-block pdetails-split-media">
+                      <div className="pdetails-media-header">
+                        <span className="pdetails-media-tag" style={{ background: "#ECFDF5", color: "#059669" }}>Team Operations</span>
+                        <span className="pdetails-media-title">Sprint Planning &amp; Agile Rituals</span>
+                      </div>
+                      <div className="pdetails-media-wrapper">
+                        <Image
+                          src="/images/taskflow-team-work.jpg"
+                          alt={`${product.name} Engineering and Product Team Sprint Planning`}
+                          width={1280}
+                          height={720}
+                          className="pdetails-media-img"
+                        />
+                      </div>
+                      <div className="pdetails-media-caption">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                          <circle cx="9" cy="7" r="4"/>
+                          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <span>Active Team Work Session — Distributed squad sprint grooming</span>
+                      </div>
                     </div>
                   </div>
-
-                  <p className="pdetails-about-paragraph">
-                    In active daily operations, {product.name} serves as the operational nerve center for cross-functional sprint planning sessions and collaborative backlog grooming. Whether teams gather in synchronous conference rooms or coordinate across global time zones, the platform&apos;s multi-display compatibility and live interactive boards facilitate high-engagement grooming rituals with zero latency.
-                  </p>
-                  <p className="pdetails-about-paragraph">
-                    By replacing scattered spreadsheets and disconnected chat threads with structured, audit-ready development workflows, teams report significant reductions in planning overhead and an average 40% increase in sprint delivery velocity. With integrated retrospective tools and historical burn-down telemetry, engineering organizations continuously iterate on delivery quality while maintaining sustainable velocity across every development cycle.
-                  </p>
                 </div>
 
                 <div className="pdetails-specs-grid">
@@ -360,7 +812,7 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                         </svg>
                       </div>
                       <h3>SOC2 Type II</h3>
-                      <p>Annual third-party audit completed. Full compliance audit reports available upon subscription.</p>
+                      <p>Annual third-party audit completed. Full compliance audit reports available upon request.</p>
                     </div>
                     <div className="pdetails-sec-box">
                       <div className="pdetails-sec-icon" aria-hidden="true">
@@ -417,7 +869,7 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
 
             {activeTab === "financials" && (
               <div className="pdetails-tab-pane">
-                {/* Financial Diligence & Revenue Overview */}
+                {/* Text First */}
                 <div className="pdetails-about-card">
                   <span className="pdetails-about-badge">Financial Diligence</span>
                   <h2 className="pdetails-card-title">{product.name} Financial Performance, Unit Economics &amp; Growth Telemetry</h2>
@@ -428,44 +880,62 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                     The platform exhibits strong cohort retention dynamics with a Net Retention Rate (NRR) of 108.5% and sustained gross margins exceeding 84%. Low customer acquisition costs (CAC) paired with automated self-serve expansion tiers ensure healthy lifetime value to customer acquisition cost (LTV:CAC) ratios across both mid-market and enterprise customer tiers.
                   </p>
                   <p className="pdetails-about-paragraph">
+                    Subscription billing is managed via an automated multi-currency checkout engine with automated dunning workflows and merchant-of-record reconciliation. Over 70% of annualized contract value (ACV) is collected upfront through annual prepayments, generating positive working capital and mitigating monthly volatility with an involuntary churn recovery rate above 68%.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    Operating overhead remains exceptionally lean, with cloud infrastructure and database hosting expenses representing less than 4.8% of gross monthly recurring revenue (MRR). Vendor agreements, third-party software subscriptions, and developer tooling licenses are maintained under transferable commercial agreements to ensure friction-free ownership handoff.
+                  </p>
+                  <p className="pdetails-about-paragraph">
                     With zero long-term debt, audited profit-and-loss (P&amp;L) statements, and automated banking reconciliation feeds, the business maintains a transparent financial profile optimized for seamless escrow closing and risk-free post-acquisition handover.
                   </p>
                 </div>
 
-                <div className="pdetails-unlocked-banner">
-                  <div className="pdetails-banner-top">
-                    <span className="pdetails-banner-pill">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "4px" }}>
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                      PRO SUBSCRIPTION ACTIVE
-                    </span>
-                    <h2>Verified Diligence Financial Data</h2>
-                    <p>All metrics below have been audited and verified through Stripe and bank integration.</p>
+                {/* Then Show Image */}
+                <div className="pdetails-media-block pdetails-media-block--compact">
+                  <div className="pdetails-media-header">
+                    <span className="pdetails-media-tag" style={{ background: "#ECFDF5", color: "#059669" }}>Financial Telemetry</span>
+                    <span className="pdetails-media-title">Verified Revenue &amp; Growth Metrics</span>
                   </div>
+                  <div className="pdetails-media-wrapper">
+                    <Image
+                      src="/images/finmate.jpg"
+                      alt={`${product.name} Verified Financial Analytics & Revenue Telemetry`}
+                      width={1280}
+                      height={720}
+                      className="pdetails-media-img"
+                      priority
+                    />
+                  </div>
+                  <div className="pdetails-media-caption">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                      <circle cx="9" cy="9" r="2"/>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                    <span>Stripe &amp; Banking Verified Diligence Data Telemetry</span>
+                  </div>
+                </div>
 
-                  <div className="pdetails-fin-cards">
-                    <div className="pdetails-fin-card">
-                      <span className="pdetails-fin-label">Annual Recurring Revenue</span>
-                      <strong className="pdetails-fin-num">$148,500 / yr</strong>
-                      <span className="pdetails-fin-badge">Stripe Verified</span>
-                    </div>
-                    <div className="pdetails-fin-card">
-                      <span className="pdetails-fin-label">Monthly Growth Rate</span>
-                      <strong className="pdetails-fin-num">+12.4% MoM</strong>
-                      <span className="pdetails-fin-badge">TTM Verified</span>
-                    </div>
-                    <div className="pdetails-fin-card">
-                      <span className="pdetails-fin-label">Gross Margin</span>
-                      <strong className="pdetails-fin-num">84.2%</strong>
-                      <span className="pdetails-fin-badge">Audited P&amp;L</span>
-                    </div>
-                    <div className="pdetails-fin-card">
-                      <span className="pdetails-fin-label">Net Retention Rate</span>
-                      <strong className="pdetails-fin-num">108.5%</strong>
-                      <span className="pdetails-fin-badge">Cohort Analysis</span>
-                    </div>
-                  </div>
+                {/* Post-Telemetry Diligence & Transaction Governance */}
+                <div className="pdetails-about-card" style={{ marginTop: "2rem" }}>
+                  <span className="pdetails-about-badge" style={{ background: "#EEF2FF", color: "#4F46E5" }}>
+                    Transaction Diligence &amp; Asset Handover
+                  </span>
+                  <h2 className="pdetails-card-title">
+                    Escrow Protocols, Merchant Account Transfer &amp; Post-Closing Continuity
+                  </h2>
+                  <p className="pdetails-about-paragraph">
+                    During asset acquisition, {product.name}&apos;s billing infrastructure facilitates seamless ownership reassignment with zero payment disruption for active subscribers. Native merchant-of-record and Stripe Connect integrations allow direct administrative transfer of customer tokens, historical billing records, recurring subscription schedules, and banked account feeds without triggering re-authentication friction or involuntary subscriber churn.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    Transaction settlement is structured through industry-standard SaaS escrow workflows, ensuring mutual protection throughout the technical inspection and migration escrow period. Comprehensive diligence packages include audited month-over-month Profit &amp; Loss (P&amp;L) ledgers, GAAP-compliant revenue recognition summaries, verified Stripe customer cohort retention reports, and third-party bank reconciliation statements spanning the preceding 24 months.
+                  </p>
+                  <p className="pdetails-about-paragraph">
+                    From an operational efficiency standpoint, customer payback periods remain exceptionally rapid at under 5.2 months, supported by organic acquisition channels, word-of-mouth referral velocity, and product-led growth (PLG) expansion tiers. Customer Lifetime Value (LTV) continues to compound through enterprise tier upsells and annual prepaid contract commitments, delivering robust cash flow predictability and substantial downside protection for acquiring operators.
+                  </p>
+                  <p className="pdetails-about-paragraph" style={{ marginBottom: 0 }}>
+                    Post-closing transition governance includes up to 90 days of structured founder advisory support, detailed standard operating procedures (SOPs) for continuous integration and automated deployments, and transferred vendor accounts across hosting, logging, and security compliance tools to guarantee seamless, uninterrupted day-one operational continuity.
+                  </p>
                 </div>
               </div>
             )}
@@ -473,12 +943,75 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
             {activeTab === "reviews" && (
               <div className="pdetails-tab-pane">
                 <div className="pdetails-spec-card">
-                  <h2 className="pdetails-card-title">Customer Feedback &amp; Ratings</h2>
+                  <span className="pdetails-about-badge" style={{ background: "#EEF2FF", color: "#4F46E5" }}>
+                    Verified Diligence Scorecard
+                  </span>
+                  <h2 className="pdetails-card-title">{product.name} Company Ratings &amp; Trust Scorecard</h2>
+                  <p className="pdetails-about-paragraph" style={{ marginBottom: "1.75rem" }}>
+                    Comprehensive third-party diligence ratings, verified user satisfaction indices, and independent platform audits for {product.name}. Scores aggregated from verified business customers, enterprise engineering teams, and leading B2B software review networks.
+                  </p>
+
+                  {/* Multi-Platform Rating Badges */}
+                  <div className="pdetails-rating-platforms">
+                    <div className="pdetails-rating-platform-card">
+                      <div className="pdetails-plat-header">
+                        <span className="pdetails-plat-name">G2 Crowd</span>
+                        <span className="pdetails-plat-badge">Leader Q3</span>
+                      </div>
+                      <div className="pdetails-plat-score-row">
+                        <span className="pdetails-plat-score">4.9</span>
+                        <span className="pdetails-plat-max">/ 5.0</span>
+                      </div>
+                      <div className="pdetails-plat-stars">★★★★★</div>
+                      <p className="pdetails-plat-caption">2,340+ verified buyer reviews</p>
+                    </div>
+
+                    <div className="pdetails-rating-platform-card">
+                      <div className="pdetails-plat-header">
+                        <span className="pdetails-plat-name">Capterra</span>
+                        <span className="pdetails-plat-badge" style={{ background: "#ECFDF5", color: "#059669" }}>Top Performer</span>
+                      </div>
+                      <div className="pdetails-plat-score-row">
+                        <span className="pdetails-plat-score">4.8</span>
+                        <span className="pdetails-plat-max">/ 5.0</span>
+                      </div>
+                      <div className="pdetails-plat-stars">★★★★★</div>
+                      <p className="pdetails-plat-caption">1,820+ verified business reviews</p>
+                    </div>
+
+                    <div className="pdetails-rating-platform-card">
+                      <div className="pdetails-plat-header">
+                        <span className="pdetails-plat-name">Trustpilot</span>
+                        <span className="pdetails-plat-badge" style={{ background: "#FEF3C7", color: "#D97706" }}>Excellent</span>
+                      </div>
+                      <div className="pdetails-plat-score-row">
+                        <span className="pdetails-plat-score">4.9</span>
+                        <span className="pdetails-plat-max">/ 5.0</span>
+                      </div>
+                      <div className="pdetails-plat-stars">★★★★★</div>
+                      <p className="pdetails-plat-caption">960+ customer ratings</p>
+                    </div>
+
+                    <div className="pdetails-rating-platform-card">
+                      <div className="pdetails-plat-header">
+                        <span className="pdetails-plat-name">Product Hunt</span>
+                        <span className="pdetails-plat-badge" style={{ background: "#FEE2E2", color: "#DC2626" }}>#1 Product</span>
+                      </div>
+                      <div className="pdetails-plat-score-row">
+                        <span className="pdetails-plat-score">4.9</span>
+                        <span className="pdetails-plat-max">/ 5.0</span>
+                      </div>
+                      <div className="pdetails-plat-stars">★★★★★</div>
+                      <p className="pdetails-plat-caption">1,450+ community upvotes</p>
+                    </div>
+                  </div>
+
+                  {/* Summary Rating & Star Distribution */}
                   <div className="pdetails-reviews-summary">
                     <div className="pdetails-rev-big">
                       <span className="pdetails-rev-score">4.9</span>
                       <span className="pdetails-stars">★★★★★</span>
-                      <span className="pdetails-rev-total">5,120 verified reviews</span>
+                      <span className="pdetails-rev-total">5,120 verified reviews across all platforms</span>
                     </div>
                     <div className="pdetails-rev-bars">
                       <div className="pdetails-bar-row">
@@ -499,14 +1032,582 @@ export default function ProductMoreDetailsClient({ product }: ProductMoreDetails
                     </div>
                   </div>
 
-                  <div className="pdetails-quotes-grid">
-                    <div className="pdetails-quote-card">
-                      <p>&ldquo;{product.name} drastically accelerated our team sprint cycle. The integration was seamless and support was lightning fast.&rdquo;</p>
-                      <strong>— Marcus Vance, VP Engineering at CloudSync</strong>
+                  {/* Dimension / Category Scores */}
+                  <div className="pdetails-cat-breakdown">
+                    <div className="pdetails-cat-row">
+                      <div className="pdetails-cat-label-row">
+                        <span>Ease of Deployment &amp; Onboarding</span>
+                        <span className="pdetails-cat-score">98% (4.9 / 5.0)</span>
+                      </div>
+                      <div className="pdetails-bar-track"><div className="pdetails-bar-fill" style={{ width: "98%", background: "#4F46E5" }} /></div>
                     </div>
-                    <div className="pdetails-quote-card">
-                      <p>&ldquo;Best investment we made this quarter. Everything worked out of the box with zero configuration headache.&rdquo;</p>
-                      <strong>— Sarah Lin, Head of Product at Vertex Labs</strong>
+                    <div className="pdetails-cat-row">
+                      <div className="pdetails-cat-label-row">
+                        <span>Customer Support &amp; SLA Adherence</span>
+                        <span className="pdetails-cat-score">100% (5.0 / 5.0)</span>
+                      </div>
+                      <div className="pdetails-bar-track"><div className="pdetails-bar-fill" style={{ width: "100%", background: "#059669" }} /></div>
+                    </div>
+                    <div className="pdetails-cat-row">
+                      <div className="pdetails-cat-label-row">
+                        <span>System Stability &amp; SLA Uptime (99.9%)</span>
+                        <span className="pdetails-cat-score">99% (4.9 / 5.0)</span>
+                      </div>
+                      <div className="pdetails-bar-track"><div className="pdetails-bar-fill" style={{ width: "99%", background: "#0284C7" }} /></div>
+                    </div>
+                    <div className="pdetails-cat-row">
+                      <div className="pdetails-cat-label-row">
+                        <span>Value for Money &amp; ROI</span>
+                        <span className="pdetails-cat-score">96% (4.8 / 5.0)</span>
+                      </div>
+                      <div className="pdetails-bar-track"><div className="pdetails-bar-fill" style={{ width: "96%", background: "#F59E0B" }} /></div>
+                    </div>
+                  </div>
+
+
+
+                  {/* Rating & Comments Action Header */}
+                  <div className="pdetails-reviews-action-header">
+                    <div>
+                      <h3 className="pdetails-card-title" style={{ fontSize: "1.25rem", margin: 0 }}>
+                        User Comments &amp; Community Feedback ({commentsList.length + 5120})
+                      </h3>
+                      <p style={{ color: "#64748B", fontSize: "0.85rem", margin: "0.25rem 0 0 0" }}>
+                        Verified customer ratings, deployment feedback, and technical reviews.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="pdetails-btn-write-review"
+                      onClick={() => setShowReviewForm(!showReviewForm)}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M12 5v14M5 12h14" />
+                      </svg>
+                      {showReviewForm ? "Close Review Form" : "Give Rating & Comment"}
+                    </button>
+                  </div>
+
+                  {/* Submission Success Toast */}
+                  {reviewSubmitted && (
+                    <div className="pdetails-review-success">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                      </svg>
+                      <span>Thank you! Your verified rating and comment has been posted successfully.</span>
+                    </div>
+                  )}
+
+                  {/* Interactive Review Form */}
+                  {showReviewForm && (
+                    <form className="pdetails-review-form-card" onSubmit={handleReviewSubmit}>
+                      <h4 className="pdetails-form-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        Share Your Rating &amp; Review for {product.name}
+                      </h4>
+
+                      {/* Star Rating Picker */}
+                      <div className="pdetails-star-selector-row">
+                        <span className="pdetails-star-selector-label">Your Rating:</span>
+                        <div className="pdetails-star-buttons" onMouseLeave={() => setHoverRating(0)}>
+                          {[1, 2, 3, 4, 5].map((star) => {
+                            const isFilled = star <= (hoverRating || userRating);
+                            return (
+                              <button
+                                key={star}
+                                type="button"
+                                className={`pdetails-star-btn ${isFilled ? "pdetails-star-btn--filled" : "pdetails-star-btn--empty"}`}
+                                onClick={() => setUserRating(star)}
+                                onMouseEnter={() => setHoverRating(star)}
+                                aria-label={`Rate ${star} stars`}
+                              >
+                                ★
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <span className="pdetails-rating-text-hint">
+                          {hoverRating || userRating} / 5 Stars &bull;{" "}
+                          {(hoverRating || userRating) === 5
+                            ? "Outstanding"
+                            : (hoverRating || userRating) === 4
+                            ? "Very Good"
+                            : (hoverRating || userRating) === 3
+                            ? "Average"
+                            : "Needs Improvement"}
+                        </span>
+                      </div>
+
+
+                      <div className="pdetails-form-group">
+                        <label htmlFor="review-comment">Your Comment &amp; Feedback *</label>
+                        <textarea
+                          id="review-comment"
+                          className="pdetails-form-textarea"
+                          rows={4}
+                          placeholder="What did you like most about this product? How has it improved your team's workflow and sprint efficiency?"
+                          value={reviewComment}
+                          onChange={(e) => setReviewComment(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <div className="pdetails-form-submit-row">
+                        <button
+                          type="button"
+                          className="pdetails-btn-cancel-review"
+                          onClick={() => setShowReviewForm(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button type="submit" className="pdetails-btn-submit">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                          Publish Review &amp; Rating
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* Comments Feed List */}
+                  <div className="pdetails-comments-list">
+                    {commentsList.map((item) => {
+                      const votes = item.helpfulCount + (helpfulVotes[item.id] || 0);
+                      const hasVoted = !!userVoted[item.id];
+                      return (
+                        <div key={item.id} className="pdetails-comment-card">
+                          <div className="pdetails-comment-header">
+                            <div className="pdetails-comment-user">
+                              <div className="pdetails-comment-avatar" style={{ background: item.avatarBg }}>
+                                {item.initials}
+                              </div>
+                              <div className="pdetails-comment-user-info">
+                                <div className="pdetails-comment-name-row">
+                                  <span>{item.name}</span>
+                                  <span className="pdetails-verified-badge">✓ Verified Buyer</span>
+                                </div>
+                                <span className="pdetails-comment-role">{item.role}</span>
+                              </div>
+                            </div>
+                            <div className="pdetails-comment-rating-box">
+                              <span className="pdetails-comment-stars">
+                                {"★".repeat(item.rating)}
+                                {"☆".repeat(5 - item.rating)}
+                              </span>
+                              <span className="pdetails-comment-date">{item.date}</span>
+                            </div>
+                          </div>
+
+                          <p className="pdetails-comment-body">{item.comment}</p>
+
+                          <div className="pdetails-comment-footer">
+                            <span className="pdetails-comment-tag">{item.tag}</span>
+                            <button
+                              type="button"
+                              className={`pdetails-helpful-btn ${hasVoted ? "pdetails-helpful-btn--active" : ""}`}
+                              onClick={() => handleHelpfulToggle(item.id)}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                              </svg>
+                              <span>{hasVoted ? `Helpful (${votes})` : `Helpful (${votes})`}</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "compare" && (
+              <div className="pdetails-tab-pane">
+                <div className="pdetails-compare-wrap">
+                  <div className="pdetails-compare-card">
+                    <div className="pdetails-compare-header">
+                      <span className="pdetails-compare-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="20" x2="18" y2="10" />
+                          <line x1="12" y1="20" x2="12" y2="4" />
+                          <line x1="6" y1="20" x2="6" y2="14" />
+                        </svg>
+                        Competitive Benchmarks
+                      </span>
+                      <h2 className="pdetails-compare-title">Compare {product.name} With Market Alternatives</h2>
+                      <p className="pdetails-compare-desc">
+                        Direct side-by-side technical, financial, and architectural benchmark comparing {product.name} against leading alternatives in the {product.category || "SaaS"} market. Evaluate verified metrics, codebase asset transfer rights, latency SLAs, and operational overhead.
+                      </p>
+                    </div>
+
+                    {/* Interactive Product Chooser Toolbar */}
+                    <div className="pdetails-compare-toolbar">
+                      <div className="pdetails-compare-toolbar-top">
+                        <div className="pdetails-compare-toolbar-title">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 16v-4" />
+                            <path d="M12 8h.01" />
+                          </svg>
+                          <span>Customize Comparison: Choose Which Products You Want to Compare</span>
+                        </div>
+                      </div>
+
+                      <div className="pdetails-compare-pickers-grid">
+                        <div className="pdetails-compare-picker-box">
+                          <label className="pdetails-compare-picker-label" htmlFor="compare-slot-1">
+                            <span>Slot 1: Choose Product</span>
+                            <span style={{ color: comp1.isMarketplace ? "#059669" : "#4F46E5", fontSize: "0.75rem", textTransform: "none" }}>
+                              {comp1.isMarketplace ? "✓ SaaS MRKT" : "External Alternative"}
+                            </span>
+                          </label>
+                          <select
+                            id="compare-slot-1"
+                            className="pdetails-compare-picker-select"
+                            value={comp1Id}
+                            onChange={(e) => setComp1Id(e.target.value)}
+                          >
+                            <optgroup label="Popular Industry Alternatives">
+                              {industryOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.name} ({opt.category})
+                                </option>
+                              ))}
+                            </optgroup>
+                            <optgroup label="SaaS MRKT Verified Listings">
+                              {marketplaceOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.name} ({opt.category})
+                                </option>
+                              ))}
+                            </optgroup>
+                          </select>
+                        </div>
+
+                        <div className="pdetails-compare-picker-box">
+                          <label className="pdetails-compare-picker-label" htmlFor="compare-slot-2">
+                            <span>Slot 2: Choose Product</span>
+                            <span style={{ color: comp2.isMarketplace ? "#059669" : "#4F46E5", fontSize: "0.75rem", textTransform: "none" }}>
+                              {comp2.isMarketplace ? "✓ SaaS MRKT" : "External Alternative"}
+                            </span>
+                          </label>
+                          <select
+                            id="compare-slot-2"
+                            className="pdetails-compare-picker-select"
+                            value={comp2Id}
+                            onChange={(e) => setComp2Id(e.target.value)}
+                          >
+                            <optgroup label="Popular Industry Alternatives">
+                              {industryOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.name} ({opt.category})
+                                </option>
+                              ))}
+                            </optgroup>
+                            <optgroup label="SaaS MRKT Verified Listings">
+                              {marketplaceOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.name} ({opt.category})
+                                </option>
+                              ))}
+                            </optgroup>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="pdetails-compare-pills-row">
+                        <span className="pdetails-compare-pills-label">Quick presets:</span>
+                        <button
+                          type="button"
+                          className="pdetails-compare-quick-btn"
+                          onClick={() => {
+                            setComp1Id(defaultChoices.comp1);
+                            setComp2Id(defaultChoices.comp2);
+                          }}
+                        >
+                          Category Peers ({product.category})
+                        </button>
+                        {marketplaceOptions.length >= 2 && (
+                          <button
+                            type="button"
+                            className="pdetails-compare-quick-btn"
+                            onClick={() => {
+                              setComp1Id(marketplaceOptions[0].id);
+                              setComp2Id(marketplaceOptions[1].id);
+                            }}
+                          >
+                            Marketplace Listings
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="pdetails-compare-quick-btn"
+                          onClick={() => {
+                            setComp1Id("ext-monday");
+                            setComp2Id("ext-bamboohr");
+                          }}
+                        >
+                          Industry Giants
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Comparison Matrix Table */}
+                    <div className="pdetails-compare-table-container">
+                      <table className="pdetails-compare-table">
+                        <thead>
+                          <tr>
+                            <th style={{ width: "24%" }}>Feature / Dimension</th>
+                            <th className="pdetails-compare-col-featured" style={{ width: "32%" }}>
+                              <div className="pdetails-compare-product-cell">
+                                <div
+                                  className="pdetails-compare-avatar"
+                                  style={{ backgroundColor: product.brandColor || "#4F46E5" }}
+                                >
+                                  {product.brandLetter || product.name.charAt(0)}
+                                </div>
+                                <div className="pdetails-compare-product-info">
+                                  <span className="pdetails-compare-product-name">{product.name}</span>
+                                  <span className="pdetails-compare-pill-verified">✓ This Product (Verified)</span>
+                                </div>
+                              </div>
+                            </th>
+                            <th style={{ width: "22%" }}>
+                              <div className="pdetails-compare-product-cell">
+                                <div
+                                  className="pdetails-compare-avatar"
+                                  style={{ backgroundColor: comp1.color }}
+                                >
+                                  {comp1.letter}
+                                </div>
+                                <div className="pdetails-compare-product-info">
+                                  <span className="pdetails-compare-product-name">{comp1.name}</span>
+                                  <span className={comp1.isMarketplace ? "pdetails-compare-pill-verified" : "pdetails-compare-pill-competitor"}>
+                                    {comp1.sub}
+                                  </span>
+                                </div>
+                              </div>
+                              <select
+                                className="pdetails-compare-col-header-select"
+                                value={comp1Id}
+                                onChange={(e) => setComp1Id(e.target.value)}
+                                aria-label="Switch Slot 1 product"
+                              >
+                                <optgroup label="Industry Alternatives">
+                                  {industryOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>Switch: {opt.name}</option>
+                                  ))}
+                                </optgroup>
+                                <optgroup label="SaaS MRKT Listings">
+                                  {marketplaceOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>Switch: {opt.name}</option>
+                                  ))}
+                                </optgroup>
+                              </select>
+                            </th>
+                            <th style={{ width: "22%" }}>
+                              <div className="pdetails-compare-product-cell">
+                                <div
+                                  className="pdetails-compare-avatar"
+                                  style={{ backgroundColor: comp2.color }}
+                                >
+                                  {comp2.letter}
+                                </div>
+                                <div className="pdetails-compare-product-info">
+                                  <span className="pdetails-compare-product-name">{comp2.name}</span>
+                                  <span className={comp2.isMarketplace ? "pdetails-compare-pill-verified" : "pdetails-compare-pill-competitor"}>
+                                    {comp2.sub}
+                                  </span>
+                                </div>
+                              </div>
+                              <select
+                                className="pdetails-compare-col-header-select"
+                                value={comp2Id}
+                                onChange={(e) => setComp2Id(e.target.value)}
+                                aria-label="Switch Slot 2 product"
+                              >
+                                <optgroup label="Industry Alternatives">
+                                  {industryOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>Switch: {opt.name}</option>
+                                  ))}
+                                </optgroup>
+                                <optgroup label="SaaS MRKT Listings">
+                                  {marketplaceOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>Switch: {opt.name}</option>
+                                  ))}
+                                </optgroup>
+                              </select>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Category</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">{product.category || "Enterprise SaaS"}</td>
+                            <td>{comp1.category}</td>
+                            <td>{comp2.category}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Customer Rating</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>{product.rating || 4.9} ★</strong> <span className="pdetails-compare-val-muted">({(product.reviewCount || 5120).toLocaleString()} reviews)</span>
+                            </td>
+                            <td>{comp1.rating} ★ <span className="pdetails-compare-val-muted">({comp1.reviews} reviews)</span></td>
+                            <td>{comp2.rating} ★ <span className="pdetails-compare-val-muted">({comp2.reviews} reviews)</span></td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Asset &amp; IP Transfer</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <span style={{ color: "#059669", fontWeight: 700 }}>✓ 100% Full IP Transfer via Escrow</span>
+                            </td>
+                            <td className={comp1.isMarketplace ? "pdetails-compare-val-highlight" : "pdetails-compare-val-muted"}>{comp1.ipTransfer}</td>
+                            <td className={comp2.isMarketplace ? "pdetails-compare-val-highlight" : "pdetails-compare-val-muted"}>{comp2.ipTransfer}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Starting Price</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>${product.price}/mo</strong> <span className="pdetails-compare-val-muted">or Full Asset Acquisition</span>
+                            </td>
+                            <td>{comp1.price}</td>
+                            <td>{comp2.price}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Global Edge Latency (P95)</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>&lt; 110ms Edge Routing</strong>
+                            </td>
+                            <td>{comp1.edgeLatency}</td>
+                            <td>{comp2.edgeLatency}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Contractual SLA</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>99.98% High-Availability</strong>
+                            </td>
+                            <td>{comp1.sla}</td>
+                            <td>{comp2.sla}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Security &amp; Compliance</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>Pre-audited SOC 2 Type II &amp; GDPR</strong>
+                            </td>
+                            <td>{comp1.soc2}</td>
+                            <td>{comp2.soc2}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Technology Foundation</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>{techStack.slice(0, 4).join(", ")}</strong>
+                            </td>
+                            <td>{comp1.hosting}</td>
+                            <td>{comp2.hosting}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">Transition &amp; Handover</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>45-Day 1-on-1 Transition Support</strong>
+                            </td>
+                            <td className={comp1.isMarketplace ? "pdetails-compare-val-highlight" : "pdetails-compare-val-muted"}>{comp1.support}</td>
+                            <td className={comp2.isMarketplace ? "pdetails-compare-val-highlight" : "pdetails-compare-val-muted"}>{comp2.support}</td>
+                          </tr>
+
+                          <tr>
+                            <td className="pdetails-compare-feature-label">API &amp; Integration Engine</td>
+                            <td className="pdetails-compare-col-featured pdetails-compare-val-highlight">
+                              <strong>OpenAPI 3.0 + Webhook Subscriptions</strong>
+                            </td>
+                            <td>{comp1.api}</td>
+                            <td>{comp2.api}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Differentiators Grid */}
+                    <div className="pdetails-compare-cards-grid">
+                      <div className="pdetails-compare-feature-box">
+                        <div className="pdetails-compare-feature-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            <path d="m9 12 2 2 4-4" />
+                          </svg>
+                        </div>
+                        <h3 className="pdetails-compare-feature-title">Guaranteed Escrow Protection</h3>
+                        <p className="pdetails-compare-feature-desc">
+                          Transactions on SaaS MRKT are conducted under milestone escrow holding. Funds release only after complete technical audit, codebase transfer, and verified domain handover.
+                        </p>
+                      </div>
+
+                      <div className="pdetails-compare-feature-box">
+                        <div className="pdetails-compare-feature-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="16 18 22 12 16 6" />
+                            <polyline points="8 6 2 12 8 18" />
+                          </svg>
+                        </div>
+                        <h3 className="pdetails-compare-feature-title">Clean Modern Codebase</h3>
+                        <p className="pdetails-compare-feature-desc">
+                          Unlike bloated legacy monoliths, {product.name} is engineered with strict TypeScript typing, Dockerized microservices, and continuous CI/CD pipelines ready for turnkey scaling.
+                        </p>
+                      </div>
+
+                      <div className="pdetails-compare-feature-box">
+                        <div className="pdetails-compare-feature-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                          </svg>
+                        </div>
+                        <h3 className="pdetails-compare-feature-title">Audited Unit Economics</h3>
+                        <p className="pdetails-compare-feature-desc">
+                          Pre-verified Stripe revenue feeds, low server overhead (&lt;4.8% of MRR), and healthy NRR retention dynamics provide full fiscal visibility with zero hidden liabilities.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* CTA Box */}
+                    <div className="pdetails-compare-cta">
+                      <div>
+                        <h3>Interested in evaluating or acquiring {product.name}?</h3>
+                        <p>Speak directly with the verified seller or request access to the technical sandbox repository.</p>
+                      </div>
+                      <div className="pdetails-compare-cta-btns">
+                        <a
+                          href={`https://wa.me/14158902341?text=${encodeURIComponent(
+                            `Hi ${sellerName}, I am interested in purchasing ${product.name} on SaaS MRKT and would like to chat on WhatsApp.`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="pdetails-compare-cta-btn-primary"
+                          style={{
+                            background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                          }}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                          </svg>
+                          <span>Chat on WhatsApp ({sellerName})</span>
+                        </a>
+                        <Link href="/products" className="pdetails-compare-cta-btn-secondary">
+                          Explore More Listings
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -69,8 +69,8 @@ export default function HowItWorksClient() {
         </svg>
       ),
       tags: ["Instant Sandbox Access", "Direct Vendor Chat", "Zero Middleman Markup"],
-      ctaText: "View Pricing & Deals",
-      ctaHref: "/pricing",
+      ctaText: "Explore Products",
+      ctaHref: "/products",
     },
   ];
 
@@ -265,8 +265,8 @@ export default function HowItWorksClient() {
           <Link href="/products" className="btn-primary" id="hiw-explore-products-btn">
             Browse All Products
           </Link>
-          <Link href="/pricing" className="btn-secondary" id="hiw-view-pricing-btn">
-            View Marketplace Pricing
+          <Link href="/sellers" className="btn-secondary" id="hiw-view-pricing-btn">
+            For SaaS Sellers
           </Link>
         </div>
 

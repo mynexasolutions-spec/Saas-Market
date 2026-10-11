@@ -1,66 +1,127 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import AuthSuccessPopup, { AuthPopupData } from "@/components/AuthSuccessPopup";
+import LogoutConfirmModal from "@/components/LogoutConfirmModal";
+
+export type UserRole = "buyer" | "vendor" | "admin";
 
 export interface User {
   name: string;
   email: string;
   initials: string;
-  isSubscribed?: boolean;
+  role: UserRole;
+  title?: string;
+  company?: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  phone?: string;
+  avatarUrl?: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, name?: string) => void;
-  signup: (email: string, name?: string) => void;
+  isInitialized: boolean;
+  login: (email: string, name?: string, role?: UserRole) => void;
+  signup: (email: string, name?: string, role?: UserRole) => void;
   logout: () => void;
+  requestLogout: () => void;
+  cancelLogout: () => void;
+  confirmLogout: () => void;
+  isLogoutConfirmOpen: boolean;
+  updateUser: (updated: Partial<User>) => void;
+  loginAsRole: (role: UserRole) => void;
   isAuthOpen: boolean;
   authMode: "login" | "signup";
-  openAuth: (mode?: "login" | "signup") => void;
+  authDefaultRole: UserRole;
+  openAuth: (mode?: "login" | "signup", defaultRole?: UserRole) => void;
   closeAuth: () => void;
   showPopupMessage: (title: string, subtitle: string, type?: "login" | "signup" | "logout") => void;
-  isSubscribed: boolean;
-  subscribe: (planName?: string) => void;
-  unsubscribe: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const ROLE_PRESETS: Record<UserRole, { name: string; email: string; title: string; company: string }> = {
+  buyer: {
+    name: "Alex Morgan",
+    email: "alex@company.com",
+    title: "Head of Product & Growth",
+    company: "Acme Cloud Ventures",
+  },
+  vendor: {
+    name: "David Miller",
+    email: "vendor@saasmrkt.com",
+    title: "Founder & Lead Architect",
+    company: "SaaS MRKT",
+  },
+  admin: {
+    name: "Admin",
+    email: "admin@saasmrkt.com",
+    title: "Platform Super Administrator",
+    company: "SaaS MRKT Operations",
+  },
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [user, setUser] = useState<User | null>(null);
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
+  const [authDefaultRole, setAuthDefaultRole] = useState<UserRole>("buyer");
   const [authPopup, setAuthPopup] = useState<AuthPopupData | null>(null);
   const [popupToast, setPopupToast] = useState<string | null>(null);
 
+  // Logout Confirmation Modal state
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Restore user session from localStorage or set initial default demo buyer
   useEffect(() => {
-    // When the user refreshes the website, erase all user & subscription test data
     try {
-      localStorage.removeItem("saas_mrkt_user");
-      localStorage.removeItem("saas_mrkt_subscribed");
-      sessionStorage.removeItem("saas_mrkt_user");
-      sessionStorage.removeItem("saas_mrkt_subscribed");
+      const isExplicitlyLoggedOut = localStorage.getItem("saas_mrkt_logged_out") === "true";
+      if (isExplicitlyLoggedOut) {
+        setUser(null);
+        setIsInitialized(true);
+        return;
+      }
+
+      const savedUserStr = localStorage.getItem("saas_mrkt_user_session");
+      if (savedUserStr) {
+        const parsed = JSON.parse(savedUserStr);
+        if (parsed && parsed.email && parsed.role) {
+          if (parsed.name) parsed.name = parsed.name.replace(/\s*\(NexaSaaS\)/gi, "").trim();
+          if (parsed.email && parsed.email.includes("nexasaas.io")) parsed.email = parsed.email.replace("nexasaas.io", "saasmrkt.com");
+          if (parsed.company && parsed.company.includes("NexaSaaS")) parsed.company = "SaaS MRKT";
+          localStorage.setItem("saas_mrkt_user_session", JSON.stringify(parsed));
+          setUser(parsed);
+          setIsInitialized(true);
+          return;
+        }
+      }
     } catch {
       // Ignore
     }
-    setUser(null);
-    setIsSubscribed(false);
 
-    const handleClear = () => {
-      try {
-        localStorage.removeItem("saas_mrkt_user");
-        localStorage.removeItem("saas_mrkt_subscribed");
-      } catch {
-        // Ignore
-      }
+    // Default demo user on first visit if user has never explicitly logged out
+    const defaultBuyer: User = {
+      name: ROLE_PRESETS.buyer.name,
+      email: ROLE_PRESETS.buyer.email,
+      initials: "AM",
+      role: "buyer",
+      title: ROLE_PRESETS.buyer.title,
+      company: ROLE_PRESETS.buyer.company,
+      location: "San Francisco, CA",
+      website: "https://acmecloud.io",
+      bio: "SaaS software procurement lead evaluating cloud infrastructure and marketing tooling.",
+      phone: "+1 (555) 234-8900",
     };
-
-    window.addEventListener("beforeunload", handleClear);
-    return () => {
-      window.removeEventListener("beforeunload", handleClear);
-    };
+    setUser(defaultBuyer);
+    setIsInitialized(true);
   }, []);
 
   useEffect(() => {
@@ -82,93 +143,175 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return email.slice(0, 2).toUpperCase();
   };
 
-  const login = (email: string, name?: string) => {
-    const computedName = name && name.trim() ? name.trim() : email.split("@")[0];
+  const detectRoleFromEmail = (email: string, fallbackRole?: UserRole): UserRole => {
+    if (fallbackRole) return fallbackRole;
+    const lower = email.toLowerCase();
+    if (lower.includes("admin")) return "admin";
+    if (lower.includes("vendor") || lower.includes("seller")) return "vendor";
+    return "buyer";
+  };
+
+  const login = (email: string, name?: string, role?: UserRole) => {
+    const determinedRole = detectRoleFromEmail(email, role);
+    const computedName =
+      name && name.trim()
+        ? name.trim()
+        : ROLE_PRESETS[determinedRole]?.name || email.split("@")[0];
+
     const newUser: User = {
       name: computedName,
       email,
       initials: getInitials(computedName, email),
-      isSubscribed: isSubscribed,
+      role: determinedRole,
+      title: ROLE_PRESETS[determinedRole]?.title,
+      company: ROLE_PRESETS[determinedRole]?.company,
     };
+
     setUser(newUser);
+    try {
+      localStorage.removeItem("saas_mrkt_logged_out");
+      localStorage.setItem("saas_mrkt_user_session", JSON.stringify(newUser));
+    } catch {
+      // Ignore
+    }
+
     setIsAuthOpen(false);
+
+    const roleLabel =
+      determinedRole === "admin"
+        ? "Platform Administrator"
+        : determinedRole === "vendor"
+        ? "SaaS Vendor"
+        : "Software Buyer";
 
     setAuthPopup({
       isOpen: true,
       type: "login",
       title: "Welcome Back! 👋",
-      subtitle: `You are signed in as ${computedName}. Marketplace tools & features are ready.`,
+      subtitle: `Signed in as ${computedName} (${roleLabel}).`,
       email,
       name: computedName,
     });
 
-    setPopupToast(`Welcome! Logged in as ${email}`);
+    setPopupToast(`Logged in as ${email} [${roleLabel}]`);
   };
 
-  const signup = (email: string, name?: string) => {
-    const computedName = name && name.trim() ? name.trim() : email.split("@")[0];
+  const signup = (email: string, name?: string, role?: UserRole) => {
+    const determinedRole = detectRoleFromEmail(email, role);
+    const computedName =
+      name && name.trim()
+        ? name.trim()
+        : ROLE_PRESETS[determinedRole]?.name || email.split("@")[0];
+
     const newUser: User = {
       name: computedName,
       email,
       initials: getInitials(computedName, email),
-      isSubscribed: isSubscribed,
+      role: determinedRole,
+      title: ROLE_PRESETS[determinedRole]?.title,
+      company: ROLE_PRESETS[determinedRole]?.company,
     };
+
     setUser(newUser);
+    try {
+      localStorage.removeItem("saas_mrkt_logged_out");
+      localStorage.setItem("saas_mrkt_user_session", JSON.stringify(newUser));
+    } catch {
+      // Ignore
+    }
+
     setIsAuthOpen(false);
+
+    const roleLabel =
+      determinedRole === "admin"
+        ? "Platform Administrator"
+        : determinedRole === "vendor"
+        ? "SaaS Vendor"
+        : "Software Buyer";
 
     setAuthPopup({
       isOpen: true,
       type: "signup",
       title: "Account Created Successfully! 🎉",
-      subtitle: `Welcome to SaaS MRKT, ${computedName}! Your free trial & benefits are active.`,
+      subtitle: `Welcome to SaaS MRKT, ${computedName}! Registered as ${roleLabel}.`,
       email,
       name: computedName,
     });
 
-    setPopupToast(`Account created! Welcome, ${computedName}`);
+    setPopupToast(`Account created! Logged in as ${roleLabel}`);
+  };
+
+  const loginAsRole = (role: UserRole) => {
+    const preset = ROLE_PRESETS[role];
+    login(preset.email, preset.name, role);
+  };
+
+  const executeLogout = () => {
+    setUser(null);
+    try {
+      localStorage.removeItem("saas_mrkt_user_session");
+      localStorage.setItem("saas_mrkt_logged_out", "true");
+    } catch {
+      // Ignore
+    }
+
+    setPopupToast("Signed out successfully.");
+
+    // If currently on a protected page, navigate smoothly to home without page refresh
+    if (
+      pathname &&
+      (pathname.startsWith("/vendor") ||
+        pathname.startsWith("/profile") ||
+        pathname.startsWith("/admin"))
+    ) {
+      router.push("/");
+    }
   };
 
   const logout = () => {
-    setUser(null);
+    executeLogout();
+  };
 
-    setAuthPopup({
-      isOpen: true,
-      type: "logout",
-      title: "Signed Out Successfully",
-      subtitle: "You have been logged out of your SaaS MRKT account.",
+  const requestLogout = () => {
+    setIsLogoutConfirmOpen(true);
+  };
+
+  const cancelLogout = () => {
+    setIsLogoutConfirmOpen(false);
+  };
+
+  const confirmLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
+      executeLogout();
+      setIsLoggingOut(false);
+      setIsLogoutConfirmOpen(false);
+    }, 220);
+  };
+
+  const updateUser = (updated: Partial<User>) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const baseName = updated.name || prev.name;
+      const baseEmail = updated.email || prev.email;
+      const initials = getInitials(baseName, baseEmail);
+      const updatedUser: User = {
+        ...prev,
+        ...updated,
+        initials,
+      };
+      try {
+        localStorage.setItem("saas_mrkt_user_session", JSON.stringify(updatedUser));
+      } catch {
+        // Ignore
+      }
+      return updatedUser;
     });
-
-    setPopupToast("Signed out successfully.");
   };
 
-  const subscribe = (planName: string = "Pro Growth") => {
-    setIsSubscribed(true);
-    if (user) {
-      setUser({ ...user, isSubscribed: true });
-    }
-
-    setAuthPopup({
-      isOpen: true,
-      type: "signup",
-      title: "Subscription Activated! 🚀",
-      subtitle: `You are now subscribed to ${planName}. All verified metrics, financials, and locked content are now unlocked!`,
-      email: user?.email || "alex@company.com",
-      name: user?.name || "Subscriber",
-    });
-
-    setPopupToast(`⚡ Subscription Active! Full metrics unlocked.`);
-  };
-
-  const unsubscribe = () => {
-    setIsSubscribed(false);
-    if (user) {
-      setUser({ ...user, isSubscribed: false });
-    }
-    setPopupToast("Subscription paused.");
-  };
-
-  const openAuth = (mode: "login" | "signup" = "login") => {
+  const openAuth = (mode: "login" | "signup" = "login", defaultRole: UserRole = "buyer") => {
     setAuthMode(mode);
+    setAuthDefaultRole(defaultRole);
     setIsAuthOpen(true);
   };
 
@@ -195,20 +338,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
+        isInitialized,
         login,
         signup,
         logout,
+        requestLogout,
+        cancelLogout,
+        confirmLogout,
+        isLogoutConfirmOpen,
+        updateUser,
+        loginAsRole,
         isAuthOpen,
         authMode,
+        authDefaultRole,
         openAuth,
         closeAuth,
         showPopupMessage,
-        isSubscribed,
-        subscribe,
-        unsubscribe,
       }}
     >
       {children}
+
+      {/* Global Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={isLogoutConfirmOpen}
+        user={user}
+        onCancel={cancelLogout}
+        onConfirm={confirmLogout}
+        isLoggingOut={isLoggingOut}
+      />
 
       {/* Global Success Popup Message Modal */}
       <AuthSuccessPopup

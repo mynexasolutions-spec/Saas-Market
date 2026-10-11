@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import UserNavDropdown from "@/components/UserNavDropdown";
 
 interface NavbarProps {
   onOpenAuth: (mode: "login" | "signup") => void;
@@ -22,7 +23,7 @@ export default function Navbar({
   onSearchSubmit,
 }: NavbarProps) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, requestLogout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -55,9 +56,13 @@ export default function Navbar({
   return (
     <header className="navbar-wrapper">
       <div className="container">
-        <nav className="navbar" aria-label="Main Navigation">
+        <nav className={`navbar${isSearchExpanded ? " navbar-search-active" : ""}`} aria-label="Main Navigation">
           {/* Logo */}
-          <Link href="/" className="brand-logo" id="nav-brand-logo">
+          <Link
+            href="/"
+            className="brand-logo"
+            id="nav-brand-logo"
+          >
             <span className="brand-icon">
               <Image src="/logo.png" alt="SaaS MRKT Logo" width={38} height={38} priority style={{ objectFit: "contain" }} />
             </span>
@@ -167,11 +172,7 @@ export default function Navbar({
                   For Sellers
                 </Link>
               </li>
-              <li>
-                <Link href="/pricing" className="nav-link" id="nav-pricing">
-                  Pricing
-                </Link>
-              </li>
+
               <li
                 className="nav-link-dropdown"
                 onMouseEnter={() => setResourcesOpen(true)}
@@ -283,48 +284,7 @@ export default function Navbar({
             )}
             {user ? (
               <div className="nav-user-logged-wrap">
-                <div className="nav-user-badge" title={user.email}>
-                  <span className="nav-user-avatar" aria-hidden="true">
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                  </span>
-                  <span className="nav-user-name">{user.name}</span>
-                  <span className="nav-user-indicator" title="Active"></span>
-                </div>
-                <button
-                  type="button"
-                  className="nav-logout-btn"
-                  onClick={logout}
-                  title="Sign out of account"
-                  id="nav-logout-btn"
-                >
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                  <span>Log Out</span>
-                </button>
+                <UserNavDropdown user={user} onLogout={requestLogout} />
               </div>
             ) : (
               <>
@@ -344,24 +304,26 @@ export default function Navbar({
                 </button>
               </>
             )}
-            <button
-              className="mobile-menu-btn"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            >
-              {mobileMenuOpen ? (
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              ) : (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </svg>
-              )}
-            </button>
+            {!isSearchExpanded && (
+              <button
+                className="mobile-menu-btn"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {mobileMenuOpen ? (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                ) : (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                  </svg>
+                )}
+              </button>
+            )}
           </div>
         </nav>
 
@@ -381,20 +343,40 @@ export default function Navbar({
               <Link href="/sellers" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
                 For Sellers
               </Link>
-              <Link href="/pricing" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
-                Pricing
-              </Link>
+
               <Link href="/blog" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
                 Blog &amp; Resources
               </Link>
               <Link href="/how-it-works" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
                 How It Works
               </Link>
+              <div style={{ height: "1px", background: "var(--slate-200)", margin: "0.5rem 0" }} />
+              {user?.role === "admin" && (
+                <Link href="/admin" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                  🛡️ Admin Console
+                </Link>
+              )}
+              {user?.role === "vendor" && (
+                <Link href="/vendor" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                  🏢 Vendor Portal
+                </Link>
+              )}
+              {user?.role === "buyer" && (
+                <Link href="/profile" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                  👤 My Profile
+                </Link>
+              )}
             </div>
             <div className="mobile-nav-auth-section">
               {user ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
-                  <div className="nav-user-badge" style={{ width: "fit-content" }} title={user.email}>
+                  <Link
+                    href={user.role === "admin" ? "/admin" : user.role === "vendor" ? "/vendor" : "/profile"}
+                    className="nav-user-badge"
+                    style={{ width: "fit-content", textDecoration: "none" }}
+                    title={user.email}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     <span className="nav-user-avatar" aria-hidden="true">
                       <svg
                         width="15"
@@ -410,16 +392,16 @@ export default function Navbar({
                         <circle cx="12" cy="7" r="4" />
                       </svg>
                     </span>
-                    <span className="nav-user-name">{user.name}</span>
+                    <span className="nav-user-name">{user.role === "admin" ? "Admin" : user.name}</span>
                     <span className="nav-user-indicator" title="Active"></span>
-                  </div>
+                  </Link>
                   <button
                     type="button"
                     className="nav-logout-btn"
                     style={{ width: "100%", justifyContent: "center" }}
                     onClick={() => {
                       setMobileMenuOpen(false);
-                      logout();
+                      requestLogout();
                     }}
                   >
                     <svg

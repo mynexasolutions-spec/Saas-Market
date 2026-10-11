@@ -218,8 +218,8 @@ export default function ContactPageClient() {
                 </div>
                 <div>
                   <h3 className="contact-info-title">Want to List Your Product?</h3>
-                  <p className="contact-info-text">See our seller plans — start free and upgrade anytime. No commission on sales.</p>
-                  <a href="/pricing" className="contact-info-link" id="contact-sidebar-pricing-link">View Seller Plans</a>
+                  <p className="contact-info-text">Learn how to list your software and connect with buyers. Zero commission on sales.</p>
+                  <a href="/sellers" className="contact-info-link" id="contact-sidebar-pricing-link">View Seller Guide</a>
                 </div>
               </div>
 

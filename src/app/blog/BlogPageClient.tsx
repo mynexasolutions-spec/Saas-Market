@@ -234,8 +234,9 @@ export default function BlogPageClient() {
 
   return (
     <PageLayout activeNav="resources" noContainer>
-      {/* Hero / Page Header */}
-      <section className="blog-hero">
+      <div className="blog-page-wrapper">
+        {/* Hero / Page Header */}
+        <section className="blog-hero">
         <div className="container">
           <div className="blog-hero-content">
             <div className="section-badge">BLOG & RESOURCES</div>
@@ -267,6 +268,25 @@ export default function BlogPageClient() {
                 </button>
               )}
             </div>
+
+            {/* Category Filter Pills in Hero */}
+            <div className="blog-hero-categories" role="tablist" aria-label="Blog categories">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  id={`blog-filter-${cat.toLowerCase().replace(/\s/g, "-")}`}
+                  className={`blog-filter-btn${activeCategory === cat ? " blog-filter-btn--active" : ""}`}
+                  onClick={() => {
+                    setActiveCategory(cat);
+                    setVisiblePosts(6);
+                  }}
+                  role="tab"
+                  aria-selected={activeCategory === cat}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         {/* Decorative blobs */}
@@ -274,76 +294,74 @@ export default function BlogPageClient() {
         <div className="blog-hero-blob blog-hero-blob--2" />
       </section>
 
-      {/* Featured Articles */}
-      <section className="blog-featured-section">
-        <div className="container">
-          <div className="section-badge">FEATURED</div>
-          <div className="blog-featured-grid">
-            {featuredPosts.map((post) => (
-              <Link href={`/blog/${post.slug}`} key={post.slug} className="blog-featured-card" id={`blog-featured-${post.slug}`}>
-                <div className="blog-featured-banner" style={{ background: post.gradient, position: "relative", overflow: "hidden" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/images/blog/${post.slug}.jpg`}
-                    alt={post.title}
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: "linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.65) 100%)",
-                      pointerEvents: "none",
-                    }}
-                  />
-                  <span className="blog-featured-tag-badge" style={{ position: "relative", zIndex: 2 }}>{post.tag}</span>
-                </div>
-                <div className="blog-featured-body">
-                  <div className="blog-featured-meta">
-                    <span className="blog-tag blog-tag--featured">{post.tag}</span>
-                    <span className="blog-meta-sep">•</span>
-                    <span className="blog-date">{post.date}</span>
-                    <span className="blog-meta-sep">•</span>
-                    <span className="blog-read-time">{post.readTime}</span>
+      {/* Featured Articles - shown when on 'All' and no search query */}
+      {activeCategory === "All" && !searchQuery && (
+        <section className="blog-featured-section">
+          <div className="container">
+            <div className="section-badge">FEATURED</div>
+            <div className="blog-featured-grid">
+              {featuredPosts.map((post) => (
+                <Link href={`/blog/${post.slug}`} key={post.slug} className="blog-featured-card" id={`blog-featured-${post.slug}`}>
+                  <div className="blog-featured-banner" style={{ background: post.gradient, position: "relative", overflow: "hidden" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/images/blog/${post.slug}.jpg`}
+                      alt={post.title}
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.65) 100%)",
+                        pointerEvents: "none",
+                      }}
+                    />
+                    <span className="blog-featured-tag-badge" style={{ position: "relative", zIndex: 2 }}>{post.tag}</span>
                   </div>
-                  <h2 className="blog-featured-title">{post.title}</h2>
-                  <p className="blog-featured-excerpt">{post.excerpt}</p>
-                  <div className="blog-featured-footer">
-                    <span className="blog-read-more-btn">
-                      Read Now
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                      </svg>
-                    </span>
+                  <div className="blog-featured-body">
+                    <div className="blog-featured-meta">
+                      <span className="blog-tag blog-tag--featured">{post.tag}</span>
+                      <span className="blog-meta-sep">•</span>
+                      <span className="blog-date">{post.date}</span>
+                      <span className="blog-meta-sep">•</span>
+                      <span className="blog-read-time">{post.readTime}</span>
+                    </div>
+                    <h2 className="blog-featured-title">{post.title}</h2>
+                    <p className="blog-featured-excerpt">{post.excerpt}</p>
+                    <div className="blog-featured-footer">
+                      <span className="blog-read-more-btn">
+                        Read Now
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* All Articles */}
-      <section className="blog-list-section">
+      <section className="blog-list-section" id="blog-articles-list">
         <div className="container">
-          {/* Category Filters */}
-          <div className="blog-filter-bar">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                id={`blog-filter-${cat.toLowerCase().replace(/\s/g, "-")}`}
-                className={`blog-filter-btn${activeCategory === cat ? " blog-filter-btn--active" : ""}`}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="blog-list-header">
+            <h2 className="blog-list-title">
+              {searchQuery
+                ? `Search results for "${searchQuery}"`
+                : activeCategory === "All"
+                ? "All Articles"
+                : `${activeCategory} Articles`}
+            </h2>
+            <span className="blog-list-count">
+              {filteredPosts.length} {filteredPosts.length === 1 ? "article" : "articles"}
+            </span>
           </div>
 
           {filteredPosts.length === 0 ? (
@@ -405,9 +423,6 @@ export default function BlogPageClient() {
                       </div>
                       <span className="blog-card-read-now">
                         Read Now
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                        </svg>
                       </span>
                     </div>
                   </div>
@@ -489,6 +504,7 @@ export default function BlogPageClient() {
           </div>
         </div>
       </section>
+      </div>
     </PageLayout>
   );
 }

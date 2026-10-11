@@ -155,6 +155,50 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
       "Real-time revenue forecast analytics",
     ],
   },
+  {
+    id: "prod-cloudguard",
+    name: "CloudGuard",
+    category: "Security & Compliance",
+    rating: 4.9,
+    reviewCount: 3800,
+    description: "Automated cloud security posture management and compliance auditor.",
+    image: "/images/security-compliance-dashboard.jpg",
+    logo: "/images/logos/cloudguard.jpg",
+    price: 49,
+    period: "mo",
+    brandColor: "#0EA5E9",
+    brandLetter: "C",
+    topBadge: "Verified",
+    tags: ["Cloud Security", "Compliance"],
+    features: [
+      "Continuous multi-cloud security posture monitoring",
+      "Automated SOC 2, HIPAA & ISO 27001 audit readiness",
+      "Real-time vulnerability detection and auto-remediation",
+      "Zero-trust identity access and role compliance checks",
+    ],
+  },
+  {
+    id: "prod-analytica",
+    name: "Analytica",
+    category: "Analytics & BI",
+    rating: 4.8,
+    reviewCount: 2900,
+    description: "Real-time product analytics, cohort retention and funnel tracking.",
+    image: "/images/enterprise-growth-feature.jpg",
+    logo: "/images/logos/analytica.jpg",
+    price: 32,
+    period: "mo",
+    brandColor: "#10B981",
+    brandLetter: "A",
+    topBadge: "Trending",
+    tags: ["Analytics", "Dashboards"],
+    features: [
+      "Interactive event tracking without engineering setup",
+      "Behavioral cohort retention and churn heatmaps",
+      "Self-serve SQL and drag-and-drop funnel builder",
+      "Automated weekly executive KPI digest alerts",
+    ],
+  },
 ];
 
 interface FeaturedProductsProps {
@@ -168,7 +212,23 @@ export default function FeaturedProducts({
   searchFilter,
   categoryFilter,
 }: FeaturedProductsProps) {
+  const [productsList, setProductsList] = useState<ProductItem[]>(FEATURED_PRODUCTS_LIST);
   const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
+
+  // Sync with dynamic products managed by Admin Console
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("saas_mrkt_featured_products");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProductsList(parsed);
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
 
   const toggleBookmark = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -179,7 +239,7 @@ export default function FeaturedProducts({
   };
 
   // Filter based on search query or category
-  const filteredProducts = FEATURED_PRODUCTS_LIST.filter((p) => {
+  const filteredProducts = productsList.filter((p) => {
     const matchesSearch =
       !searchFilter ||
       p.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
