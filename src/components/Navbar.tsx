@@ -198,6 +198,48 @@ export default function Navbar({
                         <div className="dropdown-desc">Read our latest articles</div>
                       </div>
                     </Link>
+                    <Link href="/tools/saas-spend-calculator" className={`dropdown-item-rich${pathname === "/tools/saas-spend-calculator" ? " active-dropdown-item" : ""}`}>
+                      <div className="dropdown-icon-box" style={{ background: "rgba(59, 130, 246, 0.12)", color: "#2563EB" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="4" y="2" width="16" height="20" rx="2" />
+                          <line x1="8" y1="6" x2="16" y2="6" />
+                          <line x1="16" y1="14" x2="16" y2="18" />
+                          <path d="M16 10h.01" /><path d="M12 10h.01" /><path d="M8 10h.01" />
+                          <path d="M12 14h.01" /><path d="M8 14h.01" />
+                          <path d="M12 18h.01" /><path d="M8 18h.01" />
+                        </svg>
+                      </div>
+                      <div className="dropdown-text-box">
+                        <div className="dropdown-title">Spend Calculator</div>
+                        <div className="dropdown-desc">Audit wasted software spend</div>
+                      </div>
+                    </Link>
+                    <Link href="/alternatives" className={`dropdown-item-rich${pathname === "/alternatives" ? " active-dropdown-item" : ""}`}>
+                      <div className="dropdown-icon-box" style={{ background: "rgba(239, 68, 68, 0.12)", color: "#DC2626" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="17 1 21 5 17 9" />
+                          <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                          <polyline points="7 23 3 19 7 15" />
+                          <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                        </svg>
+                      </div>
+                      <div className="dropdown-text-box">
+                        <div className="dropdown-title">Alternatives Directory</div>
+                        <div className="dropdown-desc">Compare legacy tool replacements</div>
+                      </div>
+                    </Link>
+                    <Link href="/badges" className={`dropdown-item-rich${pathname === "/badges" ? " active-dropdown-item" : ""}`}>
+                      <div className="dropdown-icon-box" style={{ background: "rgba(245, 158, 11, 0.12)", color: "#D97706" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="8" r="7" />
+                          <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+                        </svg>
+                      </div>
+                      <div className="dropdown-text-box">
+                        <div className="dropdown-title">Vendor Badges</div>
+                        <div className="dropdown-desc">Embed verified rating awards</div>
+                      </div>
+                    </Link>
                     <Link href="/trust" className={`dropdown-item-rich${pathname === "/trust" ? " active-dropdown-item" : ""}`}>
                       <div className="dropdown-icon-box" style={{ background: "rgba(16, 185, 129, 0.12)", color: "#059669" }}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

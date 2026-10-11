@@ -31,6 +31,20 @@ const BLOG_POSTS = [
     gradient: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
   },
   {
+    slug: "best-free-open-source-developer-tools-2026",
+    tag: "Productivity",
+    title: "Best Free & Open-Source Developer Tools Every Dev Should Know in 2026",
+    excerpt:
+      "Supercharge your engineering workflow without expensive licenses. Here are the top open-source tools for API testing, local Docker orchestration, and database inspection.",
+    date: "Oct 11, 2026",
+    readTime: "8 min read",
+    author: "Kevin Oduya",
+    authorRole: "Principal Systems Architect",
+    featured: false,
+    accentColor: "#0284C7",
+    gradient: "linear-gradient(135deg, #0284C7 0%, #0369A1 100%)",
+  },
+  {
     slug: "micro-saas-stack-bootstrapped-founders-2026",
     tag: "Guides",
     title: "The $100/Month Lean SaaS Stack: How Bootstrapped Founders Scale to $20K MRR",

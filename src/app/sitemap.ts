@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { BLOG_POSTS } from "./blog/[slug]/page";
 import { CATEGORIES_DATA } from "@/data/categoriesData";
+import { ALTERNATIVES_DATA } from "@/data/alternativesData";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.saasmrkt.com";
@@ -38,7 +39,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-
     {
       url: `${baseUrl}/how-it-works`,
       lastModified: currentDate,
@@ -76,6 +76,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/alternatives`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/tools/saas-spend-calculator`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/badges`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/submit-product`,
       lastModified: currentDate,
       changeFrequency: "weekly",
@@ -86,6 +104,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/editorial-guidelines`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/privacy`,
@@ -109,6 +133,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
+  // Dynamic alternatives landing pages
+  const alternativeRoutes: MetadataRoute.Sitemap = Object.keys(ALTERNATIVES_DATA).map((slug) => ({
+    url: `${baseUrl}/alternatives/${slug}`,
+    lastModified: currentDate,
+    changeFrequency: "weekly",
+    priority: 0.85,
+  }));
+
   // Dynamic blog articles
   const blogRoutes: MetadataRoute.Sitemap = Object.keys(BLOG_POSTS).map((slug) => ({
     url: `${baseUrl}/blog/${slug}`,
@@ -117,5 +149,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.75,
   }));
 
-  return [...staticRoutes, ...categoryRoutes, ...blogRoutes];
+  return [...staticRoutes, ...categoryRoutes, ...alternativeRoutes, ...blogRoutes];
 }
