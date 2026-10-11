@@ -17,6 +17,62 @@ const CATEGORIES = [
 
 const BLOG_POSTS = [
   {
+    slug: "ai-agents-autonomous-saas-workflows-2026",
+    tag: "Trends",
+    title: "How Autonomous AI Agents Are Replacing Repetitive SaaS Workflows in 2026",
+    excerpt:
+      "From automated customer triage to real-time ledger closing, autonomous AI agents are turning static SaaS dashboards into proactive digital co-workers.",
+    date: "Oct 10, 2026",
+    readTime: "9 min read",
+    author: "Elena Rostova",
+    authorRole: "Head of AI Product Strategy",
+    featured: true,
+    accentColor: "#4F46E5",
+    gradient: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
+  },
+  {
+    slug: "micro-saas-stack-bootstrapped-founders-2026",
+    tag: "Guides",
+    title: "The $100/Month Lean SaaS Stack: How Bootstrapped Founders Scale to $20K MRR",
+    excerpt:
+      "Stop burning cash on bloated enterprise software. Here is the exact, battle-tested minimal SaaS stack used by solo founders to scale profitably in 2026.",
+    date: "Oct 8, 2026",
+    readTime: "8 min read",
+    author: "Zack Robinson",
+    authorRole: "Bootstrapped Founder & Micro-SaaS Builder",
+    featured: false,
+    accentColor: "#10B981",
+    gradient: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+  },
+  {
+    slug: "saas-security-zero-trust-vendor-compliance",
+    tag: "Business Growth",
+    title: "The 2026 SaaS Security Playbook: Zero-Trust, API Hardening & Vendor Risk",
+    excerpt:
+      "With third-party software supply chain breaches surging, engineering leads and CTOs need this zero-trust architecture to audit vendor tokens, webhooks, and SOC2 compliance.",
+    date: "Oct 6, 2026",
+    readTime: "10 min read",
+    author: "David Sterling",
+    authorRole: "Chief Information Security Officer",
+    featured: false,
+    accentColor: "#0F172A",
+    gradient: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
+  },
+  {
+    slug: "death-of-per-seat-pricing-usage-based-saas",
+    tag: "Trends",
+    title: "Why Per-Seat Pricing Is Dying: The Rise of Outcome & Consumption-Based SaaS",
+    excerpt:
+      "AI automation means fewer human seats do vastly more work. Here is why the software industry is transitioning to consumption, credit, and outcome billing in 2026.",
+    date: "Oct 4, 2026",
+    readTime: "9 min read",
+    author: "Marcus Vance",
+    authorRole: "SaaS Economist & Pricing Strategist",
+    featured: false,
+    accentColor: "#EC4899",
+    gradient: "linear-gradient(135deg, #EC4899 0%, #BE185D 100%)",
+  },
+  {
     slug: "best-project-management-tools-2026",
     tag: "Reviews",
     title: "Best Project Management Tools for Remote & Agile Teams in 2026",
