@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
 import { ALL_PRODUCTS, ProductItem } from "@/data/products";
+import { useAuth } from "@/context/AuthContext";
 
 export interface ComparableOption {
   id: string;
@@ -32,6 +33,7 @@ interface ProductMoreDetailsClientProps {
 }
 
 export default function ProductMoreDetailsClient({ product, initialTab = "overview" }: ProductMoreDetailsClientProps) {
+  const { user, openAuth, loginAsRole } = useAuth();
   const [activeTab, setActiveTab] = useState<"overview" | "architecture" | "security" | "financials" | "reviews" | "compare">(initialTab);
 
   React.useEffect(() => {
@@ -467,6 +469,189 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
     setHelpfulVotes((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
 
+  const renderBuyerLock = (title: string, description: string) => (
+    <div
+      style={{
+        margin: "2.5rem auto",
+        maxWidth: "780px",
+        background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
+        borderRadius: "24px",
+        border: "1px solid #E2E8F0",
+        boxShadow: "0 20px 45px -15px rgba(15, 23, 42, 0.08)",
+        padding: "3.25rem 2rem",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "5px",
+          background: "linear-gradient(90deg, #6366F1, #8B5CF6, #EC4899)",
+        }}
+      />
+      <div
+        style={{
+          width: "68px",
+          height: "68px",
+          borderRadius: "20px",
+          background: "rgba(99, 102, 241, 0.1)",
+          color: "#4F46E5",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "1.25rem",
+        }}
+      >
+        <svg
+          width="34"
+          height="34"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      </div>
+
+      <div>
+        <span
+          style={{
+            display: "inline-block",
+            background: "#EEF2FF",
+            color: "#4F46E5",
+            padding: "0.3rem 0.95rem",
+            borderRadius: "9999px",
+            fontSize: "0.82rem",
+            fontWeight: 700,
+            marginBottom: "0.75rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+          }}
+        >
+          🔒 Verified Buyer Gated Diligence
+        </span>
+        <h3
+          style={{
+            fontSize: "1.65rem",
+            fontWeight: 800,
+            color: "#0F172A",
+            marginBottom: "0.75rem",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {title}
+        </h3>
+        <p
+          style={{
+            fontSize: "0.98rem",
+            color: "#64748B",
+            lineHeight: 1.6,
+            maxWidth: "580px",
+            margin: "0 auto 2rem",
+          }}
+        >
+          {description}
+        </p>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "0.75rem",
+            maxWidth: "620px",
+            margin: "0 auto 2rem",
+            textAlign: "left",
+          }}
+        >
+          <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "0.85rem 1rem", borderRadius: "12px", fontSize: "0.85rem", color: "#334155", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ color: "#10B981", fontWeight: "bold" }}>✓</span> Full ARR/MRR &amp; Churn Financials
+          </div>
+          <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "0.85rem 1rem", borderRadius: "12px", fontSize: "0.85rem", color: "#334155", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ color: "#10B981", fontWeight: "bold" }}>✓</span> Database Schemas &amp; Cloud Infra
+          </div>
+          <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "0.85rem 1rem", borderRadius: "12px", fontSize: "0.85rem", color: "#334155", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ color: "#10B981", fontWeight: "bold" }}>✓</span> SOC 2 Type II &amp; 99.98% SLAs
+          </div>
+          <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", padding: "0.85rem 1rem", borderRadius: "12px", fontSize: "0.85rem", color: "#334155", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ color: "#10B981", fontWeight: "bold" }}>✓</span> Direct Seller WhatsApp Desk
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.85rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => openAuth("signup", "buyer")}
+            style={{
+              background: "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)",
+              color: "#ffffff",
+              border: "none",
+              padding: "0.85rem 1.85rem",
+              borderRadius: "12px",
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              cursor: "pointer",
+              boxShadow: "0 8px 20px -3px rgba(79, 70, 229, 0.4)",
+            }}
+          >
+            Sign Up as Buyer to Unlock (Free)
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openAuth("login", "buyer")}
+            style={{
+              background: "#FFFFFF",
+              color: "#334155",
+              border: "1px solid #CBD5E1",
+              padding: "0.85rem 1.5rem",
+              borderRadius: "12px",
+              fontWeight: 600,
+              fontSize: "0.95rem",
+              cursor: "pointer",
+            }}
+          >
+            Log In
+          </button>
+
+          <button
+            type="button"
+            onClick={() => loginAsRole("buyer")}
+            style={{
+              background: "#FEF3C7",
+              color: "#92400E",
+              border: "1px dashed #F59E0B",
+              padding: "0.85rem 1.25rem",
+              borderRadius: "12px",
+              fontWeight: 700,
+              fontSize: "0.88rem",
+              cursor: "pointer",
+            }}
+            title="Instantly test with demo buyer account"
+          >
+            ⚡ 1-Click Demo Buyer Access
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <PageLayout activeNav="products" noContainer>
       <div className="pdetails-page-wrapper">
@@ -481,6 +666,140 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
             <span className="pdetails-crumb-sep">/</span>
             <span className="pdetails-crumb-current">Full Specifications &amp; Deep Diligence</span>
           </nav>
+
+          {/* Top Auth Banner (Locked / Unlocked state) */}
+          {!user ? (
+            <div
+              style={{
+                background: "linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)",
+                color: "#ffffff",
+                borderRadius: "16px",
+                padding: "1.25rem 1.75rem",
+                marginBottom: "1.75rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "1.25rem",
+                flexWrap: "wrap",
+                border: "1px solid rgba(165, 180, 252, 0.2)",
+                boxShadow: "0 10px 25px -5px rgba(49, 46, 129, 0.3)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                <div
+                  style={{
+                    width: "44px",
+                    height: "44px",
+                    borderRadius: "12px",
+                    background: "rgba(255, 255, 255, 0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#FCD34D"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 700, color: "#ffffff" }}>
+                    Confidential Due Diligence &amp; Metrics Are Gated for Buyers
+                  </h4>
+                  <p style={{ margin: "0.2rem 0 0", fontSize: "0.85rem", color: "#C7D2FE", lineHeight: 1.4 }}>
+                    Sign up as a verified buyer to unlock verified financials, architecture diagrams, SLA compliance, and direct seller chat.
+                  </p>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  onClick={() => openAuth("signup", "buyer")}
+                  style={{
+                    background: "#4F46E5",
+                    color: "#ffffff",
+                    border: "none",
+                    padding: "0.6rem 1.25rem",
+                    borderRadius: "10px",
+                    fontWeight: 700,
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.4)",
+                  }}
+                >
+                  Sign Up Free to Unlock
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openAuth("login", "buyer")}
+                  style={{
+                    background: "rgba(255, 255, 255, 0.1)",
+                    color: "#ffffff",
+                    border: "1px solid rgba(255, 255, 255, 0.25)",
+                    padding: "0.6rem 1rem",
+                    borderRadius: "10px",
+                    fontWeight: 600,
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  Log In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => loginAsRole("buyer")}
+                  style={{
+                    background: "transparent",
+                    color: "#FCD34D",
+                    border: "1px dashed rgba(252, 211, 77, 0.5)",
+                    padding: "0.6rem 0.85rem",
+                    borderRadius: "10px",
+                    fontWeight: 600,
+                    fontSize: "0.82rem",
+                    cursor: "pointer",
+                  }}
+                  title="Instant 1-click demo buyer login"
+                >
+                  ⚡ Demo Buyer Access
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{
+                background: "#F0FDF4",
+                border: "1px solid #BBF7D0",
+                borderRadius: "12px",
+                padding: "0.75rem 1.25rem",
+                marginBottom: "1.5rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "1rem",
+                fontSize: "0.88rem",
+                color: "#166534",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 600 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+                <span>Verified Buyer Access Active ({user.name}) &bull; Full Diligence &amp; Seller Desk Unlocked</span>
+              </div>
+              <span style={{ fontSize: "0.8rem", color: "#15803D" }}>100% Escrow Protected</span>
+            </div>
+          )}
 
           {/* Navigation Tabs */}
           <div className="pdetails-nav-tabs">
@@ -547,7 +866,14 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                   </p>
                 </div>
 
-                {/* Connecting Text Card Between Upper and Lower Sections */}
+                {!user ? (
+                  renderBuyerLock(
+                    `Deep Architecture & Financial Diligence Gated for ${product.name}`,
+                    `To safeguard seller intellectual property and maintain verified diligence standards, detailed infrastructure blueprints, cohort financial records, and direct seller negotiation channels are exclusively accessible to registered buyers.`
+                  )
+                ) : (
+                  <>
+                    {/* Connecting Text Card Between Upper and Lower Sections */}
                 <div className="pdetails-bridge-card">
                   <div className="pdetails-bridge-header">
                     <span className="pdetails-about-badge" style={{ background: "#EEF2FF", color: "#4F46E5" }}>
@@ -662,13 +988,22 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     </div>
                   </div>
                 </div>
-              </div>
+              </>
             )}
+          </div>
+        )}
 
             {activeTab === "architecture" && (
               <div className="pdetails-tab-pane">
-                {/* Architecture & Engineering Overview */}
-                <div className="pdetails-about-card">
+                {!user ? (
+                  renderBuyerLock(
+                    `System Architecture & Infrastructure Blueprints Gated`,
+                    `Reviewing the low-latency edge topology, distributed database schemas, and microservices documentation for ${product.name} requires a verified buyer profile.`
+                  )
+                ) : (
+                  <>
+                    {/* Architecture & Engineering Overview */}
+                    <div className="pdetails-about-card">
                   <span className="pdetails-about-badge">System Architecture</span>
                   <h2 className="pdetails-card-title">{product.name} Technical Architecture &amp; Engineering Foundation</h2>
                   <p className="pdetails-about-paragraph">
@@ -749,13 +1084,22 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     External API interactions are strictly governed by distributed token-bucket rate limiters and OAuth 2.0 / API key authentication middlewares. Comprehensive OpenAPI 3.0 specifications and interactive Swagger documentation provide developers with exact schema contracts, webhook verification guides, and sandbox endpoints, enabling rapid integrations and painless technical transfer during acquisitions.
                   </p>
                 </div>
-              </div>
+              </>
             )}
+          </div>
+        )}
 
             {activeTab === "security" && (
               <div className="pdetails-tab-pane">
-                {/* Security, Governance & SLAs Overview */}
-                <div className="pdetails-about-card">
+                {!user ? (
+                  renderBuyerLock(
+                    `Enterprise Security, SOC 2 & SLAs Gated`,
+                    `SOC 2 Type II audit certifications, AWS KMS encryption topology, and 99.98% high-availability SLA agreements are restricted to registered buyers.`
+                  )
+                ) : (
+                  <>
+                    {/* Security, Governance & SLAs Overview */}
+                    <div className="pdetails-about-card">
                   <span className="pdetails-about-badge">Security &amp; Governance</span>
                   <h2 className="pdetails-card-title">{product.name} Enterprise Security Architecture &amp; Governance</h2>
                   <p className="pdetails-about-paragraph">
@@ -864,13 +1208,22 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     Compliance with international privacy mandates—including EU GDPR and California CCPA—is built into the platform&apos;s data layer. Automated workflows handle data subject access requests (DSAR) and cryptographic tenant deletion with verifiable audit certificates. Strict logical tenant separation prevents cross-tenant data leakage, providing enterprise buyers and diligence auditors with complete confidence in regulatory compliance and long-term asset integrity.
                   </p>
                 </div>
-              </div>
+              </>
             )}
+          </div>
+        )}
 
             {activeTab === "financials" && (
               <div className="pdetails-tab-pane">
-                {/* Text First */}
-                <div className="pdetails-about-card">
+                {!user ? (
+                  renderBuyerLock(
+                    `Audited Financial Statements & MRR Growth Gated`,
+                    `Access verified Stripe telemetry, cohort retention rates, profit margins, and banking audit feeds for ${product.name} by signing up as a verified buyer.`
+                  )
+                ) : (
+                  <>
+                    {/* Text First */}
+                    <div className="pdetails-about-card">
                   <span className="pdetails-about-badge">Financial Diligence</span>
                   <h2 className="pdetails-card-title">{product.name} Financial Performance, Unit Economics &amp; Growth Telemetry</h2>
                   <p className="pdetails-about-paragraph">
@@ -937,12 +1290,21 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     Post-closing transition governance includes up to 90 days of structured founder advisory support, detailed standard operating procedures (SOPs) for continuous integration and automated deployments, and transferred vendor accounts across hosting, logging, and security compliance tools to guarantee seamless, uninterrupted day-one operational continuity.
                   </p>
                 </div>
-              </div>
+              </>
             )}
+          </div>
+        )}
 
             {activeTab === "reviews" && (
               <div className="pdetails-tab-pane">
-                <div className="pdetails-spec-card">
+                {!user ? (
+                  renderBuyerLock(
+                    `Verified Buyer Reviews & Evaluations Gated`,
+                    `Read authentic verified buyer reviews, deployment telemetry, and submit your evaluation for ${product.name} with a free buyer account.`
+                  )
+                ) : (
+                  <>
+                    <div className="pdetails-spec-card">
                   <span className="pdetails-about-badge" style={{ background: "#EEF2FF", color: "#4F46E5" }}>
                     Verified Diligence Scorecard
                   </span>
@@ -1222,12 +1584,21 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     })}
                   </div>
                 </div>
-              </div>
+              </>
             )}
+          </div>
+        )}
 
             {activeTab === "compare" && (
               <div className="pdetails-tab-pane">
-                <div className="pdetails-compare-wrap">
+                {!user ? (
+                  renderBuyerLock(
+                    `Side-by-Side Competitive Diligence Gated`,
+                    `Compare ${product.name} against market alternatives with verified pricing, latency benchmarks, escrow terms, and technical specifications.`
+                  )
+                ) : (
+                  <>
+                    <div className="pdetails-compare-wrap">
                   <div className="pdetails-compare-card">
                     <div className="pdetails-compare-header">
                       <span className="pdetails-compare-badge">
@@ -1611,8 +1982,10 @@ export default function ProductMoreDetailsClient({ product, initialTab = "overvi
                     </div>
                   </div>
                 </div>
-              </div>
+              </>
             )}
+          </div>
+        )}
           </div>
         </div>
       </div>

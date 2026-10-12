@@ -95,9 +95,39 @@ export default function SubmitProductClient() {
       setCurrentStep(currentStep + 1);
     } else {
       // Final submit
-      const newId = `SMRKT-${Math.floor(10000 + Math.random() * 90000)}`;
+      const newId = `prod-${Math.floor(10000 + Math.random() * 90000)}`;
       setSubmissionId(newId);
       setIsSubmitted(true);
+
+      try {
+        const cleanFeatures = form.features.filter(Boolean);
+        const newProduct = {
+          id: newId,
+          name: form.name.trim(),
+          category: form.category,
+          tagline: form.tagline.trim() || `${form.name} for modern high-velocity teams`,
+          price: parseFloat(form.price) || 29,
+          period: form.period || "mo",
+          pricingModel: form.pricingModel || "Subscription",
+          description: form.description.trim(),
+          website: form.website.trim() || "https://saasmrkt.com",
+          brandColor: form.brandColor || "#6366F1",
+          brandLetter: form.name.trim().slice(0, 2).toUpperCase(),
+          features: cleanFeatures.length > 0 ? cleanFeatures : ["Cloud API Integrations", "Two-Way Synchronization", "Enterprise Support"],
+          status: "Live & Active",
+          inquiriesCount: 0,
+          viewsCount: 1,
+          listedDate: "Just now",
+        };
+
+        const existingRaw = localStorage.getItem("saas_mrkt_vendor_products");
+        let list = existingRaw ? JSON.parse(existingRaw) : [];
+        if (!Array.isArray(list)) list = [];
+        list.unshift(newProduct);
+        localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(list));
+      } catch {
+        // Ignore localStorage errors
+      }
     }
   };
 
@@ -266,15 +296,32 @@ export default function SubmitProductClient() {
               </ul>
             </div>
 
-            <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+            <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
               <Link
-                href="/products"
+                href="/vendor"
                 style={{
                   background: "var(--primary)",
                   color: "#ffffff",
                   padding: "0.8rem 1.75rem",
                   borderRadius: "12px",
                   fontWeight: 700,
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                <span>Manage in Vendor Dashboard</span>
+                <span>→</span>
+              </Link>
+              <Link
+                href="/products"
+                style={{
+                  background: "#F1F5F9",
+                  color: "#334155",
+                  padding: "0.8rem 1.5rem",
+                  borderRadius: "12px",
+                  fontWeight: 600,
                   textDecoration: "none",
                 }}
               >

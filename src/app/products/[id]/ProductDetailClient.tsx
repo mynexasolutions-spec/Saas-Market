@@ -325,7 +325,14 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 <button
                   type="button"
                   className="detail-btn-secondary"
-                  onClick={() => setContactModalOpen(true)}
+                  onClick={() => {
+                    if (!user) {
+                      openAuth("signup", "buyer");
+                      showToast("Please sign up or log in as a buyer to contact the vendor.");
+                      return;
+                    }
+                    setContactModalOpen(true);
+                  }}
                 >
                   Contact Seller
                 </button>
@@ -336,19 +343,40 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   id="detail-see-more-btn"
                   style={{ textDecoration: "none" }}
                 >
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                  <span>See More Detail</span>
+                  {!user ? (
+                    <>
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                      <span>Unlock More Details 🔒</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                      <span>See More Detail</span>
+                    </>
+                  )}
                 </Link>
               </div>
             </div>

@@ -107,20 +107,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Ignore
     }
 
-    // Default demo user on first visit if user has never explicitly logged out
-    const defaultBuyer: User = {
-      name: ROLE_PRESETS.buyer.name,
-      email: ROLE_PRESETS.buyer.email,
-      initials: "AM",
-      role: "buyer",
-      title: ROLE_PRESETS.buyer.title,
-      company: ROLE_PRESETS.buyer.company,
-      location: "San Francisco, CA",
-      website: "https://acmecloud.io",
-      bio: "SaaS software procurement lead evaluating cloud infrastructure and marketing tooling.",
-      phone: "+1 (555) 234-8900",
-    };
-    setUser(defaultBuyer);
+    // Default visitor is unauthenticated (guest) until they sign up or log in
+    setUser(null);
     setIsInitialized(true);
   }, []);
 

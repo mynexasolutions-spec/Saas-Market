@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/context/AuthContext";
@@ -21,6 +21,82 @@ interface PurchaseInquiry {
   status: "New Request" | "Contacted" | "Quote Sent" | "Purchased";
 }
 
+export interface VendorSaaSListing {
+  id: string;
+  name: string;
+  category: string;
+  tagline: string;
+  price: number;
+  period: string;
+  pricingModel: string;
+  description: string;
+  website: string;
+  brandColor: string;
+  brandLetter: string;
+  features: string[];
+  status: "Live & Active" | "Under Review" | "Paused";
+  inquiriesCount: number;
+  viewsCount: number;
+  listedDate: string;
+}
+
+const DEFAULT_VENDOR_LISTINGS: VendorSaaSListing[] = [
+  {
+    id: "prod-growthflow",
+    name: "GrowthFlow AI",
+    category: "Marketing & Email",
+    tagline: "Autonomous omnichannel AI marketing engine for high-velocity SaaS growth teams",
+    price: 49,
+    period: "mo",
+    pricingModel: "Subscription",
+    description: "Multi-channel lifecycle marketing automation platform with autonomous AI campaign drafting and native conversion attribution.",
+    website: "https://growthflow.ai",
+    brandColor: "#6366F1",
+    brandLetter: "GF",
+    features: ["Autonomous Email & SMS Sequences", "Predictive Churn Attribution", "Cross-Platform Cohort Tracking"],
+    status: "Live & Active",
+    inquiriesCount: 84,
+    viewsCount: 4200,
+    listedDate: "12 Oct 2025",
+  },
+  {
+    id: "prod-manage360",
+    name: "Manage360 Suite",
+    category: "Project Management",
+    tagline: "Unified sprint planning, velocity burndown telemetry, and team capacity orchestration",
+    price: 79,
+    period: "mo",
+    pricingModel: "Subscription",
+    description: "Enterprise agile delivery workspace consolidating Jira issues, GitHub pull requests, and automated product release documentation.",
+    website: "https://manage360.io",
+    brandColor: "#059669",
+    brandLetter: "M3",
+    features: ["Two-Way GitHub & GitLab Sync", "Interactive Multiplayer Gantt Charts", "Capacity & Workload Telemetry"],
+    status: "Live & Active",
+    inquiriesCount: 62,
+    viewsCount: 3100,
+    listedDate: "18 Nov 2025",
+  },
+  {
+    id: "prod-taskflow",
+    name: "TaskFlow Workspace",
+    category: "Project Management",
+    tagline: "Modern collaborative documentation and real-time multiplayer agile coordination",
+    price: 29,
+    period: "mo",
+    pricingModel: "Subscription",
+    description: "High-performance collaborative Kanban and project planning suite for modern remote engineering squads.",
+    website: "https://taskflow.dev",
+    brandColor: "#3B82F6",
+    brandLetter: "TF",
+    features: ["Sub-110ms Edge Collaboration", "SOC 2 Type II Certified", "Automated Sprint Burndowns"],
+    status: "Live & Active",
+    inquiriesCount: 45,
+    viewsCount: 2800,
+    listedDate: "05 Jan 2026",
+  },
+];
+
 interface CompanyDocument {
   id: string;
   title: string;
@@ -34,7 +110,24 @@ interface CompanyDocument {
 
 export default function VendorPage() {
   const { user, loginAsRole, openAuth, isInitialized } = useAuth();
-  const [activeTab, setActiveTab] = useState<"purchase-requests" | "documents">("purchase-requests");
+  const [activeTab, setActiveTab] = useState<"listings" | "purchase-requests" | "documents">("listings");
+  const [vendorProducts, setVendorProducts] = useState<VendorSaaSListing[]>(DEFAULT_VENDOR_LISTINGS);
+  const [listingSearch, setListingSearch] = useState("");
+  const [listingCategoryFilter, setListingCategoryFilter] = useState("all");
+
+  // New Listing Modal State
+  const [isListingModalOpen, setIsListingModalOpen] = useState(false);
+  const [newListingName, setNewListingName] = useState("");
+  const [newListingCategory, setNewListingCategory] = useState("Project Management");
+  const [newListingTagline, setNewListingTagline] = useState("");
+  const [newListingPrice, setNewListingPrice] = useState("49");
+  const [newListingPeriod, setNewListingPeriod] = useState("mo");
+  const [newListingModel, setNewListingModel] = useState("Subscription");
+  const [newListingDesc, setNewListingDesc] = useState("");
+  const [newListingWebsite, setNewListingWebsite] = useState("");
+  const [newListingColor, setNewListingColor] = useState("#6366F1");
+  const [newListingFeatures, setNewListingFeatures] = useState(["", "", ""]);
+
   const [toastNotice, setToastNotice] = useState<string | null>(null);
   const [inquiryFilter, setInquiryFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -49,6 +142,89 @@ export default function VendorPage() {
   const showToast = (msg: string) => {
     setToastNotice(msg);
     setTimeout(() => setToastNotice(null), 3500);
+  };
+
+  // Load vendor listings from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("saas_mrkt_vendor_products");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setVendorProducts(parsed);
+        }
+      }
+    } catch {}
+  }, []);
+
+  const handleCreateListing = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newListingName.trim()) {
+      showToast("Please enter a SaaS product name.");
+      return;
+    }
+
+    const brandLetters = newListingName.trim().slice(0, 2).toUpperCase();
+    const cleanFeatures = newListingFeatures.map(f => f.trim()).filter(Boolean);
+
+    const newListing: VendorSaaSListing = {
+      id: `prod-${Date.now()}`,
+      name: newListingName.trim(),
+      category: newListingCategory,
+      tagline: newListingTagline.trim() || `${newListingName.trim()} for high-growth enterprise teams`,
+      price: parseFloat(newListingPrice) || 49,
+      period: newListingPeriod,
+      pricingModel: newListingModel,
+      description: newListingDesc.trim() || `${newListingName.trim()} is an all-in-one software solution.`,
+      website: newListingWebsite.trim() || "https://saasmrkt.com",
+      brandColor: newListingColor,
+      brandLetter: brandLetters,
+      features: cleanFeatures.length > 0 ? cleanFeatures : ["Cloud API Integrations", "Role-Based Access Control", "99.98% High-Availability SLA"],
+      status: "Live & Active",
+      inquiriesCount: 0,
+      viewsCount: 1,
+      listedDate: "Just now",
+    };
+
+    const updated = [newListing, ...vendorProducts];
+    setVendorProducts(updated);
+    try {
+      localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
+    } catch {}
+
+    setIsListingModalOpen(false);
+    setNewListingName("");
+    setNewListingTagline("");
+    setNewListingPrice("49");
+    setNewListingDesc("");
+    setNewListingWebsite("");
+    setNewListingFeatures(["", "", ""]);
+    showToast(`"${newListing.name}" has been successfully listed in your SaaS catalog!`);
+  };
+
+  const handleToggleListingStatus = (id: string) => {
+    const updated = vendorProducts.map((p) => {
+      if (p.id === id) {
+        const nextStatus = p.status === "Live & Active" ? "Paused" : "Live & Active";
+        showToast(`"${p.name}" status changed to ${nextStatus}.`);
+        return { ...p, status: nextStatus as VendorSaaSListing["status"] };
+      }
+      return p;
+    });
+    setVendorProducts(updated);
+    try {
+      localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
+    } catch {}
+  };
+
+  const handleDeleteListing = (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to remove "${name}" from your active listings?`)) return;
+    const updated = vendorProducts.filter((p) => p.id !== id);
+    setVendorProducts(updated);
+    try {
+      localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
+    } catch {}
+    showToast(`"${name}" has been removed from your listings.`);
   };
 
   // List of users who want to contact the vendor to purchase software
@@ -242,6 +418,19 @@ export default function VendorPage() {
     return true;
   });
 
+  const filteredVendorListings = vendorProducts.filter((prod) => {
+    if (listingCategoryFilter !== "all" && prod.category !== listingCategoryFilter) return false;
+    if (listingSearch.trim()) {
+      const q = listingSearch.toLowerCase();
+      const match =
+        prod.name.toLowerCase().includes(q) ||
+        prod.tagline.toLowerCase().includes(q) ||
+        prod.category.toLowerCase().includes(q);
+      if (!match) return false;
+    }
+    return true;
+  });
+
   if (!isInitialized) {
     return (
       <PageLayout activeNav="sellers" noContainer>
@@ -320,23 +509,60 @@ export default function VendorPage() {
                 <button
                   type="button"
                   className="btn-primary vendor-add-btn"
+                  onClick={() => setIsListingModalOpen(true)}
+                  style={{
+                    background: "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)",
+                    color: "#ffffff",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    padding: "0.7rem 1.25rem",
+                    borderRadius: "10px",
+                    fontWeight: 700,
+                    border: "none",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 14px rgba(79, 70, 229, 0.35)",
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  <span>List New SaaS Product</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-secondary vendor-add-btn"
                   onClick={() => setIsDocModalOpen(true)}
+                  style={{
+                    background: "#ffffff",
+                    border: "1px solid #CBD5E1",
+                    color: "#334155",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    padding: "0.7rem 1.25rem",
+                    borderRadius: "10px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
-                  <span>Upload Company Document</span>
+                  <span>Upload Document</span>
                 </button>
               </div>
             </div>
 
-            {/* Focused 2 Metrics Cards */}
+            {/* 3 Metrics Cards */}
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
                 gap: "1.25rem",
                 marginTop: "1.75rem",
               }}
@@ -345,7 +571,34 @@ export default function VendorPage() {
                 className="vendor-kpi-box"
                 style={{
                   cursor: "pointer",
-                  border: activeTab === "purchase-requests" ? "2px solid #4F46E5" : "1px solid #E2E8F0",
+                  border: activeTab === "listings" ? "2px solid #4F46E5" : "1px solid #E2E8F0",
+                  background: activeTab === "listings" ? "#EEF2FF" : "#F8FAFC",
+                }}
+                onClick={() => setActiveTab("listings")}
+              >
+                <div className="vendor-kpi-icon-wrap" style={{ background: "#E0E7FF", color: "#4F46E5", width: "48px", height: "48px", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                    <polyline points="2 17 12 22 22 17" />
+                    <polyline points="2 12 12 17 22 12" />
+                  </svg>
+                </div>
+                <div className="vendor-kpi-meta">
+                  <span className="vendor-kpi-label">My SaaS Product Catalog</span>
+                  <div className="vendor-kpi-val-row">
+                    <span className="vendor-kpi-val">{vendorProducts.length} Listings</span>
+                    <span className="vendor-kpi-trend positive">
+                      {vendorProducts.filter(p => p.status === "Live & Active").length} Live
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="vendor-kpi-box"
+                style={{
+                  cursor: "pointer",
+                  border: activeTab === "purchase-requests" ? "2px solid #3B82F6" : "1px solid #E2E8F0",
                   background: activeTab === "purchase-requests" ? "#F5F3FF" : "#F8FAFC",
                 }}
                 onClick={() => setActiveTab("purchase-requests")}
@@ -406,8 +659,21 @@ export default function VendorPage() {
             </div>
           )}
 
-          {/* Clean 2 Tabs Switcher */}
+          {/* Clean 3 Tabs Switcher */}
           <div className="vendor-tabs-bar">
+            <button
+              type="button"
+              className={`vendor-tab-btn${activeTab === "listings" ? " active" : ""}`}
+              onClick={() => setActiveTab("listings")}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                <polyline points="2 17 12 22 22 17" />
+                <polyline points="2 12 12 17 22 12" />
+              </svg>
+              <span>My SaaS Products &amp; Listings ({vendorProducts.length})</span>
+            </button>
+
             <button
               type="button"
               className={`vendor-tab-btn${activeTab === "purchase-requests" ? " active" : ""}`}
@@ -437,6 +703,334 @@ export default function VendorPage() {
               <span>Company Documents &amp; Verification ({documents.length})</span>
             </button>
           </div>
+
+          {/* =========================================================================
+              VIEW 0: MY SAAS PRODUCTS & LISTINGS (SELLERS CAN LIST & MANAGE)
+             ========================================================================= */}
+          {activeTab === "listings" && (
+            <div className="vendor-tab-content">
+              {/* Search & Action Bar */}
+              <div className="vendor-filter-row">
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", flex: 1 }}>
+                  {/* Search */}
+                  <div style={{ position: "relative", minWidth: "260px" }}>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#94A3B8"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)" }}
+                    >
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input
+                      type="text"
+                      placeholder="Search listings by title, tagline or category..."
+                      value={listingSearch}
+                      onChange={(e) => setListingSearch(e.target.value)}
+                      style={{
+                        padding: "0.6rem 1rem 0.6rem 2.4rem",
+                        borderRadius: "10px",
+                        border: "1px solid #CBD5E1",
+                        fontSize: "0.88rem",
+                        width: "100%",
+                        outline: "none",
+                      }}
+                    />
+                  </div>
+
+                  {/* Category Filter */}
+                  <select
+                    value={listingCategoryFilter}
+                    onChange={(e) => setListingCategoryFilter(e.target.value)}
+                    style={{
+                      padding: "0.6rem 1rem",
+                      borderRadius: "10px",
+                      border: "1px solid #CBD5E1",
+                      fontSize: "0.88rem",
+                      background: "#FFFFFF",
+                      outline: "none",
+                    }}
+                  >
+                    <option value="all">All Categories</option>
+                    <option value="Project Management">Project Management</option>
+                    <option value="Marketing & Email">Marketing & Email</option>
+                    <option value="CRM & Sales">CRM & Sales</option>
+                    <option value="Finance & Accounting">Finance & Accounting</option>
+                    <option value="Customer Support">Customer Support</option>
+                    <option value="Security & Compliance">Security & Compliance</option>
+                  </select>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsListingModalOpen(true)}
+                    style={{
+                      background: "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)",
+                      color: "#ffffff",
+                      border: "none",
+                      padding: "0.65rem 1.25rem",
+                      borderRadius: "10px",
+                      fontWeight: 700,
+                      fontSize: "0.88rem",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span>+ List New SaaS Product</span>
+                  </button>
+
+                  <Link
+                    href="/submit-product"
+                    style={{
+                      background: "#F1F5F9",
+                      color: "#334155",
+                      border: "1px solid #E2E8F0",
+                      padding: "0.65rem 1rem",
+                      borderRadius: "10px",
+                      fontWeight: 600,
+                      fontSize: "0.88rem",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Full Onboarding Form
+                  </Link>
+                </div>
+              </div>
+
+              {/* Product Listings Grid/Cards */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {filteredVendorListings.length === 0 ? (
+                  <div
+                    style={{
+                      background: "#FFFFFF",
+                      border: "1px dashed #CBD5E1",
+                      borderRadius: "16px",
+                      padding: "3.5rem 2rem",
+                      textAlign: "center",
+                      color: "#64748B",
+                    }}
+                  >
+                    <p style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0F172A", marginBottom: "0.5rem" }}>
+                      No SaaS listings found
+                    </p>
+                    <p style={{ fontSize: "0.9rem", marginBottom: "1.5rem" }}>
+                      You haven&apos;t added any software matching your filters yet.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setIsListingModalOpen(true)}
+                      style={{
+                        background: "#4F46E5",
+                        color: "#ffffff",
+                        padding: "0.75rem 1.5rem",
+                        borderRadius: "10px",
+                        fontWeight: 700,
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      + Create Your First SaaS Listing
+                    </button>
+                  </div>
+                ) : (
+                  filteredVendorListings.map((prod) => (
+                    <div
+                      key={prod.id}
+                      style={{
+                        background: "#FFFFFF",
+                        border: "1px solid #E2E8F0",
+                        borderRadius: "16px",
+                        padding: "1.5rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "1.5rem",
+                        flexWrap: "wrap",
+                        boxShadow: "0 2px 8px rgba(15, 23, 42, 0.04)",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: "1.25rem", flex: 1, minWidth: "300px" }}>
+                        {/* Brand Icon */}
+                        <div
+                          style={{
+                            width: "52px",
+                            height: "52px",
+                            borderRadius: "14px",
+                            background: prod.brandColor || "#6366F1",
+                            color: "#ffffff",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "1.25rem",
+                            fontWeight: 800,
+                            flexShrink: 0,
+                            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                          }}
+                        >
+                          {prod.brandLetter || prod.name.slice(0, 2).toUpperCase()}
+                        </div>
+
+                        {/* Title & Details */}
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap", marginBottom: "0.35rem" }}>
+                            <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0F172A" }}>
+                              {prod.name}
+                            </h3>
+                            <span
+                              style={{
+                                background: "#F1F5F9",
+                                color: "#475569",
+                                padding: "0.2rem 0.65rem",
+                                borderRadius: "6px",
+                                fontSize: "0.75rem",
+                                fontWeight: 700,
+                              }}
+                            >
+                              {prod.category}
+                            </span>
+                            <span
+                              style={{
+                                background: prod.status === "Live & Active" ? "#ECFDF5" : "#FEF3C7",
+                                color: prod.status === "Live & Active" ? "#059669" : "#D97706",
+                                padding: "0.2rem 0.65rem",
+                                borderRadius: "6px",
+                                fontSize: "0.75rem",
+                                fontWeight: 700,
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.35rem",
+                              }}
+                            >
+                              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: prod.status === "Live & Active" ? "#10B981" : "#F59E0B" }} />
+                              {prod.status}
+                            </span>
+                          </div>
+
+                          <p style={{ margin: "0 0 0.65rem", color: "#64748B", fontSize: "0.88rem", lineHeight: 1.45 }}>
+                            {prod.tagline}
+                          </p>
+
+                          {/* Features Pills */}
+                          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                            {prod.features.slice(0, 3).map((feat, fi) => (
+                              <span
+                                key={fi}
+                                style={{
+                                  background: "#F8FAFC",
+                                  border: "1px solid #E2E8F0",
+                                  color: "#334155",
+                                  fontSize: "0.76rem",
+                                  padding: "0.15rem 0.55rem",
+                                  borderRadius: "6px",
+                                }}
+                              >
+                                ✓ {feat}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Pricing & Telemetry */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
+                        <div style={{ textAlign: "right", minWidth: "110px" }}>
+                          <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0F172A" }}>
+                            ${prod.price}
+                            <span style={{ fontSize: "0.82rem", fontWeight: 500, color: "#64748B" }}>/{prod.period}</span>
+                          </div>
+                          <div style={{ fontSize: "0.78rem", color: "#64748B", textTransform: "uppercase", fontWeight: 600 }}>
+                            {prod.pricingModel}
+                          </div>
+                        </div>
+
+                        <div style={{ borderLeft: "1px solid #E2E8F0", paddingLeft: "1.25rem", textAlign: "left" }}>
+                          <div style={{ fontSize: "0.85rem", color: "#334155", fontWeight: 700 }}>
+                            {prod.inquiriesCount} Inquiries
+                          </div>
+                          <div style={{ fontSize: "0.78rem", color: "#64748B" }}>
+                            {prod.viewsCount.toLocaleString()} Buyer Views
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <Link
+                            href={`/products/${prod.id}`}
+                            style={{
+                              background: "#F8FAFC",
+                              border: "1px solid #CBD5E1",
+                              color: "#334155",
+                              padding: "0.5rem 0.85rem",
+                              borderRadius: "8px",
+                              fontSize: "0.82rem",
+                              fontWeight: 700,
+                              textDecoration: "none",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.35rem",
+                            }}
+                          >
+                            <span>Live Page</span>
+                            <span>↗</span>
+                          </Link>
+
+                          <button
+                            type="button"
+                            onClick={() => handleToggleListingStatus(prod.id)}
+                            style={{
+                              background: "#FFFFFF",
+                              border: "1px solid #CBD5E1",
+                              color: prod.status === "Live & Active" ? "#D97706" : "#059669",
+                              padding: "0.5rem 0.75rem",
+                              borderRadius: "8px",
+                              fontSize: "0.82rem",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                            }}
+                          >
+                            {prod.status === "Live & Active" ? "Pause" : "Activate"}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteListing(prod.id, prod.name)}
+                            style={{
+                              background: "#FEE2E2",
+                              border: "none",
+                              color: "#DC2626",
+                              padding: "0.5rem 0.65rem",
+                              borderRadius: "8px",
+                              fontSize: "0.82rem",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                            }}
+                            title="Delete listing"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
 
           {/* =========================================================================
               VIEW 1: USER LIST WHO WANT TO CONTACT VENDORS FOR PURCHASING SOFTWARE
@@ -1052,6 +1646,189 @@ export default function VendorPage() {
                   className="btn-secondary"
                   style={{ width: "100%" }}
                   onClick={() => setIsDocModalOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: CREATE NEW SAAS PRODUCT LISTING
+         ========================================================================= */}
+      {isListingModalOpen && (
+        <div className="modal-backdrop" onClick={() => setIsListingModalOpen(false)}>
+          <div className="modal-container vendor-modal-box" style={{ maxWidth: "680px" }} onClick={(e) => e.stopPropagation()}>
+            <div className="vendor-modal-header">
+              <div>
+                <h2 className="vendor-modal-title">List New SaaS Product</h2>
+                <p className="vendor-modal-sub">Add your software to the marketplace catalog to start receiving verified buyer inquiries.</p>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setIsListingModalOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateListing} className="vendor-modal-form">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <div className="form-group">
+                  <label htmlFor="listing-name">Product Name *</label>
+                  <input
+                    id="listing-name"
+                    type="text"
+                    placeholder="e.g. DocuSync AI"
+                    value={newListingName}
+                    onChange={(e) => setNewListingName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="listing-cat">Category *</label>
+                  <select
+                    id="listing-cat"
+                    value={newListingCategory}
+                    onChange={(e) => setNewListingCategory(e.target.value)}
+                  >
+                    <option value="Project Management">Project Management</option>
+                    <option value="Marketing & Email">Marketing & Email</option>
+                    <option value="CRM & Sales">CRM & Sales</option>
+                    <option value="Finance & Accounting">Finance & Accounting</option>
+                    <option value="Customer Support">Customer Support</option>
+                    <option value="Security & Compliance">Security & Compliance</option>
+                    <option value="Developer Tools">Developer Tools</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="listing-tagline">Short Tagline *</label>
+                <input
+                  id="listing-tagline"
+                  type="text"
+                  placeholder="e.g. AI-automated sprint release notes and GitHub synchronization"
+                  value={newListingTagline}
+                  onChange={(e) => setNewListingTagline(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
+                <div className="form-group">
+                  <label htmlFor="listing-price">Price ($) *</label>
+                  <input
+                    id="listing-price"
+                    type="number"
+                    placeholder="49"
+                    value={newListingPrice}
+                    onChange={(e) => setNewListingPrice(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="listing-period">Billing Period</label>
+                  <select
+                    id="listing-period"
+                    value={newListingPeriod}
+                    onChange={(e) => setNewListingPeriod(e.target.value)}
+                  >
+                    <option value="mo">Per Month (/mo)</option>
+                    <option value="yr">Per Year (/yr)</option>
+                    <option value="one-time">One-Time Fee</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="listing-model">Pricing Model</label>
+                  <select
+                    id="listing-model"
+                    value={newListingModel}
+                    onChange={(e) => setNewListingModel(e.target.value)}
+                  >
+                    <option value="Subscription">Subscription</option>
+                    <option value="One-Time License">One-Time License</option>
+                    <option value="Free Trial">Free Trial</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="listing-desc">Product Description *</label>
+                <textarea
+                  id="listing-desc"
+                  rows={3}
+                  placeholder="Provide an overview of key functionality and value proposition..."
+                  value={newListingDesc}
+                  onChange={(e) => setNewListingDesc(e.target.value)}
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: "10px", border: "1px solid #CBD5E1", fontSize: "0.9rem", outline: "none" }}
+                  required
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "1rem" }}>
+                <div className="form-group">
+                  <label htmlFor="listing-web">Website or Demo URL</label>
+                  <input
+                    id="listing-web"
+                    type="url"
+                    placeholder="https://yoursoftware.com"
+                    value={newListingWebsite}
+                    onChange={(e) => setNewListingWebsite(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="listing-color">Brand Color</label>
+                  <select
+                    id="listing-color"
+                    value={newListingColor}
+                    onChange={(e) => setNewListingColor(e.target.value)}
+                  >
+                    <option value="#6366F1">Indigo (#6366F1)</option>
+                    <option value="#3B82F6">Blue (#3B82F6)</option>
+                    <option value="#10B981">Emerald (#10B981)</option>
+                    <option value="#F59E0B">Amber (#F59E0B)</option>
+                    <option value="#EC4899">Pink (#EC4899)</option>
+                    <option value="#0F172A">Dark Slate (#0F172A)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Top Features (up to 3 bullets)</label>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  {[0, 1, 2].map((idx) => (
+                    <input
+                      key={idx}
+                      type="text"
+                      placeholder={`Feature ${idx + 1} (e.g. Automated webhook connectors)`}
+                      value={newListingFeatures[idx] || ""}
+                      onChange={(e) => {
+                        const updated = [...newListingFeatures];
+                        updated[idx] = e.target.value;
+                        setNewListingFeatures(updated);
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="vendor-modal-actions">
+                <button type="submit" className="btn-primary" style={{ width: "100%" }}>
+                  Publish SaaS Listing
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  style={{ width: "100%" }}
+                  onClick={() => setIsListingModalOpen(false)}
                 >
                   Cancel
                 </button>
