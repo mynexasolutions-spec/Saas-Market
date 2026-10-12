@@ -9,20 +9,36 @@ import PageLayout from "@/components/PageLayout";
 import { ProductItem, getSimilarProducts } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
 import { isWishlisted, toggleWishlist, WISHLIST_EVENT_NAME } from "@/utils/wishlist";
+import { findProductByIdIncludingCustom } from "@/utils/vendorProducts";
 
 interface ProductDetailClientProps {
   product: ProductItem;
 }
 
-export default function ProductDetailClient({ product }: ProductDetailClientProps) {
+export default function ProductDetailClient({ product: initialProduct }: ProductDetailClientProps) {
   const router = useRouter();
   const { user, openAuth } = useAuth();
+  const [customProduct, setCustomProduct] = useState<ProductItem | null>(null);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
+
+  // Resolve custom vendor product from localStorage if navigating to dynamic ID
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const pathParts = window.location.pathname.split("/");
+      const urlId = pathParts[2] || initialProduct.id;
+      const found = findProductByIdIncludingCustom(urlId);
+      if (found && found.id === urlId) {
+        setCustomProduct(found);
+      }
+    }
+  }, [initialProduct.id]);
+
+  const product = customProduct || initialProduct;
 
   useEffect(() => {
     setMounted(true);

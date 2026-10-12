@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getStoredVendorProducts, convertVendorListingToProductItem, VENDOR_PRODUCTS_EVENT_KEY } from "@/utils/vendorProducts";
 
 export interface ProductItem {
   id: string;
@@ -215,19 +216,33 @@ export default function FeaturedProducts({
   const [productsList, setProductsList] = useState<ProductItem[]>(FEATURED_PRODUCTS_LIST);
   const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
 
-  // Sync with dynamic products managed by Admin Console
+  // Sync with dynamic products managed by Admin Console and Vendor Dashboard
   React.useEffect(() => {
-    try {
-      const saved = localStorage.getItem("saas_mrkt_featured_products");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setProductsList(parsed);
+    const loadMergedProducts = () => {
+      let baseList = FEATURED_PRODUCTS_LIST;
+      try {
+        const saved = localStorage.getItem("saas_mrkt_featured_products");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            baseList = parsed;
+          }
         }
-      }
-    } catch {
-      // Ignore
-    }
+      } catch {}
+
+      // Prepend active vendor listings
+      const vendorListings = getStoredVendorProducts();
+      const customItems: ProductItem[] = vendorListings
+        .filter((v) => v.status === "Live & Active" || !v.status)
+        .filter((v) => !baseList.some((p) => p.id === v.id))
+        .map(convertVendorListingToProductItem);
+
+      setProductsList([...customItems, ...baseList]);
+    };
+
+    loadMergedProducts();
+    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadMergedProducts);
+    return () => window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadMergedProducts);
   }, []);
 
   const toggleBookmark = (id: string, e: React.MouseEvent) => {

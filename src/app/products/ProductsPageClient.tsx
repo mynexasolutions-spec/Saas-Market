@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import PageLayout from "@/components/PageLayout";
 import { ALL_PRODUCTS, ProductItem } from "@/data/products";
 import ProductModal from "@/components/ProductModal";
+import { getAllMarketplaceProducts, VENDOR_PRODUCTS_EVENT_KEY } from "@/utils/vendorProducts";
 
 const CATEGORIES = [
   { label: "All Products", value: "" },
@@ -27,12 +28,11 @@ const SORT_OPTIONS = [
   { label: "Newest", value: "newest" },
 ];
 
-const EXTENDED_PRODUCTS: ProductItem[] = ALL_PRODUCTS;
-
 const ITEMS_PER_PAGE = 24;
 
 export default function ProductsPageClient() {
   const router = useRouter();
+  const [productsList, setProductsList] = useState<ProductItem[]>(ALL_PRODUCTS);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("popular");
@@ -41,12 +41,22 @@ export default function ProductsPageClient() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
+  // Sync vendor products from localStorage on mount and on update events
+  useEffect(() => {
+    const updateProducts = () => {
+      setProductsList(getAllMarketplaceProducts());
+    };
+    updateProducts();
+    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, updateProducts);
+    return () => window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, updateProducts);
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 3000);
   };
 
-  const filtered = EXTENDED_PRODUCTS.filter((p) => {
+  const filtered = productsList.filter((p) => {
     const matchesCat = !selectedCategory || p.category === selectedCategory;
     const matchesSearch =
       !searchQuery ||

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/context/AuthContext";
+import { VENDOR_PRODUCTS_EVENT_KEY } from "@/utils/vendorProducts";
 
 interface PurchaseInquiry {
   id: string;
@@ -190,6 +191,7 @@ export default function VendorPage() {
     setVendorProducts(updated);
     try {
       localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: updated }));
     } catch {}
 
     setIsListingModalOpen(false);
@@ -214,6 +216,7 @@ export default function VendorPage() {
     setVendorProducts(updated);
     try {
       localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: updated }));
     } catch {}
   };
 
@@ -223,6 +226,7 @@ export default function VendorPage() {
     setVendorProducts(updated);
     try {
       localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: updated }));
     } catch {}
     showToast(`"${name}" has been removed from your listings.`);
   };

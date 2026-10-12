@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ALL_PRODUCTS, ProductItem } from "@/data/products";
+import { getAllMarketplaceProducts } from "@/utils/vendorProducts";
 
 interface SpotlightSearchModalProps {
   isOpen: boolean;
@@ -91,7 +92,8 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
 
     // 1. Products
     if (activeFilter === "all" || activeFilter === "products") {
-      const matchedProducts = ALL_PRODUCTS.filter((prod) => {
+      const allAvailableProducts = typeof window !== "undefined" ? getAllMarketplaceProducts() : ALL_PRODUCTS;
+      const matchedProducts = allAvailableProducts.filter((prod) => {
         if (!q) return true;
         return (
           prod.name.toLowerCase().includes(q) ||
