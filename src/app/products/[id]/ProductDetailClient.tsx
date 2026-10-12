@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import PageLayout from "@/components/PageLayout";
 import { ProductItem, getSimilarProducts } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
+import { isWishlisted, toggleWishlist, WISHLIST_EVENT_NAME } from "@/utils/wishlist";
 
 interface ProductDetailClientProps {
   product: ProductItem;
@@ -19,17 +20,28 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
 
   useEffect(() => {
     setMounted(true);
     document.body.classList.add("product-detail-page-active");
+
+    // Check wishlist state
+    setIsSaved(isWishlisted(product.id));
+
+    const handleWishlistChange = () => {
+      setIsSaved(isWishlisted(product.id));
+    };
+    window.addEventListener(WISHLIST_EVENT_NAME, handleWishlistChange);
+
     return () => {
       document.body.classList.remove("product-detail-page-active");
+      window.removeEventListener(WISHLIST_EVENT_NAME, handleWishlistChange);
       if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     };
-  }, []);
+  }, [product.id]);
 
   const showToast = (msg: string) => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
@@ -39,6 +51,21 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     toastTimerRef.current = setTimeout(() => {
       setToastMsg(null);
     }, 3500);
+  };
+
+  const handleToggleWishlist = () => {
+    if (!user) {
+      openAuth("signup", "buyer");
+      showToast("Please sign in or create an account to save tools to your Buyer Wishlist.");
+      return;
+    }
+    const result = toggleWishlist(product.id);
+    setIsSaved(result.wishlisted);
+    if (result.wishlisted) {
+      showToast(`Saved "${product.name}" to your Buyer Wishlist!`);
+    } else {
+      showToast(`Removed "${product.name}" from your Wishlist.`);
+    }
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -322,6 +349,39 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
               {/* CTA Action Buttons */}
               <div className="detail-actions-row">
+                {/* Wishlist Button */}
+                <button
+                  type="button"
+                  onClick={handleToggleWishlist}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.45rem",
+                    padding: "0.75rem 1.15rem",
+                    borderRadius: "12px",
+                    border: isSaved ? "1px solid #5E4BEE" : "1px solid #CBD5E1",
+                    background: isSaved ? "#EEF2FF" : "#FFFFFF",
+                    color: isSaved ? "#5E4BEE" : "#475569",
+                    fontWeight: 700,
+                    fontSize: "0.88rem",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                  }}
+                  title={isSaved ? "Saved in your Buyer Wishlist" : "Save to Buyer Wishlist"}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill={isSaved ? "#5E4BEE" : "none"}
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                  >
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                  <span>{isSaved ? "Saved to Wishlist" : "Save"}</span>
+                </button>
+
                 <button
                   type="button"
                   className="detail-btn-secondary"

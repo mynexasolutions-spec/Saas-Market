@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/context/AuthContext";
 import UserNavDropdown from "@/components/UserNavDropdown";
+import SpotlightSearchModal from "@/components/SpotlightSearchModal";
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,19 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
+
+  // Global Ctrl+K / Cmd+K shortcut listener
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsSpotlightOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -32,7 +46,9 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
     { href: "/categories", label: "Categories", id: "categories" },
     { href: "/compare", label: "Compare", id: "compare" },
     { href: "/deals", label: "Deals", id: "deals" },
-    { href: "/buyers", label: "For Buyers", id: "buyers" },
+    ...(user && user.role === "buyer"
+      ? [{ href: "/dashboard", label: "Dashboard", id: "dashboard" }]
+      : [{ href: "/buyers", label: "For Buyers", id: "buyers" }]),
     { href: "/sellers", label: "For Sellers", id: "sellers" },
   ];
 
@@ -198,6 +214,37 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
 
             {/* Right Actions */}
             <div className="nav-actions">
+              {/* Spotlight Search Trigger Button */}
+              <button
+                type="button"
+                onClick={() => setIsSpotlightOpen(true)}
+                className="nav-spotlight-btn"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.45rem",
+                  background: "#F1F5F9",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "10px",
+                  padding: "0.45rem 0.75rem",
+                  color: "#64748B",
+                  fontSize: "0.82rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                }}
+                title="Search software tools (Ctrl + K)"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <span className="nav-spotlight-label" style={{ display: "inline-block" }}>Search</span>
+                <kbd style={{ background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "4px", padding: "1px 5px", fontSize: "0.68rem", fontWeight: 700, color: "#475569" }}>
+                  ⌘K
+                </kbd>
+              </button>
+
               {user ? (
                 <div className="nav-user-logged-wrap">
                   <UserNavDropdown
@@ -371,6 +418,11 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
           closeAuth();
           showToast(`Welcome! You are signed in as ${email}`);
         }}
+      />
+
+      <SpotlightSearchModal
+        isOpen={isSpotlightOpen}
+        onClose={() => setIsSpotlightOpen(false)}
       />
 
       {/* Toast Notification */}

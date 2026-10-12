@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import UserNavDropdown from "@/components/UserNavDropdown";
+import SpotlightSearchModal from "@/components/SpotlightSearchModal";
 
 interface NavbarProps {
   onOpenAuth: (mode: "login" | "signup") => void;
@@ -27,7 +28,20 @@ export default function Navbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Global Ctrl+K / Cmd+K listener
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsSpotlightOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
 
   const handleOpenSearch = () => {
     setIsSearchExpanded(true);
@@ -163,9 +177,15 @@ export default function Navbar({
                 </Link>
               </li>
               <li>
-                <Link href="/buyers" className="nav-link" id="nav-buyers">
-                  For Buyers
-                </Link>
+                {user && user.role === "buyer" ? (
+                  <Link href="/dashboard" className="nav-link" id="nav-dashboard">
+                    Dashboard
+                  </Link>
+                ) : (
+                  <Link href="/buyers" className="nav-link" id="nav-buyers">
+                    For Buyers
+                  </Link>
+                )}
               </li>
               <li>
                 <Link href="/sellers" className="nav-link" id="nav-sellers">
@@ -313,15 +333,23 @@ export default function Navbar({
             {!isSearchExpanded && (
               <button
                 className="search-trigger-btn"
-                onClick={handleOpenSearch}
-                aria-label="Search SaaS tools"
+                onClick={() => setIsSpotlightOpen(true)}
+                aria-label="Search SaaS tools (Ctrl + K)"
                 id="nav-search-btn"
-                title="Search SaaS tools"
+                title="Search SaaS tools (Ctrl + K)"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
+                <kbd style={{ background: "#F1F5F9", border: "1px solid #CBD5E1", borderRadius: "4px", padding: "1px 5px", fontSize: "0.68rem", fontWeight: 700, color: "#64748B" }}>
+                  ⌘K
+                </kbd>
               </button>
             )}
             {user ? (
@@ -491,6 +519,11 @@ export default function Navbar({
           </div>
         )}
       </div>
+
+      <SpotlightSearchModal
+        isOpen={isSpotlightOpen}
+        onClose={() => setIsSpotlightOpen(false)}
+      />
     </header>
   );
 }

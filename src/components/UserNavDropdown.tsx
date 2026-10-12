@@ -200,23 +200,45 @@ export default function UserNavDropdown({ user, onLogout }: UserNavDropdownProps
 
             {/* If Regular Buyer / User */}
             {role === "buyer" && (
-              <Link
-                href="/profile"
-                className="dropdown-menu-item"
-                onClick={() => setIsOpen(false)}
-                role="menuitem"
-              >
-                <div className="dropdown-item-icon profile-icon">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                </div>
-                <div className="dropdown-item-content">
-                  <div className="dropdown-item-title">My User Profile</div>
-                  <div className="dropdown-item-desc">Purchased software licenses &amp; bookmarks</div>
-                </div>
-              </Link>
+              <>
+                <Link
+                  href="/dashboard"
+                  className="dropdown-menu-item"
+                  onClick={() => setIsOpen(false)}
+                  role="menuitem"
+                >
+                  <div className="dropdown-item-icon profile-icon" style={{ background: "rgba(94, 75, 238, 0.1)", color: "#5E4BEE" }}>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                    </svg>
+                  </div>
+                  <div className="dropdown-item-content">
+                    <div className="dropdown-item-title">Buyer Dashboard</div>
+                    <div className="dropdown-item-desc">Saved wishlist, vendor quotes &amp; spend</div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/profile"
+                  className="dropdown-menu-item"
+                  onClick={() => setIsOpen(false)}
+                  role="menuitem"
+                >
+                  <div className="dropdown-item-icon profile-icon">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </div>
+                  <div className="dropdown-item-content">
+                    <div className="dropdown-item-title">Profile Settings</div>
+                    <div className="dropdown-item-desc">Account credentials &amp; contact info</div>
+                  </div>
+                </Link>
+              </>
             )}
           </div>
 
