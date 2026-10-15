@@ -4,7 +4,12 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/context/AuthContext";
-import { VENDOR_PRODUCTS_EVENT_KEY } from "@/utils/vendorProducts";
+import {
+  normalizeMarketplaceCategory,
+  VendorSaaSListing,
+  VENDOR_PRODUCTS_EVENT_KEY,
+  VENDOR_PRODUCTS_STORAGE_KEY,
+} from "@/utils/vendorProducts";
 
 interface PurchaseInquiry {
   id: string;
@@ -22,30 +27,11 @@ interface PurchaseInquiry {
   status: "New Request" | "Contacted" | "Quote Sent" | "Purchased";
 }
 
-export interface VendorSaaSListing {
-  id: string;
-  name: string;
-  category: string;
-  tagline: string;
-  price: number;
-  period: string;
-  pricingModel: string;
-  description: string;
-  website: string;
-  brandColor: string;
-  brandLetter: string;
-  features: string[];
-  status: "Live & Active" | "Under Review" | "Paused";
-  inquiriesCount: number;
-  viewsCount: number;
-  listedDate: string;
-}
-
 const DEFAULT_VENDOR_LISTINGS: VendorSaaSListing[] = [
   {
     id: "prod-growthflow",
     name: "GrowthFlow AI",
-    category: "Marketing & Email",
+    category: "Marketing",
     tagline: "Autonomous omnichannel AI marketing engine for high-velocity SaaS growth teams",
     price: 49,
     period: "mo",
@@ -109,8 +95,15 @@ interface CompanyDocument {
   verifiedBy: string;
 }
 
+interface ListingFormErrors {
+  name?: string;
+  tagline?: string;
+  price?: string;
+  website?: string;
+}
+
 export default function VendorPage() {
-  const { user, loginAsRole, openAuth, isInitialized } = useAuth();
+  const { user, loginAsRole, isInitialized } = useAuth();
   const [activeTab, setActiveTab] = useState<"listings" | "purchase-requests" | "documents">("listings");
   const [vendorProducts, setVendorProducts] = useState<VendorSaaSListing[]>(DEFAULT_VENDOR_LISTINGS);
   const [listingSearch, setListingSearch] = useState("");
@@ -121,13 +114,15 @@ export default function VendorPage() {
   const [newListingName, setNewListingName] = useState("");
   const [newListingCategory, setNewListingCategory] = useState("Project Management");
   const [newListingTagline, setNewListingTagline] = useState("");
-  const [newListingPrice, setNewListingPrice] = useState("49");
+  const [newListingPrice, setNewListingPrice] = useState("");
   const [newListingPeriod, setNewListingPeriod] = useState("mo");
   const [newListingModel, setNewListingModel] = useState("Subscription");
   const [newListingDesc, setNewListingDesc] = useState("");
   const [newListingWebsite, setNewListingWebsite] = useState("");
-  const [newListingColor, setNewListingColor] = useState("#6366F1");
-  const [newListingFeatures, setNewListingFeatures] = useState(["", "", ""]);
+  const [newListingFeatures, setNewListingFeatures] = useState([""]);
+  const [listingFormErrors, setListingFormErrors] = useState<ListingFormErrors>({});
+  const [isListingOptionalOpen, setIsListingOptionalOpen] = useState(false);
+  const [editingListingId, setEditingListingId] = useState<string | null>(null);
 
   const [toastNotice, setToastNotice] = useState<string | null>(null);
   const [inquiryFilter, setInquiryFilter] = useState<string>("all");
@@ -145,89 +140,171 @@ export default function VendorPage() {
     setTimeout(() => setToastNotice(null), 3500);
   };
 
+  const persistVendorProducts = (products: VendorSaaSListing[]): boolean => {
+    try {
+      localStorage.setItem(VENDOR_PRODUCTS_STORAGE_KEY, JSON.stringify(products));
+      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: products }));
+      return true;
+    } catch {
+      showToast("We could not save that change. Free browser storage and try again.");
+      return false;
+    }
+  };
+
+  const resetListingForm = () => {
+    setEditingListingId(null);
+    setNewListingName("");
+    setNewListingCategory("Project Management");
+    setNewListingTagline("");
+    setNewListingPrice("");
+    setNewListingPeriod("mo");
+    setNewListingModel("Subscription");
+    setNewListingDesc("");
+    setNewListingWebsite("");
+    setNewListingFeatures([""]);
+    setListingFormErrors({});
+    setIsListingOptionalOpen(false);
+  };
+
+  const openCreateListing = () => {
+    resetListingForm();
+    setIsListingModalOpen(true);
+  };
+
+  const openEditListing = (listing: VendorSaaSListing) => {
+    setEditingListingId(listing.id);
+    setNewListingName(listing.name);
+    setNewListingCategory(normalizeMarketplaceCategory(listing.category));
+    setNewListingTagline(listing.tagline);
+    setNewListingPrice(listing.price > 0 ? String(listing.price) : "");
+    setNewListingPeriod(listing.period || "mo");
+    setNewListingModel(listing.pricingModel || "Subscription");
+    setNewListingDesc(listing.description || "");
+    setNewListingWebsite(listing.website || "");
+    setNewListingFeatures(listing.features.length > 0 ? listing.features : [""]);
+    setListingFormErrors({});
+    setIsListingOptionalOpen(Boolean(listing.description || listing.features.length > 0));
+    setIsListingModalOpen(true);
+  };
+
+  const closeListingModal = () => {
+    setIsListingModalOpen(false);
+    resetListingForm();
+  };
+
   // Load vendor listings from localStorage
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("saas_mrkt_vendor_products");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setVendorProducts(parsed);
+    let frameId: number | null = null;
+    const loadSavedListings = () => {
+      try {
+        const saved = localStorage.getItem(VENDOR_PRODUCTS_STORAGE_KEY);
+        if (saved !== null) {
+          const parsed: unknown = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            frameId = window.requestAnimationFrame(() => setVendorProducts(parsed as VendorSaaSListing[]));
+          }
         }
-      }
-    } catch {}
+      } catch {}
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) loadSavedListings();
+    };
+
+    loadSavedListings();
+    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadSavedListings);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadSavedListings);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   const handleCreateListing = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newListingName.trim()) {
-      showToast("Please enter a SaaS product name.");
+    const nextErrors: ListingFormErrors = {};
+    if (!newListingName.trim()) nextErrors.name = "Enter the product name buyers will recognize.";
+    if (!newListingWebsite.trim()) {
+      nextErrors.website = "Enter the website where buyers can learn about your product.";
+    } else {
+      try {
+        const url = new URL(newListingWebsite.trim());
+        if (url.protocol !== "http:" && url.protocol !== "https:") nextErrors.website = "Use a complete URL beginning with https://.";
+      } catch {
+        nextErrors.website = "Use a complete URL beginning with https://.";
+      }
+    }
+    if (newListingTagline.trim().length < 20) nextErrors.tagline = "Describe your product in at least 20 characters.";
+    if (newListingModel !== "Free" && (!(Number(newListingPrice) > 0) || !Number.isFinite(Number(newListingPrice)))) {
+      nextErrors.price = "Enter a starting price greater than zero.";
+    }
+    setListingFormErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      const firstField = Object.keys(nextErrors)[0];
+      window.setTimeout(() => document.querySelector<HTMLElement>(`[data-listing-field="${firstField}"]`)?.focus(), 0);
       return;
     }
 
     const brandLetters = newListingName.trim().slice(0, 2).toUpperCase();
     const cleanFeatures = newListingFeatures.map(f => f.trim()).filter(Boolean);
 
-    const newListing: VendorSaaSListing = {
-      id: `prod-${Date.now()}`,
+    const existingListing = editingListingId
+      ? vendorProducts.find((listing) => listing.id === editingListingId)
+      : undefined;
+    const savedListing: VendorSaaSListing = {
+      ...existingListing,
+      id: existingListing?.id || `prod-${Date.now()}`,
       name: newListingName.trim(),
       category: newListingCategory,
-      tagline: newListingTagline.trim() || `${newListingName.trim()} for high-growth enterprise teams`,
-      price: parseFloat(newListingPrice) || 49,
-      period: newListingPeriod,
+      tagline: newListingTagline.trim(),
+      price: newListingModel === "Free" ? 0 : Number(newListingPrice),
+      period: newListingModel === "Subscription" ? newListingPeriod : "once",
       pricingModel: newListingModel,
-      description: newListingDesc.trim() || `${newListingName.trim()} is an all-in-one software solution.`,
-      website: newListingWebsite.trim() || "https://saasmrkt.com",
-      brandColor: newListingColor,
+      description: newListingDesc.trim() || newListingTagline.trim(),
+      website: newListingWebsite.trim(),
+      brandColor: "#6366F1",
       brandLetter: brandLetters,
-      features: cleanFeatures.length > 0 ? cleanFeatures : ["Cloud API Integrations", "Role-Based Access Control", "99.98% High-Availability SLA"],
-      status: "Live & Active",
-      inquiriesCount: 0,
-      viewsCount: 1,
-      listedDate: "Just now",
+      features: cleanFeatures,
+      status: existingListing?.status || "Under Review",
+      inquiriesCount: existingListing?.inquiriesCount || 0,
+      viewsCount: existingListing?.viewsCount || 0,
+      listedDate: existingListing?.listedDate || "Just now",
+      deleted: false,
     };
 
-    const updated = [newListing, ...vendorProducts];
+    const updated = existingListing
+      ? vendorProducts.map((listing) => listing.id === existingListing.id ? savedListing : listing)
+      : [savedListing, ...vendorProducts];
+    if (!persistVendorProducts(updated)) return;
     setVendorProducts(updated);
-    try {
-      localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
-      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: updated }));
-    } catch {}
-
     setIsListingModalOpen(false);
-    setNewListingName("");
-    setNewListingTagline("");
-    setNewListingPrice("49");
-    setNewListingDesc("");
-    setNewListingWebsite("");
-    setNewListingFeatures(["", "", ""]);
-    showToast(`"${newListing.name}" has been successfully listed in your SaaS catalog!`);
+    resetListingForm();
+    showToast(existingListing
+      ? `"${savedListing.name}" was updated successfully.`
+      : `"${savedListing.name}" was submitted for marketplace review.`);
   };
 
   const handleToggleListingStatus = (id: string) => {
     const updated = vendorProducts.map((p) => {
       if (p.id === id) {
         const nextStatus = p.status === "Live & Active" ? "Paused" : "Live & Active";
-        showToast(`"${p.name}" status changed to ${nextStatus}.`);
         return { ...p, status: nextStatus as VendorSaaSListing["status"] };
       }
       return p;
     });
+    if (!persistVendorProducts(updated)) return;
     setVendorProducts(updated);
-    try {
-      localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
-      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: updated }));
-    } catch {}
+    const changedListing = updated.find((listing) => listing.id === id);
+    if (changedListing) showToast(`"${changedListing.name}" status changed to ${changedListing.status}.`);
   };
 
   const handleDeleteListing = (id: string, name: string) => {
     if (!confirm(`Are you sure you want to remove "${name}" from your active listings?`)) return;
-    const updated = vendorProducts.filter((p) => p.id !== id);
+    const updated = vendorProducts.map((listing) => (
+      listing.id === id ? { ...listing, deleted: true, status: "Paused" as const } : listing
+    ));
+    if (!persistVendorProducts(updated)) return;
     setVendorProducts(updated);
-    try {
-      localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(updated));
-      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: updated }));
-    } catch {}
     showToast(`"${name}" has been removed from your listings.`);
   };
 
@@ -422,14 +499,15 @@ export default function VendorPage() {
     return true;
   });
 
-  const filteredVendorListings = vendorProducts.filter((prod) => {
-    if (listingCategoryFilter !== "all" && prod.category !== listingCategoryFilter) return false;
+  const visibleVendorProducts = vendorProducts.filter((product) => !product.deleted);
+  const filteredVendorListings = visibleVendorProducts.filter((prod) => {
+    if (listingCategoryFilter !== "all" && normalizeMarketplaceCategory(prod.category) !== listingCategoryFilter) return false;
     if (listingSearch.trim()) {
       const q = listingSearch.toLowerCase();
       const match =
         prod.name.toLowerCase().includes(q) ||
         prod.tagline.toLowerCase().includes(q) ||
-        prod.category.toLowerCase().includes(q);
+        normalizeMarketplaceCategory(prod.category).toLowerCase().includes(q);
       if (!match) return false;
     }
     return true;
@@ -513,7 +591,7 @@ export default function VendorPage() {
                 <button
                   type="button"
                   className="btn-primary vendor-add-btn"
-                  onClick={() => setIsListingModalOpen(true)}
+                  onClick={openCreateListing}
                   style={{
                     background: "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)",
                     color: "#ffffff",
@@ -590,9 +668,9 @@ export default function VendorPage() {
                 <div className="vendor-kpi-meta">
                   <span className="vendor-kpi-label">My SaaS Product Catalog</span>
                   <div className="vendor-kpi-val-row">
-                    <span className="vendor-kpi-val">{vendorProducts.length} Listings</span>
+                    <span className="vendor-kpi-val">{visibleVendorProducts.length} Listings</span>
                     <span className="vendor-kpi-trend positive">
-                      {vendorProducts.filter(p => p.status === "Live & Active").length} Live
+                      {visibleVendorProducts.filter(p => p.status === "Live & Active").length} Live
                     </span>
                   </div>
                 </div>
@@ -675,7 +753,7 @@ export default function VendorPage() {
                 <polyline points="2 17 12 22 22 17" />
                 <polyline points="2 12 12 17 22 12" />
               </svg>
-              <span>My SaaS Products &amp; Listings ({vendorProducts.length})</span>
+              <span>My SaaS Products &amp; Listings ({visibleVendorProducts.length})</span>
             </button>
 
             <button
@@ -763,18 +841,20 @@ export default function VendorPage() {
                   >
                     <option value="all">All Categories</option>
                     <option value="Project Management">Project Management</option>
-                    <option value="Marketing & Email">Marketing & Email</option>
+                    <option value="Marketing">Marketing</option>
                     <option value="CRM & Sales">CRM & Sales</option>
-                    <option value="Finance & Accounting">Finance & Accounting</option>
+                    <option value="Accounting & Finance">Accounting &amp; Finance</option>
                     <option value="Customer Support">Customer Support</option>
                     <option value="Security & Compliance">Security & Compliance</option>
+                    <option value="Developer Tools">Developer Tools</option>
+                    <option value="Analytics & BI">Analytics & BI</option>
                   </select>
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                   <button
                     type="button"
-                    onClick={() => setIsListingModalOpen(true)}
+                    onClick={openCreateListing}
                     style={{
                       background: "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)",
                       color: "#ffffff",
@@ -836,7 +916,7 @@ export default function VendorPage() {
                     </p>
                     <button
                       type="button"
-                      onClick={() => setIsListingModalOpen(true)}
+                      onClick={openCreateListing}
                       style={{
                         background: "#4F46E5",
                         color: "#ffffff",
@@ -905,7 +985,7 @@ export default function VendorPage() {
                                 fontWeight: 700,
                               }}
                             >
-                              {prod.category}
+                              {normalizeMarketplaceCategory(prod.category)}
                             </span>
                             <span
                               style={{
@@ -964,15 +1044,32 @@ export default function VendorPage() {
 
                         <div style={{ borderLeft: "1px solid #E2E8F0", paddingLeft: "1.25rem", textAlign: "left" }}>
                           <div style={{ fontSize: "0.85rem", color: "#334155", fontWeight: 700 }}>
-                            {prod.inquiriesCount} Inquiries
+                            {prod.inquiriesCount || 0} Inquiries
                           </div>
                           <div style={{ fontSize: "0.78rem", color: "#64748B" }}>
-                            {prod.viewsCount.toLocaleString()} Buyer Views
+                            {(prod.viewsCount || 0).toLocaleString()} Buyer Views
                           </div>
                         </div>
 
                         {/* Actions */}
                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <button
+                            type="button"
+                            onClick={() => openEditListing(prod)}
+                            style={{
+                              background: "#EEF2FF",
+                              border: "1px solid #C7D2FE",
+                              color: "#4F46E5",
+                              padding: "0.5rem 0.75rem",
+                              borderRadius: "8px",
+                              fontSize: "0.82rem",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                            }}
+                          >
+                            Edit
+                          </button>
+
                           <Link
                             href={`/products/${prod.id}`}
                             style={{
@@ -1663,157 +1760,181 @@ export default function VendorPage() {
           MODAL: CREATE NEW SAAS PRODUCT LISTING
          ========================================================================= */}
       {isListingModalOpen && (
-        <div className="modal-backdrop" onClick={() => setIsListingModalOpen(false)}>
-          <div className="modal-container vendor-modal-box" style={{ maxWidth: "680px" }} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-backdrop" onClick={closeListingModal}>
+          <div
+            aria-labelledby="vendor-listing-title"
+            aria-modal="true"
+            className="modal-container vendor-modal-box vendor-listing-modal"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+          >
             <div className="vendor-modal-header">
               <div>
-                <h2 className="vendor-modal-title">List New SaaS Product</h2>
-                <p className="vendor-modal-sub">Add your software to the marketplace catalog to start receiving verified buyer inquiries.</p>
+                <p className="vendor-listing-kicker">{editingListingId ? "Update marketplace listing" : "New marketplace listing"}</p>
+                <h2 className="vendor-modal-title" id="vendor-listing-title">{editingListingId ? "Edit SaaS product" : "Add a SaaS product"}</h2>
+                <p className="vendor-modal-sub">{editingListingId ? "Update the listing details buyers see across the marketplace." : "Start with the essentials. You can add advanced details after approval."}</p>
               </div>
               <button
                 type="button"
                 className="modal-close-btn"
-                onClick={() => setIsListingModalOpen(false)}
+                aria-label="Close product listing form"
+                onClick={closeListingModal}
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleCreateListing} className="vendor-modal-form">
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                <div className="form-group">
-                  <label htmlFor="listing-name">Product Name *</label>
-                  <input
-                    id="listing-name"
-                    type="text"
-                    placeholder="e.g. DocuSync AI"
-                    value={newListingName}
-                    onChange={(e) => setNewListingName(e.target.value)}
-                    required
-                  />
+            <form className="vendor-modal-form" noValidate onSubmit={handleCreateListing}>
+              {Object.keys(listingFormErrors).length > 0 && (
+                <div className="vendor-listing-error-summary" role="alert">
+                  <strong>Please check the highlighted fields.</strong>
+                  <span>Your other information is still here.</span>
+                </div>
+              )}
+
+              <div className="vendor-listing-fields">
+                <div className="vendor-listing-grid vendor-listing-grid--two">
+                  <div className="form-group">
+                    <label htmlFor="listing-name">Product name <span className="vendor-required">*</span></label>
+                    <input
+                      id="listing-name"
+                      data-listing-field="name"
+                      type="text"
+                      placeholder="e.g. TaskFlow"
+                      value={newListingName}
+                      aria-invalid={Boolean(listingFormErrors.name)}
+                      onChange={(e) => { setNewListingName(e.target.value); setListingFormErrors((errors) => ({ ...errors, name: undefined })); }}
+                    />
+                    {listingFormErrors.name && <small className="vendor-field-error">{listingFormErrors.name}</small>}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="listing-cat">Primary category <span className="vendor-required">*</span></label>
+                    <select
+                      id="listing-cat"
+                      value={newListingCategory}
+                      onChange={(e) => setNewListingCategory(e.target.value)}
+                    >
+                      <option value="Project Management">Project Management</option>
+                      <option value="Marketing">Marketing</option>
+                      <option value="CRM & Sales">CRM & Sales</option>
+                      <option value="Accounting & Finance">Accounting &amp; Finance</option>
+                      <option value="Customer Support">Customer Support</option>
+                      <option value="Security & Compliance">Security & Compliance</option>
+                      <option value="Developer Tools">Developer Tools</option>
+                      <option value="Analytics & BI">Analytics & BI</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="listing-cat">Category *</label>
-                  <select
-                    id="listing-cat"
-                    value={newListingCategory}
-                    onChange={(e) => setNewListingCategory(e.target.value)}
-                  >
-                    <option value="Project Management">Project Management</option>
-                    <option value="Marketing & Email">Marketing & Email</option>
-                    <option value="CRM & Sales">CRM & Sales</option>
-                    <option value="Finance & Accounting">Finance & Accounting</option>
-                    <option value="Customer Support">Customer Support</option>
-                    <option value="Security & Compliance">Security & Compliance</option>
-                    <option value="Developer Tools">Developer Tools</option>
-                  </select>
+                  <label htmlFor="listing-web">Product website <span className="vendor-required">*</span></label>
+                  <input
+                    id="listing-web"
+                    data-listing-field="website"
+                    type="url"
+                    placeholder="https://yourproduct.com"
+                    value={newListingWebsite}
+                    aria-invalid={Boolean(listingFormErrors.website)}
+                    onChange={(e) => { setNewListingWebsite(e.target.value); setListingFormErrors((errors) => ({ ...errors, website: undefined })); }}
+                  />
+                  {listingFormErrors.website && <small className="vendor-field-error">{listingFormErrors.website}</small>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="listing-tagline">Short description <span className="vendor-required">*</span></label>
+                  <textarea
+                    id="listing-tagline"
+                    data-listing-field="tagline"
+                    rows={2}
+                    maxLength={200}
+                    placeholder="What does your product do, who is it for, and what result does it deliver?"
+                    value={newListingTagline}
+                    aria-invalid={Boolean(listingFormErrors.tagline)}
+                    onChange={(e) => { setNewListingTagline(e.target.value); setListingFormErrors((errors) => ({ ...errors, tagline: undefined })); }}
+                  />
+                  <small className={listingFormErrors.tagline ? "vendor-field-error" : "vendor-field-help"}>{listingFormErrors.tagline || "Keep it to one or two clear sentences."}</small>
+                </div>
+
+                <div className="vendor-listing-grid vendor-listing-grid--pricing">
+                  <div className="form-group">
+                    <label htmlFor="listing-model">Pricing <span className="vendor-required">*</span></label>
+                    <select
+                      id="listing-model"
+                      value={newListingModel}
+                      onChange={(e) => {
+                        const model = e.target.value;
+                        setNewListingModel(model);
+                        if (model === "Free") {
+                          setNewListingPrice("");
+                          setListingFormErrors((errors) => ({ ...errors, price: undefined }));
+                        }
+                      }}
+                    >
+                      <option value="Subscription">Recurring subscription</option>
+                      <option value="One-time purchase">One-time purchase</option>
+                      <option value="Free">Free</option>
+                    </select>
+                  </div>
+
+                  {newListingModel !== "Free" && (
+                    <div className="form-group">
+                      <label htmlFor="listing-price">Starting price in USD <span className="vendor-required">*</span></label>
+                      <input
+                        id="listing-price"
+                        data-listing-field="price"
+                        type="number"
+                        min="1"
+                        inputMode="decimal"
+                        placeholder="e.g. 29"
+                        value={newListingPrice}
+                        aria-invalid={Boolean(listingFormErrors.price)}
+                        onChange={(e) => { setNewListingPrice(e.target.value); setListingFormErrors((errors) => ({ ...errors, price: undefined })); }}
+                      />
+                      {listingFormErrors.price && <small className="vendor-field-error">{listingFormErrors.price}</small>}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="listing-tagline">Short Tagline *</label>
-                <input
-                  id="listing-tagline"
-                  type="text"
-                  placeholder="e.g. AI-automated sprint release notes and GitHub synchronization"
-                  value={newListingTagline}
-                  onChange={(e) => setNewListingTagline(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
-                <div className="form-group">
-                  <label htmlFor="listing-price">Price ($) *</label>
-                  <input
-                    id="listing-price"
-                    type="number"
-                    placeholder="49"
-                    value={newListingPrice}
-                    onChange={(e) => setNewListingPrice(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="listing-period">Billing Period</label>
+              <details className="vendor-listing-optional" open={isListingOptionalOpen} onToggle={(event) => setIsListingOptionalOpen(event.currentTarget.open)}>
+                <summary><span>Optional details</span><small>Billing, detailed description and benefits</small></summary>
+                <div className="vendor-listing-optional-body">
+                {newListingModel === "Subscription" && <div className="form-group">
+                  <label htmlFor="listing-period">Billing frequency <span className="vendor-optional-label">Optional</span></label>
                   <select
                     id="listing-period"
                     value={newListingPeriod}
                     onChange={(e) => setNewListingPeriod(e.target.value)}
                   >
-                    <option value="mo">Per Month (/mo)</option>
-                    <option value="yr">Per Year (/yr)</option>
-                    <option value="one-time">One-Time Fee</option>
+                    <option value="mo">Per month</option>
+                    <option value="yr">Per year</option>
                   </select>
-                </div>
+                </div>}
 
                 <div className="form-group">
-                  <label htmlFor="listing-model">Pricing Model</label>
-                  <select
-                    id="listing-model"
-                    value={newListingModel}
-                    onChange={(e) => setNewListingModel(e.target.value)}
-                  >
-                    <option value="Subscription">Subscription</option>
-                    <option value="One-Time License">One-Time License</option>
-                    <option value="Free Trial">Free Trial</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="listing-desc">Product Description *</label>
-                <textarea
-                  id="listing-desc"
-                  rows={3}
-                  placeholder="Provide an overview of key functionality and value proposition..."
-                  value={newListingDesc}
-                  onChange={(e) => setNewListingDesc(e.target.value)}
-                  style={{ width: "100%", padding: "0.75rem", borderRadius: "10px", border: "1px solid #CBD5E1", fontSize: "0.9rem", outline: "none" }}
-                  required
-                />
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "1rem" }}>
-                <div className="form-group">
-                  <label htmlFor="listing-web">Website or Demo URL</label>
-                  <input
-                    id="listing-web"
-                    type="url"
-                    placeholder="https://yoursoftware.com"
-                    value={newListingWebsite}
-                    onChange={(e) => setNewListingWebsite(e.target.value)}
+                  <label htmlFor="listing-desc">Detailed description <span className="vendor-optional-label">Optional</span></label>
+                  <textarea
+                    id="listing-desc"
+                    rows={4}
+                    maxLength={500}
+                    placeholder="Add more detail about the problem, ideal customer, and key differentiators."
+                    value={newListingDesc}
+                    onChange={(e) => setNewListingDesc(e.target.value)}
                   />
+                  <small className="vendor-field-help">{newListingDesc.length}/500 · You can add or revise this after approval.</small>
                 </div>
-
-                <div className="form-group">
-                  <label htmlFor="listing-color">Brand Color</label>
-                  <select
-                    id="listing-color"
-                    value={newListingColor}
-                    onChange={(e) => setNewListingColor(e.target.value)}
-                  >
-                    <option value="#6366F1">Indigo (#6366F1)</option>
-                    <option value="#3B82F6">Blue (#3B82F6)</option>
-                    <option value="#10B981">Emerald (#10B981)</option>
-                    <option value="#F59E0B">Amber (#F59E0B)</option>
-                    <option value="#EC4899">Pink (#EC4899)</option>
-                    <option value="#0F172A">Dark Slate (#0F172A)</option>
-                  </select>
-                </div>
-              </div>
 
               <div className="form-group">
-                <label>Top Features (up to 3 bullets)</label>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  {[0, 1, 2].map((idx) => (
+                <label>Key benefits <span className="vendor-optional-label">Optional · up to 3</span></label>
+                <p className="vendor-field-intro">Use short, outcome-focused phrases. You can expand this list later.</p>
+                <div className="vendor-benefit-list">
+                  {newListingFeatures.map((feature, idx) => (
                     <input
                       key={idx}
                       type="text"
-                      placeholder={`Feature ${idx + 1} (e.g. Automated webhook connectors)`}
-                      value={newListingFeatures[idx] || ""}
+                      placeholder={idx === 0 ? "e.g. Build weekly reports in minutes" : `Benefit ${idx + 1}`}
+                      value={feature}
                       onChange={(e) => {
                         const updated = [...newListingFeatures];
                         updated[idx] = e.target.value;
@@ -1822,19 +1943,17 @@ export default function VendorPage() {
                     />
                   ))}
                 </div>
+                {newListingFeatures.length < 3 && <button type="button" className="vendor-add-benefit" onClick={() => setNewListingFeatures((features) => [...features, ""])}>+ Add another benefit</button>}
               </div>
+                </div>
+              </details>
 
               <div className="vendor-modal-actions">
-                <button type="submit" className="btn-primary" style={{ width: "100%" }}>
-                  Publish SaaS Listing
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  style={{ width: "100%" }}
-                  onClick={() => setIsListingModalOpen(false)}
-                >
+                <button type="button" className="btn-secondary" onClick={closeListingModal}>
                   Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  {editingListingId ? "Save changes" : "Submit for review"} <span aria-hidden="true">→</span>
                 </button>
               </div>
             </form>

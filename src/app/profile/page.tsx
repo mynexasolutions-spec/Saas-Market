@@ -124,39 +124,40 @@ export default function ProfilePage() {
 
   // Load applied products from localStorage if available, otherwise initialize with defaults
   useEffect(() => {
+    let nextProducts = DEFAULT_APPLIED_PRODUCTS;
     try {
       const saved = localStorage.getItem("saas_mrkt_applied_products");
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setAppliedProducts(parsed);
-          return;
+        const parsed: unknown = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          nextProducts = parsed as AppliedProduct[];
         }
+      } else {
+        localStorage.setItem("saas_mrkt_applied_products", JSON.stringify(DEFAULT_APPLIED_PRODUCTS));
       }
-      // Initialize with DEFAULT_APPLIED_PRODUCTS
-      setAppliedProducts(DEFAULT_APPLIED_PRODUCTS);
-      localStorage.setItem("saas_mrkt_applied_products", JSON.stringify(DEFAULT_APPLIED_PRODUCTS));
-    } catch {
-      setAppliedProducts(DEFAULT_APPLIED_PRODUCTS);
-    }
+    } catch {}
+    const frameId = window.requestAnimationFrame(() => setAppliedProducts(nextProducts));
+    return () => window.cancelAnimationFrame(frameId);
   }, []);
 
   // Update formData when user changes
   useEffect(() => {
-    if (user) {
+    if (!user) return;
+    const frameId = window.requestAnimationFrame(() => {
       setFormData((prev) => ({
-        ...prev,
-        name: user.name || prev.name,
-        email: user.email || prev.email,
-        title: user.title || prev.title,
-        company: user.company || prev.company,
-        location: user.location || prev.location,
-        website: user.website || prev.website,
-        bio: user.bio || prev.bio,
-        phone: user.phone || prev.phone,
-        avatarUrl: user.avatarUrl || prev.avatarUrl,
-      }));
-    }
+          ...prev,
+          name: user.name || prev.name,
+          email: user.email || prev.email,
+          title: user.title || prev.title,
+          company: user.company || prev.company,
+          location: user.location || prev.location,
+          website: user.website || prev.website,
+          bio: user.bio || prev.bio,
+          phone: user.phone || prev.phone,
+          avatarUrl: user.avatarUrl || prev.avatarUrl,
+        }));
+    });
+    return () => window.cancelAnimationFrame(frameId);
   }, [user]);
 
   // Save applied products to localStorage

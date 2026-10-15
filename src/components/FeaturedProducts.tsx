@@ -3,7 +3,12 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getStoredVendorProducts, convertVendorListingToProductItem, VENDOR_PRODUCTS_EVENT_KEY } from "@/utils/vendorProducts";
+import {
+  getStoredVendorProducts,
+  mergeVendorListingsIntoProducts,
+  VENDOR_PRODUCTS_EVENT_KEY,
+  VENDOR_PRODUCTS_STORAGE_KEY,
+} from "@/utils/vendorProducts";
 
 export interface ProductItem {
   id: string;
@@ -214,7 +219,6 @@ export default function FeaturedProducts({
   categoryFilter,
 }: FeaturedProductsProps) {
   const [productsList, setProductsList] = useState<ProductItem[]>(FEATURED_PRODUCTS_LIST);
-  const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
 
   // Sync with dynamic products managed by Admin Console and Vendor Dashboard
   React.useEffect(() => {
@@ -224,34 +228,29 @@ export default function FeaturedProducts({
         const saved = localStorage.getItem("saas_mrkt_featured_products");
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             baseList = parsed;
           }
         }
       } catch {}
 
-      // Prepend active vendor listings
-      const vendorListings = getStoredVendorProducts();
-      const customItems: ProductItem[] = vendorListings
-        .filter((v) => v.status === "Live & Active" || !v.status)
-        .filter((v) => !baseList.some((p) => p.id === v.id))
-        .map(convertVendorListingToProductItem);
+      setProductsList(mergeVendorListingsIntoProducts(baseList, getStoredVendorProducts()));
+    };
 
-      setProductsList([...customItems, ...baseList]);
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY || event.key === "saas_mrkt_featured_products") {
+        loadMergedProducts();
+      }
     };
 
     loadMergedProducts();
     window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadMergedProducts);
-    return () => window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadMergedProducts);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadMergedProducts);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
-
-  const toggleBookmark = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setBookmarks((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
 
   // Filter based on search query or category
   const filteredProducts = productsList.filter((p) => {
@@ -293,7 +292,6 @@ export default function FeaturedProducts({
         <div className="featured-grid">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => {
-              const isSaved = !!bookmarks[product.id];
               return (
                 <div
                   key={product.id}
@@ -309,6 +307,7 @@ export default function FeaturedProducts({
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 360px"
                       className="discovery-card-img"
+                      unoptimized={product.image.startsWith("data:")}
                     />
                   </div>
 
@@ -323,6 +322,7 @@ export default function FeaturedProducts({
                               src={product.logo}
                               alt={`${product.name} logo`}
                               width={30}
+                              unoptimized={product.logo.startsWith("data:")}
                               height={30}
                               className="discovery-card-logo-img"
                             />

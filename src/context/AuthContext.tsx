@@ -82,34 +82,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Restore user session from localStorage or set initial default demo buyer
   useEffect(() => {
+    let restoredUser: User | null = null;
     try {
       const isExplicitlyLoggedOut = localStorage.getItem("saas_mrkt_logged_out") === "true";
-      if (isExplicitlyLoggedOut) {
-        setUser(null);
-        setIsInitialized(true);
-        return;
-      }
-
-      const savedUserStr = localStorage.getItem("saas_mrkt_user_session");
-      if (savedUserStr) {
-        const parsed = JSON.parse(savedUserStr);
-        if (parsed && parsed.email && parsed.role) {
-          if (parsed.name) parsed.name = parsed.name.replace(/\s*\(NexaSaaS\)/gi, "").trim();
-          if (parsed.email && parsed.email.includes("nexasaas.io")) parsed.email = parsed.email.replace("nexasaas.io", "saasmrkt.com");
-          if (parsed.company && parsed.company.includes("NexaSaaS")) parsed.company = "SaaS MRKT";
-          localStorage.setItem("saas_mrkt_user_session", JSON.stringify(parsed));
-          setUser(parsed);
-          setIsInitialized(true);
-          return;
+      if (!isExplicitlyLoggedOut) {
+        const savedUserStr = localStorage.getItem("saas_mrkt_user_session");
+        if (savedUserStr) {
+          const parsed = JSON.parse(savedUserStr) as User;
+          if (parsed?.email && parsed.role) {
+            restoredUser = {
+              ...parsed,
+              name: parsed.name?.replace(/\s*\(NexaSaaS\)/gi, "").trim() || parsed.name,
+              email: parsed.email.replace("nexasaas.io", "saasmrkt.com"),
+              company: parsed.company?.includes("NexaSaaS") ? "SaaS MRKT" : parsed.company,
+            };
+            localStorage.setItem("saas_mrkt_user_session", JSON.stringify(restoredUser));
+          }
         }
       }
     } catch {
       // Ignore
     }
 
-    // Default visitor is unauthenticated (guest) until they sign up or log in
-    setUser(null);
-    setIsInitialized(true);
+    const frameId = window.requestAnimationFrame(() => {
+      setUser(restoredUser);
+      setIsInitialized(true);
+    });
+    return () => window.cancelAnimationFrame(frameId);
   }, []);
 
   useEffect(() => {

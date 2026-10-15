@@ -3,6 +3,14 @@ import { ALL_PRODUCTS, ProductItem } from "@/data/products";
 export const VENDOR_PRODUCTS_STORAGE_KEY = "saas_mrkt_vendor_products";
 export const VENDOR_PRODUCTS_EVENT_KEY = "saas_mrkt_vendor_products_updated";
 
+const MARKETPLACE_CATEGORY_ALIASES: Record<string, string> = {
+  "Finance & Accounting": "Accounting & Finance",
+  "Marketing & Email": "Marketing",
+  "Marketing & Growth": "Marketing",
+  "Cloud & DevOps": "Developer Tools",
+  "DevOps & Cloud": "Developer Tools",
+};
+
 export interface VendorSaaSListing {
   id: string;
   name: string;
@@ -15,37 +23,51 @@ export interface VendorSaaSListing {
   website: string;
   brandColor: string;
   brandLetter: string;
+  logo?: string;
+  image?: string;
+  targetAudience?: string;
   features: string[];
   status: "Live & Active" | "Under Review" | "Paused";
   inquiriesCount?: number;
   viewsCount?: number;
   listedDate?: string;
   sellerName?: string;
+  deleted?: boolean;
 }
 
-export function convertVendorListingToProductItem(listing: VendorSaaSListing): ProductItem {
+export function normalizeMarketplaceCategory(category: string): string {
+  return MARKETPLACE_CATEGORY_ALIASES[category] || category;
+}
+
+export function convertVendorListingToProductItem(listing: VendorSaaSListing, baseProduct?: ProductItem): ProductItem {
+  const category = normalizeMarketplaceCategory(listing.category);
   return {
+    ...baseProduct,
     id: listing.id,
     name: listing.name,
-    category: listing.category,
-    rating: 5.0,
-    reviewCount: 1,
+    category,
+    rating: baseProduct?.rating ?? 5.0,
+    reviewCount: baseProduct?.reviewCount ?? 1,
     description: listing.description || listing.tagline,
     tagline: listing.tagline,
-    image: "/images/dealflow.jpg",
+    image: listing.image || baseProduct?.image || "/images/dealflow.jpg",
+    logo: listing.logo || baseProduct?.logo,
     price: listing.price,
     period: listing.period || "mo",
+    pricingModel: listing.pricingModel || baseProduct?.pricingModel,
     brandColor: listing.brandColor || "#5E4BEE",
     brandLetter: listing.brandLetter || listing.name.slice(0, 2).toUpperCase(),
     features: listing.features && listing.features.length > 0
       ? listing.features
-      : ["Cloud API Integrations", "Role-Based Access Control", "99.98% High-Availability SLA"],
-    topBadge: "New Listing",
-    tags: [listing.category, "Verified Vendor", listing.pricingModel || "Subscription"],
-    sellerName: listing.sellerName || "David Miller (NexaSaaS)",
+      : baseProduct?.features || [],
+    topBadge: baseProduct?.topBadge || "New Listing",
+    tags: [category, "Verified Vendor", listing.pricingModel || "Subscription"],
+    listedDate: listing.listedDate || baseProduct?.listedDate,
+    sellerName: listing.sellerName || baseProduct?.sellerName || "David Miller (NexaSaaS)",
     sellerVerified: true,
-    sellerMemberSince: "Joined Oct 2026",
-    aboutText: listing.description,
+    sellerMemberSince: baseProduct?.sellerMemberSince || "Joined Oct 2026",
+    aboutText: listing.description || baseProduct?.aboutText,
+    targetAudience: listing.targetAudience || baseProduct?.targetAudience,
   };
 }
 
@@ -61,22 +83,38 @@ export function getStoredVendorProducts(): VendorSaaSListing[] {
   }
 }
 
-export function getAllMarketplaceProducts(): ProductItem[] {
-  const vendorListings = getStoredVendorProducts();
-  const customItems: ProductItem[] = vendorListings
-    .filter((v) => v.status === "Live & Active" || !v.status)
-    .filter((v) => !ALL_PRODUCTS.some((p) => p.id === v.id))
-    .map(convertVendorListingToProductItem);
+export function mergeVendorListingsIntoProducts(
+  baseProducts: ProductItem[],
+  vendorListings: VendorSaaSListing[],
+): ProductItem[] {
+  const vendorListingsById = new Map(vendorListings.map((listing) => [listing.id, listing]));
+  const mergedBaseProducts = baseProducts.flatMap((product) => {
+    const vendorListing = vendorListingsById.get(product.id);
+    if (!vendorListing) return [product];
+    if (vendorListing.deleted) return [];
+    if (vendorListing.status && vendorListing.status !== "Live & Active") return [];
+    return [convertVendorListingToProductItem(vendorListing, product)];
+  });
+  const customItems = vendorListings
+    .filter((listing) => !baseProducts.some((product) => product.id === listing.id))
+    .filter((listing) => !listing.deleted)
+    .filter((listing) => listing.status === "Live & Active" || !listing.status)
+    .map((listing) => convertVendorListingToProductItem(listing));
 
-  return [...customItems, ...ALL_PRODUCTS];
+  return [...customItems, ...mergedBaseProducts];
+}
+
+export function getAllMarketplaceProducts(): ProductItem[] {
+  return mergeVendorListingsIntoProducts(ALL_PRODUCTS, getStoredVendorProducts());
 }
 
 export function findProductByIdIncludingCustom(id: string): ProductItem | null {
   const vendorListings = getStoredVendorProducts();
   const foundVendor = vendorListings.find((v) => v.id === id);
-  if (foundVendor) {
-    return convertVendorListingToProductItem(foundVendor);
-  }
   const foundStatic = ALL_PRODUCTS.find((p) => p.id === id);
+  if (foundVendor) {
+    if (foundVendor.deleted) return null;
+    return convertVendorListingToProductItem(foundVendor, foundStatic);
+  }
   return foundStatic || null;
 }

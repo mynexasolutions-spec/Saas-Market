@@ -4,7 +4,14 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/context/AuthContext";
-import { FEATURED_PRODUCTS_LIST, ProductItem } from "@/components/FeaturedProducts";
+import { ProductItem } from "@/components/FeaturedProducts";
+import {
+  getStoredVendorProducts,
+  normalizeMarketplaceCategory,
+  VendorSaaSListing,
+  VENDOR_PRODUCTS_EVENT_KEY,
+  VENDOR_PRODUCTS_STORAGE_KEY,
+} from "@/utils/vendorProducts";
 
 // ============================================================================
 // Types
@@ -63,6 +70,29 @@ interface VendorCatalogProduct {
   tags: string[];
   features: string[];
   uploadedDate: string;
+}
+
+function vendorListingToProject(listing: VendorSaaSListing): VendorProject {
+  const price = listing.pricingModel === "Free"
+    ? "Free"
+    : `$${listing.price}/${listing.period || "mo"}`;
+  const status: VendorProject["status"] = listing.status === "Live & Active"
+    ? "Live"
+    : listing.status === "Paused"
+      ? "Approved"
+      : "Pending Review";
+
+  return {
+    id: listing.id,
+    name: listing.name,
+    vendor: listing.sellerName || "Marketplace vendor",
+    vendorEmail: "Submitted through vendor dashboard",
+    category: normalizeMarketplaceCategory(listing.category),
+    price,
+    submittedDate: listing.listedDate || "Recently",
+    securityScan: "Passed",
+    status,
+  };
 }
 
 // Initial verified products uploaded exclusively by vendors
@@ -303,7 +333,7 @@ const VENDOR_UPLOADED_PRODUCTS: VendorCatalogProduct[] = [
 // Main Admin Page Component
 // ============================================================================
 export default function AdminPage() {
-  const { user, loginAsRole, openAuth, isInitialized } = useAuth();
+  const { user, loginAsRole, isInitialized } = useAuth();
   
   // 4 Core Admin Tabs per specification:
   // 1. "documents" -> Approve Vendor Documents
@@ -452,6 +482,33 @@ export default function AdminPage() {
     },
   ]);
 
+  useEffect(() => {
+    let frameId: number | null = null;
+    const refreshVendorProjects = () => {
+      const vendorProjects = getStoredVendorProducts()
+        .filter((listing) => !listing.deleted)
+        .map(vendorListingToProject);
+      frameId = window.requestAnimationFrame(() => {
+        setProjects((current) => [
+          ...current.filter((project) => project.id.startsWith("proj-")),
+          ...vendorProjects,
+        ]);
+      });
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) refreshVendorProjects();
+    };
+
+    refreshVendorProjects();
+    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, refreshVendorProjects);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, refreshVendorProjects);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
   // --------------------------------------------------------------------------
   // 3. User & Vendor Directory State (Admin can remove user and vendor)
   // --------------------------------------------------------------------------
@@ -518,7 +575,7 @@ export default function AdminPage() {
   // --------------------------------------------------------------------------
   // 4. Home Page Products Curation (Vendor-Uploaded Products ONLY)
   // --------------------------------------------------------------------------
-  const [vendorProducts, setVendorProducts] = useState<VendorCatalogProduct[]>(VENDOR_UPLOADED_PRODUCTS);
+  const [vendorProducts] = useState<VendorCatalogProduct[]>(VENDOR_UPLOADED_PRODUCTS);
   const [homeProductIds, setHomeProductIds] = useState<string[]>([
     "prod-manage360",
     "prod-taskflow",
@@ -533,19 +590,22 @@ export default function AdminPage() {
 
   // Sync home products with localStorage
   useEffect(() => {
+    let frameId: number | null = null;
     try {
       const saved = localStorage.getItem("saas_mrkt_featured_products");
       if (saved) {
         const parsed: ProductItem[] = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           const ids = parsed.map((p) => p.id);
-          setHomeProductIds(ids);
-          return;
+          frameId = window.requestAnimationFrame(() => setHomeProductIds(ids));
         }
       }
     } catch {
       // Ignore
     }
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   const saveLiveHomeProducts = (updatedIds: string[]) => {
@@ -580,6 +640,17 @@ export default function AdminPage() {
   const showToast = (msg: string) => {
     setToastNotice(msg);
     setTimeout(() => setToastNotice(null), 3800);
+  };
+
+  const persistVendorListings = (listings: VendorSaaSListing[]): boolean => {
+    try {
+      localStorage.setItem(VENDOR_PRODUCTS_STORAGE_KEY, JSON.stringify(listings));
+      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: listings }));
+      return true;
+    } catch {
+      showToast("The listing change could not be saved. Free browser storage and try again.");
+      return false;
+    }
   };
 
   // --------------------------------------------------------------------------
@@ -620,6 +691,13 @@ export default function AdminPage() {
   // --------------------------------------------------------------------------
   const handleRemoveProject = (id: string, name: string) => {
     if (confirm(`Are you sure you want to remove vendor project "${name}" from the marketplace?`)) {
+      const storedListings = getStoredVendorProducts();
+      if (storedListings.some((listing) => listing.id === id)) {
+        const updatedListings = storedListings.map((listing) => (
+          listing.id === id ? { ...listing, deleted: true, status: "Paused" as const } : listing
+        ));
+        if (!persistVendorListings(updatedListings)) return;
+      }
       setProjects((prev) => prev.filter((p) => p.id !== id));
       // Also remove from home page if present
       if (homeProductIds.includes(id)) {
@@ -630,6 +708,13 @@ export default function AdminPage() {
   };
 
   const handleApproveProject = (id: string, name: string) => {
+    const storedListings = getStoredVendorProducts();
+    if (storedListings.some((listing) => listing.id === id)) {
+      const updatedListings = storedListings.map((listing) => (
+        listing.id === id ? { ...listing, status: "Live & Active" as const } : listing
+      ));
+      if (!persistVendorListings(updatedListings)) return;
+    }
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: "Live" } : p))
     );
@@ -1111,7 +1196,6 @@ export default function AdminPage() {
                     </thead>
                     <tbody>
                       {projects.map((listing) => {
-                        const isPinnedToHome = homeProductIds.includes(listing.id);
                         return (
                           <tr key={listing.id}>
                             <td>

@@ -88,7 +88,7 @@ export default function DashboardClient() {
   const [toastNotice, setToastNotice] = useState<string | null>(null);
 
   // Inquiries State
-  const [inquiries, setInquiries] = useState<SavedInquiry[]>(DEFAULT_INQUIRIES);
+  const [inquiries] = useState<SavedInquiry[]>(DEFAULT_INQUIRIES);
 
   // Stack State
   const [stackItems, setStackItems] = useState<StackItem[]>(DEFAULT_STACK);
@@ -105,34 +105,43 @@ export default function DashboardClient() {
 
   // Sync wishlist from localStorage and listen to events
   useEffect(() => {
+    let frameId: number | null = null;
     const loadWishlist = () => {
-      setWishlistIds(getWishlist());
+      frameId = window.requestAnimationFrame(() => setWishlistIds(getWishlist()));
     };
     loadWishlist();
 
-    const handleUpdate = (e: any) => {
-      if (e.detail) {
-        setWishlistIds(e.detail);
+    const handleUpdate = (event: Event) => {
+      const detail = (event as CustomEvent<string[]>).detail;
+      if (detail) {
+        setWishlistIds(detail);
       } else {
         loadWishlist();
       }
     };
 
     window.addEventListener(WISHLIST_EVENT_NAME, handleUpdate);
-    return () => window.removeEventListener(WISHLIST_EVENT_NAME, handleUpdate);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(WISHLIST_EVENT_NAME, handleUpdate);
+    };
   }, []);
 
   // Load stack from localStorage
   useEffect(() => {
+    let frameId: number | null = null;
     try {
       const saved = localStorage.getItem("saas_mrkt_buyer_stack");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setStackItems(parsed);
+          frameId = window.requestAnimationFrame(() => setStackItems(parsed));
         }
       }
     } catch {}
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   const handleRemoveWishlist = (id: string, name: string) => {

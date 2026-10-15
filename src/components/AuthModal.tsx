@@ -28,26 +28,29 @@ export default function AuthModal({
 
   // Set default credentials whenever selected role changes
   useEffect(() => {
-    if (selectedRole === "buyer") {
-      setEmail("alex@company.com");
-      setName("Alex Morgan");
-    } else if (selectedRole === "vendor") {
-      setEmail("vendor@saasmrkt.com");
-      setName("David Miller");
-    } else if (selectedRole === "admin") {
-      setEmail("admin@saasmrkt.com");
-      setName("Admin");
-    }
+    const frameId = window.requestAnimationFrame(() => {
+      if (selectedRole === "buyer") {
+        setEmail("alex@company.com");
+        setName("Alex Morgan");
+      } else if (selectedRole === "vendor") {
+        setEmail("vendor@saasmrkt.com");
+        setName("David Miller");
+      } else if (selectedRole === "admin") {
+        setEmail("admin@saasmrkt.com");
+        setName("Admin");
+      }
+    });
+    return () => window.cancelAnimationFrame(frameId);
   }, [selectedRole]);
 
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) return;
+    const frameId = window.requestAnimationFrame(() => {
       setMode(initialMode);
       setIsSubmitting(false);
-      if (authDefaultRole) {
-        setSelectedRole(authDefaultRole);
-      }
-    }
+      if (authDefaultRole) setSelectedRole(authDefaultRole);
+    });
+    return () => window.cancelAnimationFrame(frameId);
   }, [isOpen, initialMode, authDefaultRole]);
 
   // Handle escape key

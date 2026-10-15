@@ -188,7 +188,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={plusJakartaSans.variable}>
+    <html lang="en" className={plusJakartaSans.variable} data-scroll-behavior="smooth">
       <head>
         <script
           type="application/ld+json"
@@ -203,7 +203,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(sitelinksNavigationSchema) }}
         />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <AuthProvider>
           {children}
         </AuthProvider>

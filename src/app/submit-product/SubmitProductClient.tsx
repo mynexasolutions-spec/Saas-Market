@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { ChangeEvent, useState } from "react";
 import PageLayout from "@/components/PageLayout";
+import {
+  VENDOR_PRODUCTS_EVENT_KEY,
+  VENDOR_PRODUCTS_STORAGE_KEY,
+  VendorSaaSListing,
+} from "@/utils/vendorProducts";
 
 interface FormState {
   name: string;
@@ -11,6 +17,8 @@ interface FormState {
   website: string;
   description: string;
   brandColor: string;
+  logo: string;
+  image: string;
   pricingModel: string;
   price: string;
   period: string;
@@ -18,839 +26,320 @@ interface FormState {
   features: string[];
   founderName: string;
   founderEmail: string;
-  payoutMethod: string;
   agreeEscrow: boolean;
+}
+
+type FieldName = keyof Omit<FormState, "features" | "agreeEscrow"> | "features" | "agreeEscrow";
+type FormErrors = Partial<Record<FieldName | "storage", string>>;
+
+const CATEGORIES = [
+  "Project Management",
+  "CRM & Sales",
+  "HR & Payroll",
+  "Accounting & Finance",
+  "Marketing",
+  "Customer Support",
+  "Developer Tools",
+  "Analytics & BI",
+  "Security & Compliance",
+];
+
+const BRAND_COLORS = ["#5E4BEE", "#2563EB", "#7C3AED", "#059669", "#D97706", "#DB2777", "#0F172A"];
+
+const INITIAL_FORM: FormState = {
+  name: "",
+  category: "",
+  tagline: "",
+  website: "",
+  description: "",
+  brandColor: "#5E4BEE",
+  logo: "",
+  image: "",
+  pricingModel: "Subscription",
+  price: "",
+  period: "mo",
+  targetAudience: "",
+  features: ["", "", ""],
+  founderName: "",
+  founderEmail: "",
+  agreeEscrow: false,
+};
+
+const STEPS = [
+  { number: 1, label: "Product & visuals" },
+  { number: 2, label: "Offer details" },
+  { number: 3, label: "Review & submit" },
+];
+
+function isValidUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function getStepErrors(step: number, form: FormState): FormErrors {
+  const errors: FormErrors = {};
+  if (step === 1) {
+    if (!form.name.trim()) errors.name = "Enter the product name buyers will recognize.";
+    if (!form.category) errors.category = "Choose the closest primary category.";
+    if (form.tagline.trim().length < 12) errors.tagline = "Use at least 12 characters to explain the core value.";
+    if (!isValidUrl(form.website.trim())) errors.website = "Enter a complete URL, including https://.";
+    if (form.description.trim().length < 60) errors.description = "Add at least 60 characters so buyers understand the product.";
+    if (!form.logo) errors.logo = "Upload a square product logo.";
+    if (!form.image) errors.image = "Upload a clear product screenshot.";
+  }
+  if (step === 2) {
+    if (!form.pricingModel) errors.pricingModel = "Select how customers pay.";
+    if (form.pricingModel !== "Free" && (!(Number(form.price) > 0) || !Number.isFinite(Number(form.price)))) {
+      errors.price = "Enter a starting price greater than zero.";
+    }
+    if (form.features.filter((feature) => feature.trim()).length < 3) {
+      errors.features = "Add at least three specific benefits or capabilities.";
+    }
+  }
+  if (step === 3) {
+    if (!form.founderName.trim()) errors.founderName = "Enter the name of the listing contact.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.founderEmail.trim())) {
+      errors.founderEmail = "Enter a valid work email address.";
+    }
+    if (!form.agreeEscrow) errors.agreeEscrow = "Confirm the listing terms before submitting.";
+  }
+  return errors;
+}
+
+function RequiredMark() {
+  return <span className="listing-required" aria-hidden="true">*</span>;
 }
 
 export default function SubmitProductClient() {
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [form, setForm] = useState<FormState>(INITIAL_FORM);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [submissionId, setSubmissionId] = useState<string>("");
 
-  const [form, setForm] = useState<FormState>({
-    name: "DocuSprint AI",
-    category: "Project Management",
-    tagline: "AI-assisted sprint documentation and automated pull request release notes",
-    website: "https://docusprint.io",
-    description: "DocuSprint turns complex Jira tickets and GitHub PRs into customer-ready changelogs and internal wikis in seconds.",
-    brandColor: "#6366F1",
-    pricingModel: "Subscription",
-    price: "29",
-    period: "mo",
-    targetAudience: "Engineering teams, Product Managers & Tech Startups",
-    features: [
-      "Automated GitHub & GitLab integration",
-      "AI changelog generation for customers",
-      "Two-way Jira & Linear synchronization",
-    ],
-    founderName: "Zack Robinson",
-    founderEmail: "zack@docusprint.io",
-    payoutMethod: "stripe",
-    agreeEscrow: true,
-  });
-
-  const categories = [
-    "Project Management",
-    "CRM & Sales",
-    "HR & Payroll",
-    "Finance & Accounting",
-    "Marketing & Email",
-    "Customer Support",
-    "Cloud & DevOps",
-    "Analytics & BI",
-    "Security & Compliance",
-  ];
-
-  const brandColors = [
-    "#6366F1",
-    "#3B82F6",
-    "#8B5CF6",
-    "#10B981",
-    "#F59E0B",
-    "#EC4899",
-    "#0F172A",
-  ];
-
-  const handleFeatureChange = (index: number, val: string) => {
-    const updated = [...form.features];
-    updated[index] = val;
-    setForm({ ...form, features: updated });
+  const setField = <K extends keyof FormState>(field: K, value: FormState[K]) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: undefined, storage: undefined }));
   };
 
-  const addFeature = () => {
-    if (form.features.length < 5) {
-      setForm({ ...form, features: [...form.features, ""] });
+  const focusFirstError = (nextErrors: FormErrors) => {
+    const firstField = Object.keys(nextErrors)[0];
+    window.setTimeout(() => {
+      document.querySelector<HTMLElement>(`[data-field="${firstField}"]`)?.focus();
+    }, 0);
+  };
+
+  const handleImage = (field: "logo" | "image", maxBytes: number) => (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const input = event.currentTarget;
+    const supportedTypes = new Set(["image/png", "image/jpeg", "image/webp"]);
+    if (!supportedTypes.has(file.type)) {
+      const nextErrors = { ...errors, [field]: "Choose a PNG, JPG, or WebP image." };
+      setErrors(nextErrors);
+      input.value = "";
+      return;
     }
+    if (file.size > maxBytes) {
+      const label = maxBytes < 500_000 ? "400 KB" : "1.2 MB";
+      setErrors((current) => ({ ...current, [field]: `Choose an image smaller than ${label}.` }));
+      input.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      if (typeof reader.result !== "string") {
+        setErrors((current) => ({ ...current, [field]: "We could not read that image. Try another file." }));
+        input.value = "";
+        return;
+      }
+      setField(field, reader.result);
+      input.value = "";
+    });
+    reader.addEventListener("error", () => {
+      setErrors((current) => ({ ...current, [field]: "We could not read that image. Try another file." }));
+      input.value = "";
+    });
+    reader.readAsDataURL(file);
   };
 
-  const removeFeature = (index: number) => {
-    if (form.features.length > 1) {
-      const updated = form.features.filter((_, i) => i !== index);
-      setForm({ ...form, features: updated });
+  const updateFeature = (index: number, value: string) => {
+    const features = [...form.features];
+    features[index] = value;
+    setField("features", features);
+  };
+
+  const submitListing = () => {
+    const newId = `prod-${Math.floor(10000 + Math.random() * 90000)}`;
+    const listing: VendorSaaSListing = {
+      id: newId,
+      name: form.name.trim(),
+      category: form.category,
+      tagline: form.tagline.trim(),
+      price: form.pricingModel === "Free" ? 0 : Number(form.price),
+      period: form.pricingModel === "One-time purchase" ? "once" : form.period,
+      pricingModel: form.pricingModel,
+      description: form.description.trim(),
+      website: form.website.trim(),
+      brandColor: form.brandColor,
+      brandLetter: form.name.trim().slice(0, 2).toUpperCase(),
+      logo: form.logo,
+      image: form.image,
+      targetAudience: form.targetAudience.trim(),
+      features: form.features.map((feature) => feature.trim()).filter(Boolean),
+      status: "Under Review",
+      inquiriesCount: 0,
+      viewsCount: 0,
+      listedDate: "Just now",
+      sellerName: form.founderName.trim(),
+    };
+
+    try {
+      const existingRaw = localStorage.getItem(VENDOR_PRODUCTS_STORAGE_KEY);
+      const parsed: unknown = existingRaw ? JSON.parse(existingRaw) : [];
+      const listings = Array.isArray(parsed) ? parsed : [];
+      localStorage.setItem(VENDOR_PRODUCTS_STORAGE_KEY, JSON.stringify([listing, ...listings]));
+      window.dispatchEvent(new Event(VENDOR_PRODUCTS_EVENT_KEY));
+      setSubmissionId(newId);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setErrors({ storage: "Your browser could not save this application. Free some storage or try a smaller screenshot, then submit again." });
     }
   };
 
   const handleNext = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Final submit
-      const newId = `prod-${Math.floor(10000 + Math.random() * 90000)}`;
-      setSubmissionId(newId);
-      setIsSubmitted(true);
-
-      try {
-        const cleanFeatures = form.features.filter(Boolean);
-        const newProduct = {
-          id: newId,
-          name: form.name.trim(),
-          category: form.category,
-          tagline: form.tagline.trim() || `${form.name} for modern high-velocity teams`,
-          price: parseFloat(form.price) || 29,
-          period: form.period || "mo",
-          pricingModel: form.pricingModel || "Subscription",
-          description: form.description.trim(),
-          website: form.website.trim() || "https://saasmrkt.com",
-          brandColor: form.brandColor || "#6366F1",
-          brandLetter: form.name.trim().slice(0, 2).toUpperCase(),
-          features: cleanFeatures.length > 0 ? cleanFeatures : ["Cloud API Integrations", "Two-Way Synchronization", "Enterprise Support"],
-          status: "Live & Active",
-          inquiriesCount: 0,
-          viewsCount: 1,
-          listedDate: "Just now",
-        };
-
-        const existingRaw = localStorage.getItem("saas_mrkt_vendor_products");
-        let list = existingRaw ? JSON.parse(existingRaw) : [];
-        if (!Array.isArray(list)) list = [];
-        list.unshift(newProduct);
-        localStorage.setItem("saas_mrkt_vendor_products", JSON.stringify(list));
-      } catch {
-        // Ignore localStorage errors
-      }
+    const nextErrors = getStepErrors(currentStep, form);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      focusFirstError(nextErrors);
+      return;
     }
+    if (currentStep < 3) {
+      setCurrentStep((step) => step + 1);
+      window.scrollTo({ top: 150, behavior: "smooth" });
+      return;
+    }
+    submitListing();
   };
+
+  const priceLabel = form.pricingModel === "Free"
+    ? "Free"
+    : form.price
+      ? `$${form.price}${form.pricingModel === "Subscription" ? `/${form.period}` : " once"}`
+      : "Price pending";
+
+  if (submissionId) {
+    return (
+      <PageLayout activeNav="sellers" noContainer>
+        <main className="listing-page listing-success-page">
+          <section className="listing-success-card">
+            <span className="listing-success-icon" aria-hidden="true">✓</span>
+            <p className="listing-eyebrow">Submission received</p>
+            <h1>{form.name} is now in review</h1>
+            <p>Our marketplace team will verify the listing and contact you at <strong>{form.founderEmail}</strong>, usually within 24–48 hours.</p>
+            <div className="listing-tracking"><span>Tracking ID</span><strong>{submissionId}</strong></div>
+            <div className="listing-next-steps">
+              <strong>What happens next</strong>
+              <ol><li>We review your product details and visuals.</li><li>You connect payouts only after approval.</li><li>Your approved listing becomes visible to buyers.</li></ol>
+            </div>
+            <div className="listing-success-actions">
+              <Link className="listing-primary-button" href="/vendor">Open vendor dashboard <span aria-hidden="true">→</span></Link>
+              <Link className="listing-secondary-button" href="/products">Browse marketplace</Link>
+            </div>
+          </section>
+        </main>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout activeNav="sellers" noContainer>
-      {/* Header */}
-      <section
-        style={{
-          background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)",
-          borderBottom: "1px solid var(--slate-200)",
-          padding: "3.5rem 1.5rem 2.5rem",
-          textAlign: "center",
-        }}
-      >
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              background: "#ffffff",
-              padding: "0.35rem 1rem",
-              borderRadius: "9999px",
-              boxShadow: "0 2px 8px rgba(15, 23, 42, 0.05)",
-              border: "1px solid var(--slate-200)",
-              fontSize: "0.85rem",
-              fontWeight: 600,
-              color: "var(--primary)",
-              marginBottom: "1rem",
-            }}
-          >
-            Vendor Onboarding Portal
+      <main className="listing-page">
+        <header className="listing-hero">
+          <p className="listing-eyebrow">Vendor onboarding</p>
+          <h1>List your SaaS with confidence</h1>
+          <p>Give buyers the essentials they need. You can connect payouts and add advanced details after approval.</p>
+          <div className="listing-stepper" aria-label={`Step ${currentStep} of 3`}>
+            {STEPS.map((step) => (
+              <div className={`listing-step ${currentStep === step.number ? "is-current" : ""} ${currentStep > step.number ? "is-complete" : ""}`} key={step.number}>
+                <span>{currentStep > step.number ? "✓" : step.number}</span><small>{step.label}</small>
+              </div>
+            ))}
           </div>
-          <h1
-            style={{
-              fontSize: "clamp(2rem, 4vw, 2.8rem)",
-              fontWeight: 900,
-              color: "var(--slate-900)",
-              marginBottom: "0.75rem",
-              letterSpacing: "-0.03em",
-            }}
-          >
-            List Your SaaS on <span style={{ color: "var(--primary)" }}>SaaS MRKT</span>
-          </h1>
-          <p style={{ fontSize: "1.05rem", color: "var(--slate-600)", lineHeight: 1.6 }}>
-            Reach 85,000+ monthly verified software buyers. Zero upfront listing fees, guaranteed escrow payouts, and instant distribution.
-          </p>
+        </header>
 
-          {/* Stepper indicator */}
-          {!isSubmitted && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "1.5rem",
-                marginTop: "2.5rem",
-              }}
-            >
-              {[
-                { num: 1, title: "Product Basics" },
-                { num: 2, title: "Pricing & Features" },
-                { num: 3, title: "Payout & Agreement" },
-              ].map((step) => (
-                <div key={step.num} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <div
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "0.9rem",
-                      fontWeight: 800,
-                      background: currentStep >= step.num ? "var(--primary)" : "#E2E8F0",
-                      color: currentStep >= step.num ? "#ffffff" : "var(--slate-500)",
-                      transition: "all 0.2s ease",
-                    }}
-                  >
-                    {step.num}
-                  </div>
-                  <span
-                    style={{
-                      fontSize: "0.85rem",
-                      fontWeight: currentStep === step.num ? 700 : 500,
-                      color: currentStep >= step.num ? "var(--slate-900)" : "var(--slate-400)",
-                    }}
-                  >
-                    {step.title}
-                  </span>
-                </div>
-              ))}
+        <div className="listing-layout">
+          <section className="listing-form-card" aria-labelledby="listing-form-title">
+            <div className="listing-form-heading">
+              <p>Step {currentStep} of 3</p>
+              <h2 id="listing-form-title">{currentStep === 1 ? "Product essentials" : currentStep === 2 ? "Pricing and key benefits" : "Review and contact"}</h2>
+              <span>{currentStep === 1 ? "Start with the information and visuals buyers see first." : currentStep === 2 ? "Keep the offer easy to scan and compare." : "Confirm who we should contact before sending your listing."}</span>
             </div>
-          )}
+
+            {Object.keys(errors).length > 0 && (
+              <div className="listing-error-summary" role="alert"><strong>Check the highlighted fields.</strong><span>We saved everything else you entered.</span></div>
+            )}
+
+            {currentStep === 1 && (
+              <div className="listing-fields">
+                <div className="listing-field-row">
+                  <label className="listing-field"><span>Product name <RequiredMark /></span><input data-field="name" aria-invalid={Boolean(errors.name)} value={form.name} onChange={(event) => setField("name", event.target.value)} placeholder="e.g. TaskFlow" />{errors.name && <small className="listing-field-error">{errors.name}</small>}</label>
+                  <label className="listing-field"><span>Primary category <RequiredMark /></span><select data-field="category" aria-invalid={Boolean(errors.category)} value={form.category} onChange={(event) => setField("category", event.target.value)}><option value="">Select a category</option>{CATEGORIES.map((category) => <option value={category} key={category}>{category}</option>)}</select>{errors.category && <small className="listing-field-error">{errors.category}</small>}</label>
+                </div>
+                <label className="listing-field"><span>One-line value proposition <RequiredMark /></span><input data-field="tagline" aria-invalid={Boolean(errors.tagline)} maxLength={100} value={form.tagline} onChange={(event) => setField("tagline", event.target.value)} placeholder="What outcome does your product deliver?" /><small className={errors.tagline ? "listing-field-error" : "listing-field-help"}>{errors.tagline || `${form.tagline.length}/100 · Focus on the customer outcome.`}</small></label>
+                <label className="listing-field"><span>Product website <RequiredMark /></span><input data-field="website" aria-invalid={Boolean(errors.website)} type="url" value={form.website} onChange={(event) => setField("website", event.target.value)} placeholder="https://yourproduct.com" />{errors.website && <small className="listing-field-error">{errors.website}</small>}</label>
+                <label className="listing-field"><span>Product overview <RequiredMark /></span><textarea data-field="description" aria-invalid={Boolean(errors.description)} maxLength={600} rows={5} value={form.description} onChange={(event) => setField("description", event.target.value)} placeholder="Explain the problem, who the product helps, and what makes it different." /><small className={errors.description ? "listing-field-error" : "listing-field-help"}>{errors.description || `${form.description.length}/600 · Aim for 2–4 clear sentences.`}</small></label>
+                <fieldset className="listing-color-field"><legend>Brand color</legend><div>{BRAND_COLORS.map((color) => <button aria-label={`Use ${color}`} aria-pressed={form.brandColor === color} className="listing-color-swatch" key={color} onClick={() => setField("brandColor", color)} style={{ backgroundColor: color }} type="button" />)}</div></fieldset>
+                <div className="listing-upload-grid">
+                  <label className={`listing-upload ${errors.logo ? "has-error" : ""}`}><input data-field="logo" accept="image/png,image/jpeg,image/webp" onChange={handleImage("logo", 400_000)} type="file" /><span className="listing-upload-title">Product logo <RequiredMark /></span><span>Square PNG, JPG or WebP · max 400 KB</span>{form.logo ? <Image alt="Uploaded product logo" className="listing-logo-preview" height={72} src={form.logo} unoptimized width={72} /> : <strong aria-hidden="true">+</strong>}{errors.logo && <small className="listing-field-error">{errors.logo}</small>}</label>
+                  <label className={`listing-upload listing-screenshot-upload ${errors.image ? "has-error" : ""}`}><input data-field="image" accept="image/png,image/jpeg,image/webp" onChange={handleImage("image", 1_200_000)} type="file" /><span className="listing-upload-title">Product screenshot <RequiredMark /></span><span>16:10 works best · max 1.2 MB</span>{form.image ? <Image alt="Uploaded product screenshot" className="listing-image-preview" fill sizes="(max-width: 800px) 100vw, 320px" src={form.image} unoptimized /> : <strong aria-hidden="true">+</strong>}{errors.image && <small className="listing-field-error">{errors.image}</small>}</label>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 2 && (
+              <div className="listing-fields">
+                <label className="listing-field"><span>Pricing model <RequiredMark /></span><select data-field="pricingModel" aria-invalid={Boolean(errors.pricingModel)} value={form.pricingModel} onChange={(event) => setField("pricingModel", event.target.value)}><option>Subscription</option><option>One-time purchase</option><option>Free</option></select>{errors.pricingModel && <small className="listing-field-error">{errors.pricingModel}</small>}</label>
+                {form.pricingModel !== "Free" && <div className="listing-field-row"><label className="listing-field"><span>Starting price (USD) <RequiredMark /></span><input data-field="price" aria-invalid={Boolean(errors.price)} min="1" inputMode="decimal" type="number" value={form.price} onChange={(event) => setField("price", event.target.value)} placeholder="29" />{errors.price && <small className="listing-field-error">{errors.price}</small>}</label>{form.pricingModel === "Subscription" && <label className="listing-field"><span>Billing period <RequiredMark /></span><select value={form.period} onChange={(event) => setField("period", event.target.value)}><option value="mo">Per month</option><option value="yr">Per year</option></select></label>}</div>}
+                <label className="listing-field"><span>Best suited for <em>Optional</em></span><input value={form.targetAudience} onChange={(event) => setField("targetAudience", event.target.value)} placeholder="e.g. Product teams with 10–100 employees" /><small className="listing-field-help">One short audience description is enough.</small></label>
+                <fieldset className="listing-feature-field" data-field="features" tabIndex={-1}><div className="listing-feature-heading"><legend>Top benefits <RequiredMark /></legend><span>{form.features.filter((feature) => feature.trim()).length}/5 added</span></div>{form.features.map((feature, index) => <div className="listing-feature-row" key={index}><span aria-hidden="true">✓</span><input aria-label={`Benefit ${index + 1}`} value={feature} onChange={(event) => updateFeature(index, event.target.value)} placeholder={index === 0 ? "e.g. Build reports in minutes, not hours" : `Benefit ${index + 1}`} />{form.features.length > 3 && <button aria-label={`Remove benefit ${index + 1}`} onClick={() => setField("features", form.features.filter((_, featureIndex) => featureIndex !== index))} type="button">×</button>}</div>)}{form.features.length < 5 && <button className="listing-add-feature" onClick={() => setField("features", [...form.features, ""])} type="button">+ Add another benefit</button>}{errors.features && <small className="listing-field-error">{errors.features}</small>}</fieldset>
+              </div>
+            )}
+
+            {currentStep === 3 && (
+              <div className="listing-fields">
+                <div className="listing-review-panel"><div><span>Product</span><strong>{form.name}</strong><small>{form.category}</small></div><div><span>Offer</span><strong>{priceLabel}</strong><small>{form.pricingModel}</small></div><button onClick={() => setCurrentStep(1)} type="button">Edit product</button><button onClick={() => setCurrentStep(2)} type="button">Edit offer</button></div>
+                <div className="listing-info-note"><strong>No payout details needed yet</strong><span>We only ask you to connect a payout account after the listing passes review.</span></div>
+                <div className="listing-field-row"><label className="listing-field"><span>Contact name <RequiredMark /></span><input data-field="founderName" aria-invalid={Boolean(errors.founderName)} value={form.founderName} onChange={(event) => setField("founderName", event.target.value)} placeholder="Full name" />{errors.founderName && <small className="listing-field-error">{errors.founderName}</small>}</label><label className="listing-field"><span>Work email <RequiredMark /></span><input data-field="founderEmail" aria-invalid={Boolean(errors.founderEmail)} type="email" value={form.founderEmail} onChange={(event) => setField("founderEmail", event.target.value)} placeholder="you@company.com" />{errors.founderEmail && <small className="listing-field-error">{errors.founderEmail}</small>}</label></div>
+                <label className={`listing-consent ${errors.agreeEscrow ? "has-error" : ""}`} data-field="agreeEscrow" tabIndex={-1}><input checked={form.agreeEscrow} onChange={(event) => setField("agreeEscrow", event.target.checked)} type="checkbox" /><span>I confirm this information is accurate and agree to the marketplace listing and 30-day escrow terms. <RequiredMark /></span>{errors.agreeEscrow && <small className="listing-field-error">{errors.agreeEscrow}</small>}</label>
+                {errors.storage && <div className="listing-storage-error" role="alert">{errors.storage}</div>}
+              </div>
+            )}
+
+            <div className="listing-form-actions">
+              {currentStep > 1 ? <button className="listing-back-button" onClick={() => { setErrors({}); setCurrentStep((step) => step - 1); }} type="button">← Back</button> : <span />}
+              <button className="listing-primary-button" onClick={handleNext} type="button">{currentStep === 3 ? "Submit for review" : "Save and continue"} <span aria-hidden="true">→</span></button>
+            </div>
+          </section>
+
+          <aside className="listing-preview-column">
+            <div className="listing-preview-label"><span /> Live marketplace preview</div>
+            <article className="listing-preview-card">
+              <div className="listing-preview-image">{form.image ? <Image alt="Product screenshot preview" fill sizes="(max-width: 900px) 100vw, 440px" src={form.image} unoptimized /> : <div><span aria-hidden="true">▧</span><strong>Your screenshot preview</strong><small>Upload an image to see your listing come to life.</small></div>}</div>
+              <div className="listing-preview-body">
+                <div className="listing-preview-title"><div className="listing-preview-logo" style={{ backgroundColor: form.brandColor }}>{form.logo ? <Image alt="" fill src={form.logo} unoptimized /> : (form.name.slice(0, 1) || "S")}</div><div><h3>{form.name || "Your product name"}</h3><span>{form.category || "Product category"}</span></div><em>Under review</em></div>
+                <p>{form.tagline || "A clear, benefit-led tagline will appear here."}</p>
+                <div className="listing-preview-features">{form.features.filter((feature) => feature.trim()).slice(0, 3).map((feature) => <span key={feature}>✓ {feature}</span>)}</div>
+                <div className="listing-preview-offer"><div><small>Starting at</small><strong>{priceLabel}</strong></div><span>View product</span></div>
+              </div>
+            </article>
+            <p className="listing-preview-tip"><strong>Preview updates as you type.</strong> Keep your headline concise and use a screenshot with readable interface details.</p>
+          </aside>
         </div>
-      </section>
-
-      {/* Main Form + Live Preview Body */}
-      <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "3rem 1.5rem 5rem" }}>
-        {isSubmitted ? (
-          /* Success Screen */
-          <div
-            style={{
-              maxWidth: "680px",
-              margin: "0 auto",
-              background: "#ffffff",
-              borderRadius: "24px",
-              border: "1px solid var(--slate-200)",
-              padding: "3.5rem 2.5rem",
-              textAlign: "center",
-              boxShadow: "0 10px 40px rgba(15, 23, 42, 0.08)",
-            }}
-          >
-            <div
-              style={{
-                width: "72px",
-                height: "72px",
-                borderRadius: "50%",
-                background: "#ECFDF5",
-                color: "#059669",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 1.5rem",
-              }}
-            >
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-
-            <h2 style={{ fontSize: "2rem", fontWeight: 900, color: "var(--slate-900)", marginBottom: "0.5rem" }}>
-              Application Received!
-            </h2>
-            <p style={{ color: "var(--slate-600)", fontSize: "1.05rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-              Thank you for listing <strong>{form.name}</strong> on SaaS MRKT. Our software curation team has queued your listing for manual quality and code safety verification.
-            </p>
-
-            <div
-              style={{
-                background: "#F8FAFC",
-                borderRadius: "14px",
-                padding: "1.25rem",
-                display: "inline-block",
-                border: "1px solid var(--slate-200)",
-                marginBottom: "2rem",
-              }}
-            >
-              <div style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--slate-500)", fontWeight: 700 }}>
-                Submission Tracking ID
-              </div>
-              <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--primary)", fontFamily: "monospace" }}>
-                {submissionId}
-              </div>
-            </div>
-
-            <div style={{ textAlign: "left", background: "#EFF6FF", borderRadius: "14px", padding: "1.25rem", marginBottom: "2.5rem", border: "1px solid #BFDBFE" }}>
-              <div style={{ fontWeight: 700, color: "#1E40AF", fontSize: "0.95rem", marginBottom: "0.4rem" }}>
-                What happens next?
-              </div>
-              <ul style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.9rem", color: "#1E3A8A", lineHeight: 1.6 }}>
-                <li>Our team verifies SSL security, refund terms, and API stability (average 24–48 hours).</li>
-                <li>You will receive an activation email at <strong>{form.founderEmail}</strong> to link your payout portal.</li>
-                <li>Your product goes live across the catalog and dynamic category pages!</li>
-              </ul>
-            </div>
-
-            <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-              <Link
-                href="/vendor"
-                style={{
-                  background: "var(--primary)",
-                  color: "#ffffff",
-                  padding: "0.8rem 1.75rem",
-                  borderRadius: "12px",
-                  fontWeight: 700,
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <span>Manage in Vendor Dashboard</span>
-                <span>→</span>
-              </Link>
-              <Link
-                href="/products"
-                style={{
-                  background: "#F1F5F9",
-                  color: "#334155",
-                  padding: "0.8rem 1.5rem",
-                  borderRadius: "12px",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-              >
-                Browse Marketplace
-              </Link>
-              <button
-                onClick={() => {
-                  setIsSubmitted(false);
-                  setCurrentStep(1);
-                }}
-                style={{
-                  background: "#ffffff",
-                  border: "1px solid var(--slate-200)",
-                  color: "var(--slate-700)",
-                  padding: "0.8rem 1.5rem",
-                  borderRadius: "12px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-              >
-                Submit Another Tool
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* Form & Live Preview Grid */
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
-              gap: "3rem",
-              alignItems: "start",
-            }}
-          >
-            {/* Left Column: Form Wizard */}
-            <div
-              style={{
-                background: "#ffffff",
-                borderRadius: "20px",
-                border: "1px solid var(--slate-200)",
-                padding: "2.25rem",
-                boxShadow: "0 6px 24px rgba(15, 23, 42, 0.04)",
-              }}
-            >
-              {currentStep === 1 && (
-                <div>
-                  <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--slate-900)", marginBottom: "0.35rem" }}>
-                    1. Product Essentials
-                  </h3>
-                  <p style={{ color: "var(--slate-500)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
-                    Provide basic identifiers and positioning for your software.
-                  </p>
-
-                  <div style={{ marginBottom: "1.25rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Product Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="e.g. DocuSprint AI"
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "10px",
-                        border: "1px solid var(--slate-200)",
-                        fontSize: "0.95rem",
-                        outline: "none",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ marginBottom: "1.25rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Primary Software Category *
-                    </label>
-                    <select
-                      value={form.category}
-                      onChange={(e) => setForm({ ...form, category: e.target.value })}
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "10px",
-                        border: "1px solid var(--slate-200)",
-                        fontSize: "0.95rem",
-                        outline: "none",
-                        background: "#ffffff",
-                      }}
-                    >
-                      {categories.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div style={{ marginBottom: "1.25rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Catchy One-Line Tagline *
-                    </label>
-                    <input
-                      type="text"
-                      value={form.tagline}
-                      onChange={(e) => setForm({ ...form, tagline: e.target.value })}
-                      placeholder="e.g. AI-assisted sprint documentation"
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "10px",
-                        border: "1px solid var(--slate-200)",
-                        fontSize: "0.95rem",
-                        outline: "none",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ marginBottom: "1.25rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Official Website or App URL *
-                    </label>
-                    <input
-                      type="url"
-                      value={form.website}
-                      onChange={(e) => setForm({ ...form, website: e.target.value })}
-                      placeholder="https://yourdomain.com"
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "10px",
-                        border: "1px solid var(--slate-200)",
-                        fontSize: "0.95rem",
-                        outline: "none",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ marginBottom: "1.5rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Brand Theme Color
-                    </label>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      {brandColors.map((color) => (
-                        <button
-                          key={color}
-                          type="button"
-                          onClick={() => setForm({ ...form, brandColor: color })}
-                          style={{
-                            width: "32px",
-                            height: "32px",
-                            borderRadius: "50%",
-                            background: color,
-                            border: form.brandColor === color ? "3px solid #0F172A" : "1px solid transparent",
-                            cursor: "pointer",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 2 && (
-                <div>
-                  <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--slate-900)", marginBottom: "0.35rem" }}>
-                    2. Pricing &amp; Features
-                  </h3>
-                  <p style={{ color: "var(--slate-500)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
-                    Configure what buyers pay and highlight your top capabilities.
-                  </p>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
-                    <div>
-                      <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                        Starting Price ($) *
-                      </label>
-                      <input
-                        type="number"
-                        value={form.price}
-                        onChange={(e) => setForm({ ...form, price: e.target.value })}
-                        placeholder="29"
-                        style={{
-                          width: "100%",
-                          padding: "0.75rem 1rem",
-                          borderRadius: "10px",
-                          border: "1px solid var(--slate-200)",
-                          fontSize: "0.95rem",
-                          outline: "none",
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                        Billing Period *
-                      </label>
-                      <select
-                        value={form.period}
-                        onChange={(e) => setForm({ ...form, period: e.target.value })}
-                        style={{
-                          width: "100%",
-                          padding: "0.75rem 1rem",
-                          borderRadius: "10px",
-                          border: "1px solid var(--slate-200)",
-                          fontSize: "0.95rem",
-                          outline: "none",
-                          background: "#ffffff",
-                        }}
-                      >
-                        <option value="mo">Per Month (mo)</option>
-                        <option value="yr">Per Year (yr)</option>
-                        <option value="lifetime">Lifetime Deal</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: "1.25rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Target Customer Segment
-                    </label>
-                    <input
-                      type="text"
-                      value={form.targetAudience}
-                      onChange={(e) => setForm({ ...form, targetAudience: e.target.value })}
-                      placeholder="e.g. Engineering squads, Solo developers"
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "10px",
-                        border: "1px solid var(--slate-200)",
-                        fontSize: "0.95rem",
-                        outline: "none",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ marginBottom: "1.5rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
-                      <label style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)" }}>
-                        Key Features / Specs ({form.features.length}/5)
-                      </label>
-                      {form.features.length < 5 && (
-                        <button
-                          type="button"
-                          onClick={addFeature}
-                          style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer" }}
-                        >
-                          + Add Feature
-                        </button>
-                      )}
-                    </div>
-                    {form.features.map((feat, idx) => (
-                      <div key={idx} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                        <input
-                          type="text"
-                          value={feat}
-                          onChange={(e) => handleFeatureChange(idx, e.target.value)}
-                          placeholder={`Feature ${idx + 1}`}
-                          style={{
-                            flex: 1,
-                            padding: "0.65rem 0.9rem",
-                            borderRadius: "8px",
-                            border: "1px solid var(--slate-200)",
-                            fontSize: "0.9rem",
-                            outline: "none",
-                          }}
-                        />
-                        {form.features.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeFeature(idx)}
-                            style={{ background: "#FEE2E2", color: "#DC2626", border: "none", borderRadius: "8px", padding: "0 0.75rem", cursor: "pointer" }}
-                          >
-                            ✕
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 3 && (
-                <div>
-                  <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--slate-900)", marginBottom: "0.35rem" }}>
-                    3. Founder Payout &amp; Terms
-                  </h3>
-                  <p style={{ color: "var(--slate-500)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
-                    Tell us where to send your software transaction payouts.
-                  </p>
-
-                  <div style={{ marginBottom: "1.25rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Founder / Rep Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={form.founderName}
-                      onChange={(e) => setForm({ ...form, founderName: e.target.value })}
-                      placeholder="e.g. Zack Robinson"
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "10px",
-                        border: "1px solid var(--slate-200)",
-                        fontSize: "0.95rem",
-                        outline: "none",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ marginBottom: "1.25rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Work Email for Verification *
-                    </label>
-                    <input
-                      type="email"
-                      value={form.founderEmail}
-                      onChange={(e) => setForm({ ...form, founderEmail: e.target.value })}
-                      placeholder="zack@docusprint.io"
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "10px",
-                        border: "1px solid var(--slate-200)",
-                        fontSize: "0.95rem",
-                        outline: "none",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ marginBottom: "1.5rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "var(--slate-700)", marginBottom: "0.4rem" }}>
-                      Preferred Payout Rail
-                    </label>
-                    <select
-                      value={form.payoutMethod}
-                      onChange={(e) => setForm({ ...form, payoutMethod: e.target.value })}
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "10px",
-                        border: "1px solid var(--slate-200)",
-                        fontSize: "0.95rem",
-                        outline: "none",
-                        background: "#ffffff",
-                      }}
-                    >
-                      <option value="stripe">Stripe Connect Direct Deposit</option>
-                      <option value="wire">International Bank Wire (SWIFT)</option>
-                      <option value="paypal">PayPal Business</option>
-                    </select>
-                  </div>
-
-                  <div style={{ background: "#F8FAFC", borderRadius: "12px", padding: "1rem", border: "1px solid var(--slate-200)", marginBottom: "1.5rem" }}>
-                    <label style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", cursor: "pointer", fontSize: "0.88rem", color: "var(--slate-700)", lineHeight: 1.5 }}>
-                      <input
-                        type="checkbox"
-                        checked={form.agreeEscrow}
-                        onChange={(e) => setForm({ ...form, agreeEscrow: e.target.checked })}
-                        style={{ marginTop: "0.2rem", accentColor: "var(--primary)" }}
-                      />
-                      <span>
-                        I agree to the SaaS MRKT <strong>30-Day Escrow Policy</strong> and confirm that my software is free from malware and operates as advertised.
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              )}
-
-              {/* Navigation buttons */}
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
-                {currentStep > 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(currentStep - 1)}
-                    style={{
-                      background: "#F1F5F9",
-                      color: "var(--slate-700)",
-                      border: "none",
-                      padding: "0.75rem 1.5rem",
-                      borderRadius: "12px",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                    }}
-                  >
-                    ← Back
-                  </button>
-                ) : <div />}
-
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={currentStep === 3 && !form.agreeEscrow}
-                  style={{
-                    background: "var(--primary)",
-                    color: "#ffffff",
-                    border: "none",
-                    padding: "0.75rem 2rem",
-                    borderRadius: "12px",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.25)",
-                    opacity: currentStep === 3 && !form.agreeEscrow ? 0.6 : 1,
-                  }}
-                >
-                  {currentStep === 3 ? "Submit Product Application ✓" : "Continue →"}
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column: Live Interactive Card Preview */}
-            <div style={{ position: "sticky", top: "100px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                <span style={{ fontSize: "0.75rem", fontWeight: 800, textTransform: "uppercase", color: "var(--primary)", letterSpacing: "0.05em" }}>
-                  Live Marketplace Preview
-                </span>
-                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#10B981" }} />
-              </div>
-
-              {/* Simulated Marketplace Product Card */}
-              <div
-                style={{
-                  background: "#ffffff",
-                  borderRadius: "20px",
-                  border: "1px solid var(--slate-200)",
-                  padding: "1.75rem",
-                  boxShadow: "0 12px 30px rgba(15, 23, 42, 0.08)",
-                  position: "relative",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "1.25rem",
-                    right: "1.25rem",
-                    background: "#ECFDF5",
-                    color: "#059669",
-                    fontSize: "0.75rem",
-                    fontWeight: 700,
-                    padding: "0.25rem 0.65rem",
-                    borderRadius: "9999px",
-                  }}
-                >
-                  New Submission
-                </div>
-
-                {/* Logo & Name */}
-                <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
-                  <div
-                    style={{
-                      width: "56px",
-                      height: "56px",
-                      borderRadius: "14px",
-                      background: form.brandColor,
-                      color: "#ffffff",
-                      fontSize: "1.5rem",
-                      fontWeight: 800,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {form.name ? form.name.charAt(0) : "S"}
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--slate-900)", margin: 0 }}>
-                      {form.name || "Software Name"}
-                    </h4>
-                    <span style={{ fontSize: "0.82rem", color: "var(--slate-500)", fontWeight: 500 }}>
-                      {form.category}
-                    </span>
-                  </div>
-                </div>
-
-                <p style={{ color: "var(--slate-600)", fontSize: "0.92rem", lineHeight: 1.5, marginBottom: "1.25rem" }}>
-                  {form.tagline || "Your product tagline will appear here."}
-                </p>
-
-                {/* Features List */}
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--slate-500)", textTransform: "uppercase", marginBottom: "0.4rem" }}>
-                    Features
-                  </div>
-                  <ul style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.88rem", color: "var(--slate-700)", lineHeight: 1.6 }}>
-                    {form.features.filter(Boolean).map((f, i) => (
-                      <li key={i}>{f}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Pricing & CTA Preview */}
-                <div
-                  style={{
-                    background: "#F8FAFC",
-                    borderRadius: "14px",
-                    padding: "1rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--slate-500)", textTransform: "uppercase", fontWeight: 700 }}>
-                      Pricing
-                    </div>
-                    <div style={{ fontSize: "1.35rem", fontWeight: 900, color: "var(--slate-900)" }}>
-                      ${form.price || "0"}
-                      <span style={{ fontSize: "0.8rem", fontWeight: 500, color: "var(--slate-500)" }}>/{form.period}</span>
-                    </div>
-                  </div>
-
-                  <span
-                    style={{
-                      background: "var(--primary)",
-                      color: "#ffffff",
-                      padding: "0.55rem 1.1rem",
-                      borderRadius: "10px",
-                      fontSize: "0.88rem",
-                      fontWeight: 700,
-                    }}
-                  >
-                    Buy Tool
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
+      </main>
     </PageLayout>
   );
 }

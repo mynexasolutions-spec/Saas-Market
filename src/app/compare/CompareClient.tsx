@@ -6,6 +6,20 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import PageLayout from "@/components/PageLayout";
 import { ALL_PRODUCTS, ProductItem } from "@/data/products";
+import {
+  getAllMarketplaceProducts,
+  VENDOR_PRODUCTS_EVENT_KEY,
+  VENDOR_PRODUCTS_STORAGE_KEY,
+} from "@/utils/vendorProducts";
+
+function findComparisonProduct(products: ProductItem[], id: string): ProductItem | undefined {
+  const normalizedId = id.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return products.find((product) => (
+    product.id.toLowerCase() === id.toLowerCase()
+    || product.slug?.toLowerCase() === id.toLowerCase()
+    || product.name.toLowerCase().replace(/[^a-z0-9]/g, "") === normalizedId
+  ));
+}
 
 export default function CompareClient() {
   const searchParams = useSearchParams();
@@ -17,34 +31,47 @@ export default function CompareClient() {
   const [tool1Id, setTool1Id] = useState<string>(initialTool1);
   const [tool2Id, setTool2Id] = useState<string>(initialTool2);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [marketplaceProducts, setMarketplaceProducts] = useState<ProductItem[]>(ALL_PRODUCTS);
+
+  useEffect(() => {
+    let frameId: number | null = null;
+    const refreshProducts = () => {
+      frameId = window.requestAnimationFrame(() => setMarketplaceProducts(getAllMarketplaceProducts()));
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) refreshProducts();
+    };
+
+    refreshProducts();
+    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, refreshProducts);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, refreshProducts);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
 
   useEffect(() => {
     const t1 = searchParams.get("tool1");
     const t2 = searchParams.get("tool2");
-    if (t1) setTool1Id(t1);
-    if (t2) setTool2Id(t2);
+    const frameId = window.requestAnimationFrame(() => {
+      if (t1) setTool1Id(t1);
+      if (t2) setTool2Id(t2);
+    });
+    return () => window.cancelAnimationFrame(frameId);
   }, [searchParams]);
 
   // Resolve products
   const product1: ProductItem = useMemo(() => {
-    const found = ALL_PRODUCTS.find(
-      (p) =>
-        p.id.toLowerCase() === tool1Id.toLowerCase() ||
-        (p.slug && p.slug.toLowerCase() === tool1Id.toLowerCase()) ||
-        p.name.toLowerCase().replace(/[^a-z0-9]/g, "") === tool1Id.toLowerCase().replace(/[^a-z0-9]/g, "")
-    );
-    return found || ALL_PRODUCTS[2] || ALL_PRODUCTS[0]; // fallback to TaskFlow or first
-  }, [tool1Id]);
+    const found = findComparisonProduct(marketplaceProducts, tool1Id);
+    return found || marketplaceProducts[2] || marketplaceProducts[0] || ALL_PRODUCTS[0];
+  }, [marketplaceProducts, tool1Id]);
 
   const product2: ProductItem = useMemo(() => {
-    const found = ALL_PRODUCTS.find(
-      (p) =>
-        p.id.toLowerCase() === tool2Id.toLowerCase() ||
-        (p.slug && p.slug.toLowerCase() === tool2Id.toLowerCase()) ||
-        p.name.toLowerCase().replace(/[^a-z0-9]/g, "") === tool2Id.toLowerCase().replace(/[^a-z0-9]/g, "")
-    );
-    return found || ALL_PRODUCTS[1] || ALL_PRODUCTS[0]; // fallback to Manage360
-  }, [tool2Id]);
+    const found = findComparisonProduct(marketplaceProducts, tool2Id);
+    return found || marketplaceProducts[1] || marketplaceProducts[0] || ALL_PRODUCTS[0];
+  }, [marketplaceProducts, tool2Id]);
 
   const handleCopyComparisonLink = () => {
     if (typeof window !== "undefined") {
@@ -176,7 +203,7 @@ export default function CompareClient() {
                   cursor: "pointer",
                 }}
               >
-                {ALL_PRODUCTS.map((p) => (
+                {marketplaceProducts.map((p) => (
                   <option key={p.id} value={p.slug || p.id}>
                     {p.name} ({p.category}) — ${p.price}/{p.period}
                   </option>
@@ -240,7 +267,7 @@ export default function CompareClient() {
                   cursor: "pointer",
                 }}
               >
-                {ALL_PRODUCTS.map((p) => (
+                {marketplaceProducts.map((p) => (
                   <option key={p.id} value={p.slug || p.id}>
                     {p.name} ({p.category}) — ${p.price}/{p.period}
                   </option>
@@ -364,7 +391,7 @@ export default function CompareClient() {
                 }}
               >
                 {product1.logo ? (
-                  <Image src={product1.logo} alt={product1.name} width={60} height={60} style={{ objectFit: "cover" }} />
+                  <Image src={product1.logo} alt={product1.name} width={60} height={60} style={{ objectFit: "cover" }} unoptimized={product1.logo.startsWith("data:")} />
                 ) : (
                   product1.brandLetter || product1.name.charAt(0)
                 )}
@@ -495,7 +522,7 @@ export default function CompareClient() {
                 }}
               >
                 {product2.logo ? (
-                  <Image src={product2.logo} alt={product2.name} width={60} height={60} style={{ objectFit: "cover" }} />
+                  <Image src={product2.logo} alt={product2.name} width={60} height={60} style={{ objectFit: "cover" }} unoptimized={product2.logo.startsWith("data:")} />
                 ) : (
                   product2.brandLetter || product2.name.charAt(0)
                 )}
@@ -611,8 +638,8 @@ export default function CompareClient() {
             </span>
           </div>
 
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+          <div className="compare-table-scroll" style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", minWidth: "680px", borderCollapse: "collapse", textAlign: "left" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--slate-200)", background: "#ffffff" }}>
                   <th style={{ padding: "1.2rem 1.5rem", width: "26%", color: "var(--slate-500)", fontWeight: 700, fontSize: "0.85rem", textTransform: "uppercase" }}>

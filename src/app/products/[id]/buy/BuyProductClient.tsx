@@ -10,6 +10,10 @@ interface BuyProductClientProps {
   product: ProductItem;
 }
 
+function getStableProductCode(value: string): number {
+  return Array.from(value).reduce((hash, character) => ((hash * 31) + character.charCodeAt(0)) >>> 0, 2166136261);
+}
+
 export default function BuyProductClient({ product }: BuyProductClientProps) {
   const { user } = useAuth();
   const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal" | "applepay">("card");
@@ -45,10 +49,11 @@ export default function BuyProductClient({ product }: BuyProductClientProps) {
     }, 1200);
   };
 
-  const priceVal = product.price || 19;
+  const priceVal = product.price ?? 19;
   const sellerName = product.sellerName || "Elena Rostova";
-  const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
-  const licenseKey = `SMRKT-${product.name.toUpperCase().slice(0, 4)}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const productCode = getStableProductCode(product.id);
+  const orderNumber = `ORD-${String(100000 + (productCode % 900000))}`;
+  const licenseKey = `SMRKT-${product.name.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4)}-${productCode.toString(36).slice(0, 6).padStart(6, "0").toUpperCase()}`;
   const handleDownloadZip = () => {
     const packageInfo = `=====================================================
 PACKAGE: ${product.name}

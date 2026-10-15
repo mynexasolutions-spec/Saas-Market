@@ -6,7 +6,10 @@ import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
 import { ALL_PRODUCTS, ProductItem } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
-import { findProductByIdIncludingCustom } from "@/utils/vendorProducts";
+
+type ProductDetailTab = "overview" | "architecture" | "security" | "financials" | "reviews" | "compare";
+
+const PRODUCT_DETAIL_TABS: ProductDetailTab[] = ["overview", "architecture", "security", "financials", "reviews", "compare"];
 
 export interface ComparableOption {
   id: string;
@@ -30,32 +33,23 @@ export interface ComparableOption {
 
 interface ProductMoreDetailsClientProps {
   product: ProductItem;
-  initialTab?: "overview" | "architecture" | "security" | "financials" | "reviews" | "compare";
+  initialTab?: ProductDetailTab;
 }
 
-export default function ProductMoreDetailsClient({ product: initialProduct, initialTab = "overview" }: ProductMoreDetailsClientProps) {
+export default function ProductMoreDetailsClient({ product, initialTab = "overview" }: ProductMoreDetailsClientProps) {
   const { user, openAuth, loginAsRole } = useAuth();
-  const [activeTab, setActiveTab] = useState<"overview" | "architecture" | "security" | "financials" | "reviews" | "compare">(initialTab);
-  const [customProduct, setCustomProduct] = useState<ProductItem | null>(null);
+  const [activeTab, setActiveTab] = useState<ProductDetailTab>(initialTab);
 
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const pathParts = window.location.pathname.split("/");
-      const urlId = pathParts[2] || initialProduct.id;
-      const found = findProductByIdIncludingCustom(urlId);
-      if (found && found.id === urlId) {
-        setCustomProduct(found);
-      }
-
+    const frameId = window.requestAnimationFrame(() => {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get("tab");
-      if (tabParam && ["overview", "architecture", "security", "financials", "reviews", "compare"].includes(tabParam)) {
-        setActiveTab(tabParam as any);
+      if (tabParam && PRODUCT_DETAIL_TABS.includes(tabParam as ProductDetailTab)) {
+        setActiveTab(tabParam as ProductDetailTab);
       }
-    }
-  }, [initialProduct.id]);
-
-  const product = customProduct || initialProduct;
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, []);
 
   const sellerName = product.sellerName || "Elena Rostova";
   const techStack = product.techStack || ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "AWS"];

@@ -43,6 +43,14 @@ export default function Navbar({
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, []);
 
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      setMobileMenuOpen(false);
+      setResourcesOpen(false);
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [pathname]);
+
   const handleOpenSearch = () => {
     setIsSearchExpanded(true);
     if (onSearchFocus) onSearchFocus();
@@ -347,6 +355,7 @@ export default function Navbar({
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
+                <span className="nav-spotlight-label">Search</span>
                 <kbd style={{ background: "#F1F5F9", border: "1px solid #CBD5E1", borderRadius: "4px", padding: "1px 5px", fontSize: "0.68rem", fontWeight: 700, color: "#64748B" }}>
                   ⌘K
                 </kbd>
@@ -379,6 +388,8 @@ export default function Navbar({
                 className="mobile-menu-btn"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-navigation"
               >
                 {mobileMenuOpen ? (
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -399,7 +410,7 @@ export default function Navbar({
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="mobile-nav-drawer">
+          <div className="mobile-nav-drawer" id="mobile-navigation">
             <div className="mobile-nav-links">
               <Link href="/products" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
                 Products

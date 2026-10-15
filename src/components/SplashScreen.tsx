@@ -13,8 +13,8 @@ export default function SplashScreen() {
     const hasVisited = sessionStorage.getItem("hasVisited");
 
     if (hasVisited) {
-      setLoading(false);
-      return;
+      const frameId = window.requestAnimationFrame(() => setLoading(false));
+      return () => window.cancelAnimationFrame(frameId);
     }
 
     sessionStorage.setItem("hasVisited", "true");

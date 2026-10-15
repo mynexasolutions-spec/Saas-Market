@@ -1,7 +1,6 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { ALL_PRODUCTS, getProductById } from "@/data/products";
-import ProductDetailClient from "./ProductDetailClient";
+import ProductRouteClient from "@/components/ProductRouteClient";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -30,10 +29,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductDetailPage({ params }: Props) {
   const { id } = await params;
   const product = getProductById(id);
-
-  if (!product) {
-    notFound();
-  }
-
-  return <ProductDetailClient product={product} />;
+  return <ProductRouteClient initialProduct={product || null} productId={id} view="detail" />;
 }

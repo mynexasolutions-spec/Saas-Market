@@ -28,6 +28,7 @@ export interface ProductItem {
   reviewCount: number;
   description: string;
   image: string;
+  gallery?: string[];
   logo?: string;
   price: number;
   period: string;
@@ -222,6 +223,12 @@ export const FEATURED_PRODUCTS_LIST: ProductItem[] = [
     description: "All-in-one workspace for notes, docs, sprints and task management.",
     tagline: "Unified workspace for high-velocity software and product teams",
     image: "/images/taskflow-agile-board-light.jpg",
+    gallery: [
+      "/images/taskflow-agile-board-light.jpg",
+      "/images/taskflow-dashboard-preview.jpg",
+      "/images/taskflow-roadmap-hub-light.jpg",
+      "/images/taskflow.jpg",
+    ],
     logo: "/images/logos/taskflow.jpg",
     price: 19,
     period: "mo",

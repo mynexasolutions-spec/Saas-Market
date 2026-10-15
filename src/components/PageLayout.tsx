@@ -36,6 +36,14 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, []);
 
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      setMobileMenuOpen(false);
+      setResourcesOpen(false);
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [pathname]);
+
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 3500);
@@ -266,6 +274,8 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
                 className="mobile-menu-btn"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-navigation"
               >
                 {mobileMenuOpen ? (
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -285,7 +295,7 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
 
           {/* Mobile Dropdown */}
           {mobileMenuOpen && (
-            <div className="mobile-nav-drawer">
+            <div className="mobile-nav-drawer" id="mobile-navigation">
               <div className="mobile-nav-links">
                 {navLinks.map((link) => (
                   <Link

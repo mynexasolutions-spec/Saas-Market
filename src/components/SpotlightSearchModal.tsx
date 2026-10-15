@@ -4,7 +4,11 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ALL_PRODUCTS, ProductItem } from "@/data/products";
-import { getAllMarketplaceProducts } from "@/utils/vendorProducts";
+import {
+  getAllMarketplaceProducts,
+  VENDOR_PRODUCTS_EVENT_KEY,
+  VENDOR_PRODUCTS_STORAGE_KEY,
+} from "@/utils/vendorProducts";
 
 interface SpotlightSearchModalProps {
   isOpen: boolean;
@@ -56,17 +60,38 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<SearchCategory>("all");
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [marketplaceProducts, setMarketplaceProducts] = useState<ProductItem[]>(ALL_PRODUCTS);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let frameId: number | null = null;
+    const refreshProducts = () => {
+      frameId = window.requestAnimationFrame(() => setMarketplaceProducts(getAllMarketplaceProducts()));
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) refreshProducts();
+    };
+
+    refreshProducts();
+    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, refreshProducts);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, refreshProducts);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
 
   // Focus input when modal opens
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => {
+      const timeoutId = window.setTimeout(() => {
         inputRef.current?.focus();
+        setQuery("");
+        setSelectedIndex(0);
       }, 50);
-      setQuery("");
-      setSelectedIndex(0);
+      return () => window.clearTimeout(timeoutId);
     }
   }, [isOpen]);
 
@@ -92,8 +117,7 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
 
     // 1. Products
     if (activeFilter === "all" || activeFilter === "products") {
-      const allAvailableProducts = typeof window !== "undefined" ? getAllMarketplaceProducts() : ALL_PRODUCTS;
-      const matchedProducts = allAvailableProducts.filter((prod) => {
+      const matchedProducts = marketplaceProducts.filter((prod) => {
         if (!q) return true;
         return (
           prod.name.toLowerCase().includes(q) ||
@@ -114,7 +138,7 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
           url: `/products/${prod.id}`,
           iconBg: prod.brandColor || "#5E4BEE",
           iconLetter: prod.brandLetter || prod.name.slice(0, 2).toUpperCase(),
-          price: `$${prod.price}/${prod.period}`,
+          price: prod.price === 0 ? "Free" : `$${prod.price}/${prod.period}`,
         });
       });
     }
@@ -177,7 +201,7 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
     }
 
     return results;
-  }, [query, activeFilter]);
+  }, [query, activeFilter, marketplaceProducts]);
 
   // Keyboard navigation through list (ArrowUp, ArrowDown, Enter)
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

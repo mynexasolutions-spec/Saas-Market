@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,52 +9,36 @@ import PageLayout from "@/components/PageLayout";
 import { ProductItem, getSimilarProducts } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
 import { isWishlisted, toggleWishlist, WISHLIST_EVENT_NAME } from "@/utils/wishlist";
-import { findProductByIdIncludingCustom } from "@/utils/vendorProducts";
 
 interface ProductDetailClientProps {
   product: ProductItem;
 }
 
+function subscribeToWishlist(onStoreChange: () => void): () => void {
+  window.addEventListener(WISHLIST_EVENT_NAME, onStoreChange);
+  return () => window.removeEventListener(WISHLIST_EVENT_NAME, onStoreChange);
+}
+
 export default function ProductDetailClient({ product: initialProduct }: ProductDetailClientProps) {
   const router = useRouter();
   const { user, openAuth } = useAuth();
-  const [customProduct, setCustomProduct] = useState<ProductItem | null>(null);
   const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [portalRoot] = useState<HTMLElement | null>(() => typeof document === "undefined" ? null : document.body);
   const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
 
-  // Resolve custom vendor product from localStorage if navigating to dynamic ID
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const pathParts = window.location.pathname.split("/");
-      const urlId = pathParts[2] || initialProduct.id;
-      const found = findProductByIdIncludingCustom(urlId);
-      if (found && found.id === urlId) {
-        setCustomProduct(found);
-      }
-    }
-  }, [initialProduct.id]);
-
-  const product = customProduct || initialProduct;
+  const product = initialProduct;
+  const galleryImages = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
+  const isSaved = useSyncExternalStore(subscribeToWishlist, () => isWishlisted(product.id), () => false);
 
   useEffect(() => {
-    setMounted(true);
     document.body.classList.add("product-detail-page-active");
-
-    // Check wishlist state
-    setIsSaved(isWishlisted(product.id));
-
-    const handleWishlistChange = () => {
-      setIsSaved(isWishlisted(product.id));
-    };
-    window.addEventListener(WISHLIST_EVENT_NAME, handleWishlistChange);
 
     return () => {
       document.body.classList.remove("product-detail-page-active");
-      window.removeEventListener(WISHLIST_EVENT_NAME, handleWishlistChange);
       if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     };
   }, [product.id]);
@@ -76,7 +60,6 @@ export default function ProductDetailClient({ product: initialProduct }: Product
       return;
     }
     const result = toggleWishlist(product.id);
-    setIsSaved(result.wishlisted);
     if (result.wishlisted) {
       showToast(`Saved "${product.name}" to your Buyer Wishlist!`);
     } else {
@@ -145,50 +128,18 @@ export default function ProductDetailClient({ product: initialProduct }: Product
   const keyFeatures =
     product.keyFeaturesList && product.keyFeaturesList.length > 0
       ? product.keyFeaturesList
-      : [
-          {
-            title: "Lead Management",
-            description: "Capture, organize and track all your leads in one place.",
-            icon: "users",
-            iconBg: "rgba(59, 130, 246, 0.12)",
-            iconColor: "#2563EB",
-          },
-          {
-            title: "Email Marketing",
-            description: "Create and automate email campaigns to engage customers.",
-            icon: "mail",
-            iconBg: "rgba(236, 72, 153, 0.12)",
-            iconColor: "#DB2777",
-          },
-          {
-            title: "Sales Pipeline",
-            description: "Visualize and manage your deals from start to close.",
-            icon: "pipeline",
-            iconBg: "rgba(16, 185, 129, 0.12)",
-            iconColor: "#059669",
-          },
-          {
-            title: "Workflow Automation",
-            description: "Automate repetitive tasks and save time.",
-            icon: "automation",
-            iconBg: "rgba(249, 115, 22, 0.12)",
-            iconColor: "#EA580C",
-          },
-          {
-            title: "Analytics & Reports",
-            description: "Get detailed insights and reports to grow your business.",
-            icon: "analytics",
-            iconBg: "rgba(139, 92, 246, 0.12)",
-            iconColor: "#7C3AED",
-          },
-          {
-            title: "Customer Support",
-            description: "Manage customer inquiries and tickets efficiently.",
-            icon: "support",
-            iconBg: "rgba(234, 179, 8, 0.12)",
-            iconColor: "#CA8A04",
-          },
-        ];
+      : product.features.slice(0, 6).map((feature, index) => {
+          const [title, ...details] = feature.split(":");
+          const colors = ["#2563EB", "#7C3AED", "#059669", "#EA580C", "#DB2777", "#CA8A04"];
+          const icons = ["users", "automation", "pipeline", "analytics", "mail", "support"];
+          return {
+            title: title.trim(),
+            description: details.join(":").trim() || `Use ${title.trim().toLowerCase()} to keep your team's work clear and efficient.`,
+            icon: icons[index % icons.length],
+            iconBg: `${colors[index % colors.length]}14`,
+            iconColor: colors[index % colors.length],
+          };
+        });
 
   const techStackList = product.techStack || ["Next.js", "React", "Node.js", "AWS"];
 
@@ -266,10 +217,11 @@ export default function ProductDetailClient({ product: initialProduct }: Product
         </nav>
 
         {/* Hero Section */}
-        <div className="detail-hero-card">
+        <div className="detail-hero-card detail-hero-card-premium">
           <div className="detail-hero-grid">
             {/* Left Column: Product Info */}
             <div className="detail-hero-left">
+              <div className="detail-trust-badge"><span aria-hidden="true">✓</span> Verified marketplace listing</div>
               {/* Product Logo / Icon */}
               <div
                 className="detail-hero-logo"
@@ -287,6 +239,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                     width={72}
                     height={72}
                     className="detail-logo-img"
+                    unoptimized={product.logo.startsWith("data:")}
                   />
                 ) : (
                   <span className="detail-logo-fallback">{product.brandLetter}</span>
@@ -300,12 +253,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
               </p>
 
               {/* Basic Idea of the Project */}
-              <p className="detail-hero-idea">
-                {product.aboutText ||
-                  (product.description && product.description !== product.tagline
-                    ? product.description
-                    : `${product.name} provides modern teams with intuitive tools to streamline ${product.category} operations, unify communication, and automate workflows in a single workspace.`)}
-              </p>
+              <p className="detail-hero-idea">{aboutText}</p>
 
               {/* Tags Row */}
               <div className="detail-tags-row">
@@ -346,9 +294,11 @@ export default function ProductDetailClient({ product: initialProduct }: Product
 
               {/* Product Price & Rating */}
               <div className="detail-hero-price-row">
+                <span className="detail-price-kicker">Starting at</span>
                 <span className="detail-hero-price-amount">
-                  ${product.price !== undefined ? product.price : 29}
+                  {product.price === 0 ? "Free" : `$${product.price !== undefined ? product.price : 29}`}
                 </span>
+                {product.price !== 0 && <span className="detail-price-period">/{product.period}</span>}
                 <div className="detail-rating-row">
                   <span className="detail-stars">★★★★★</span>
                   <span className="detail-rating-score">
@@ -365,6 +315,9 @@ export default function ProductDetailClient({ product: initialProduct }: Product
 
               {/* CTA Action Buttons */}
               <div className="detail-actions-row">
+                <Link href={`/products/${product.id}/buy`} className="detail-btn-primary">
+                  Start with {product.name} <span aria-hidden="true">→</span>
+                </Link>
                 {/* Wishlist Button */}
                 <button
                   type="button"
@@ -455,29 +408,35 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                   )}
                 </Link>
               </div>
+              <div className="detail-purchase-note"><span aria-hidden="true">◈</span><span><strong>Marketplace buyer protection</strong> · Secure checkout and a 30-day escrow window.</span></div>
             </div>
 
-            {/* Right Column: Screenshot Preview & Moving Balls Area */}
+            {/* Right Column: Product gallery */}
             <div className="detail-hero-right">
-              <div className="detail-preview-frame">
-                <Image
-                  src={product.image}
-                  alt={`${product.name} dashboard preview`}
-                  width={680}
-                  height={440}
-                  priority
-                  className="detail-preview-image"
-                />
-              </div>
-
-              {/* Bouncing Balls Moving in this Area */}
-              <div className="detail-hero-moving-stage" aria-label="Playful balls moving and bouncing">
-                <div className="ball-walker walker-one">
-                  <div className="bouncing-sphere ball-one" />
-                </div>
-                <div className="ball-walker walker-two">
-                  <div className="bouncing-sphere ball-two" />
-                </div>
+              <div className="detail-gallery">
+                <button className="detail-gallery-main" type="button" onClick={() => setGalleryOpen(true)} aria-label={`Open ${product.name} image ${activeGalleryIndex + 1} of ${galleryImages.length}`}>
+                  <Image
+                    src={galleryImages[activeGalleryIndex]}
+                    alt={`${product.name} product preview ${activeGalleryIndex + 1}`}
+                    fill
+                    priority
+                    sizes="(max-width: 900px) 100vw, 56vw"
+                    className="detail-preview-image"
+                    unoptimized={galleryImages[activeGalleryIndex].startsWith("data:")}
+                  />
+                  <span className="detail-gallery-label">Product preview</span>
+                  <span className="detail-gallery-count">{activeGalleryIndex + 1} / {galleryImages.length}</span>
+                  <span className="detail-gallery-expand" aria-hidden="true">↗</span>
+                </button>
+                {galleryImages.length > 1 && (
+                  <div className="detail-gallery-thumbs" aria-label="Product screenshots">
+                    {galleryImages.map((image, index) => (
+                      <button className={index === activeGalleryIndex ? "is-active" : ""} key={image} onClick={() => setActiveGalleryIndex(index)} type="button" aria-label={`Show screenshot ${index + 1}`}>
+                        <Image src={image} alt="" fill sizes="100px" unoptimized={image.startsWith("data:")} />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -576,7 +535,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                   </div>
                   <div className="detail-info-text">
                     <span className="detail-info-label">Pricing Model</span>
-                    <strong className="detail-info-val">Subscription (Monthly / Annual)</strong>
+                    <strong className="detail-info-val">{pricingModel}</strong>
                   </div>
                 </div>
 
@@ -843,6 +802,19 @@ export default function ProductDetailClient({ product: initialProduct }: Product
         </section>
       </div>
 
+      {portalRoot && galleryOpen && createPortal(
+        <div className="detail-lightbox" role="dialog" aria-modal="true" aria-label={`${product.name} product gallery`} onClick={() => setGalleryOpen(false)}>
+          <button className="detail-lightbox-close" type="button" onClick={() => setGalleryOpen(false)} aria-label="Close gallery">×</button>
+          <div className="detail-lightbox-content" onClick={(event) => event.stopPropagation()}>
+            <div className="detail-lightbox-image">
+              <Image src={galleryImages[activeGalleryIndex]} alt={`${product.name} screenshot ${activeGalleryIndex + 1}`} fill sizes="95vw" unoptimized={galleryImages[activeGalleryIndex].startsWith("data:")} />
+            </div>
+            {galleryImages.length > 1 && <div className="detail-lightbox-controls"><button type="button" onClick={() => setActiveGalleryIndex((activeGalleryIndex - 1 + galleryImages.length) % galleryImages.length)}>← Previous</button><span>{activeGalleryIndex + 1} of {galleryImages.length}</span><button type="button" onClick={() => setActiveGalleryIndex((activeGalleryIndex + 1) % galleryImages.length)}>Next →</button></div>}
+          </div>
+        </div>,
+        portalRoot
+      )}
+
       {/* Contact Seller Modal */}
       {contactModalOpen && (
         <div className="detail-modal-overlay" onClick={() => setContactModalOpen(false)}>
@@ -950,7 +922,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
 
 
       {/* Toast Notification Popup: Portaled to document.body for zero clipping */}
-      {mounted &&
+      {portalRoot &&
         toastMsg &&
         createPortal(
           <div
@@ -961,7 +933,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
             <span className="toast-notice-lock-badge">🔒</span>
             <span>{toastMsg}</span>
           </div>,
-          document.body
+          portalRoot
         )}
     </PageLayout>
   );

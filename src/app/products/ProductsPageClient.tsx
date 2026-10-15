@@ -2,12 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import PageLayout from "@/components/PageLayout";
 import { ALL_PRODUCTS, ProductItem } from "@/data/products";
 import ProductModal from "@/components/ProductModal";
-import { getAllMarketplaceProducts, VENDOR_PRODUCTS_EVENT_KEY } from "@/utils/vendorProducts";
+import {
+  getAllMarketplaceProducts,
+  VENDOR_PRODUCTS_EVENT_KEY,
+  VENDOR_PRODUCTS_STORAGE_KEY,
+} from "@/utils/vendorProducts";
 
 const CATEGORIES = [
   { label: "All Products", value: "" },
@@ -18,6 +21,8 @@ const CATEGORIES = [
   { label: "Customer Support", value: "Customer Support" },
   { label: "Developer Tools", value: "Developer Tools" },
   { label: "CRM & Sales", value: "CRM & Sales" },
+  { label: "Analytics & BI", value: "Analytics & BI" },
+  { label: "Security & Compliance", value: "Security & Compliance" },
 ];
 
 const SORT_OPTIONS = [
@@ -36,6 +41,9 @@ export default function ProductsPageClient() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("popular");
+  const [minPrice, setMinPrice] = useState("0");
+  const [maxPrice, setMaxPrice] = useState("200");
+  const [minimumRating, setMinimumRating] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -46,9 +54,16 @@ export default function ProductsPageClient() {
     const updateProducts = () => {
       setProductsList(getAllMarketplaceProducts());
     };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) updateProducts();
+    };
     updateProducts();
     window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, updateProducts);
-    return () => window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, updateProducts);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, updateProducts);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   const showToast = (msg: string) => {
@@ -62,12 +77,18 @@ export default function ProductsPageClient() {
       !searchQuery ||
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCat && matchesSearch;
+      p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.features.some((feature) => feature.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      Boolean(p.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())));
+    const matchesMinPrice = minPrice === "" || p.price >= Number(minPrice);
+    const matchesMaxPrice = maxPrice === "" || p.price <= Number(maxPrice);
+    const matchesRating = minimumRating === null || p.rating >= minimumRating;
+    return matchesCat && matchesSearch && matchesMinPrice && matchesMaxPrice && matchesRating;
   }).sort((a, b) => {
     if (sortBy === "rating") return b.rating - a.rating;
     if (sortBy === "price-asc") return a.price - b.price;
     if (sortBy === "price-desc") return b.price - a.price;
+    if (sortBy === "newest") return (Date.parse(b.listedDate || "") || 0) - (Date.parse(a.listedDate || "") || 0);
     return b.reviewCount - a.reviewCount;
   });
 
@@ -122,6 +143,16 @@ export default function ProductsPageClient() {
           </div>
         </div>
 
+        <section className="products-marketplace-hero">
+          <div className="container">
+            <div className="products-marketplace-hero-content">
+              <p className="products-marketplace-eyebrow">Explore solutions</p>
+              <h1>Discover software built for <span>better work</span></h1>
+              <p>Compare trusted SaaS products, transparent pricing, and verified customer feedback in one place.</p>
+            </div>
+          </div>
+        </section>
+
         {/* Main Content */}
         <section className="products-main">
           <div className="container">
@@ -149,9 +180,9 @@ export default function ProductsPageClient() {
                   <h3 className="products-filter-title">Price Range</h3>
                   <div className="products-price-range">
                     <div className="products-price-row">
-                      <input type="number" placeholder="Min $" className="products-price-input" id="price-min" defaultValue={0} min={0} />
+                      <input type="number" aria-label="Minimum price" placeholder="Min $" className="products-price-input" id="price-min" value={minPrice} min={0} onChange={(event) => { setMinPrice(event.target.value); setCurrentPage(1); }} />
                       <span>–</span>
-                      <input type="number" placeholder="Max $" className="products-price-input" id="price-max" defaultValue={200} min={0} />
+                      <input type="number" aria-label="Maximum price" placeholder="Max $" className="products-price-input" id="price-max" value={maxPrice} min={0} onChange={(event) => { setMaxPrice(event.target.value); setCurrentPage(1); }} />
                     </div>
                   </div>
                 </div>
@@ -160,7 +191,19 @@ export default function ProductsPageClient() {
                   <h3 className="products-filter-title">Rating</h3>
                   {[4.5, 4, 3.5].map((r) => (
                     <label key={r} className="products-rating-label">
-                      <input type="radio" name="rating-filter" id={`rating-filter-${r}`} />
+                      <input
+                        type="radio"
+                        name="rating-filter"
+                        id={`rating-filter-${r}`}
+                        checked={minimumRating === r}
+                        onChange={() => { setMinimumRating(r); setCurrentPage(1); }}
+                        onClick={() => {
+                          if (minimumRating === r) {
+                            setMinimumRating(null);
+                            setCurrentPage(1);
+                          }
+                        }}
+                      />
                       <span style={{ color: "#F59E0B" }}>{"★".repeat(Math.floor(r))}</span>
                       <span> {r}+ stars</span>
                     </label>
@@ -203,7 +246,7 @@ export default function ProductsPageClient() {
                       <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                     </svg>
                     <span>Filters</span>
-                    {selectedCategory && (
+                    {(selectedCategory || minPrice !== "0" || maxPrice !== "200" || minimumRating !== null) && (
                       <span className="mobile-filter-active-dot" />
                     )}
                   </button>
@@ -254,7 +297,7 @@ export default function ProductsPageClient() {
                     <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                   <p>No products found matching &ldquo;{searchQuery}&rdquo;</p>
-                  <button className="btn-primary" onClick={() => { setSearchQuery(""); setSelectedCategory(""); setCurrentPage(1); }}>
+                  <button className="btn-primary" onClick={() => { setSearchQuery(""); setSelectedCategory(""); setMinPrice("0"); setMaxPrice("200"); setMinimumRating(null); setCurrentPage(1); }}>
                     Clear Filters
                   </button>
                 </div>
@@ -276,6 +319,7 @@ export default function ProductsPageClient() {
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 360px"
                             className="discovery-card-img"
+                            unoptimized={product.image.startsWith("data:")}
                           />
                         </div>
 
@@ -292,6 +336,7 @@ export default function ProductsPageClient() {
                                     width={30}
                                     height={30}
                                     className="discovery-card-logo-img"
+                                    unoptimized={product.logo.startsWith("data:")}
                                   />
                                 </div>
                               ) : (
@@ -339,7 +384,8 @@ export default function ProductsPageClient() {
                           {/* Price & Rating Row */}
                           <div className="discovery-meta-row">
                             <div className="discovery-price-group">
-                              <span className="discovery-price-amount">${product.price}</span>
+                              <span className="discovery-price-amount">{product.price === 0 ? "Free" : `$${product.price}`}</span>
+                              {product.price > 0 && <span className="discovery-price-period">{product.period === "once" ? "one-time" : `/${product.period}`}</span>}
                             </div>
 
                             <div className="discovery-rating-inline">
@@ -366,7 +412,7 @@ export default function ProductsPageClient() {
                               router.push(`/products/${product.id}`);
                             }}
                           >
-                            View Basic Info
+                            View product
                           </button>
                         </div>
                       </div>
@@ -501,9 +547,9 @@ export default function ProductsPageClient() {
                 <h3 className="products-filter-title">Price Range</h3>
                 <div className="products-price-range">
                   <div className="products-price-row">
-                    <input type="number" placeholder="Min $" className="products-price-input" defaultValue={0} min={0} />
+                    <input type="number" aria-label="Minimum price" placeholder="Min $" className="products-price-input" value={minPrice} min={0} onChange={(event) => { setMinPrice(event.target.value); setCurrentPage(1); }} />
                     <span>–</span>
-                    <input type="number" placeholder="Max $" className="products-price-input" defaultValue={200} min={0} />
+                    <input type="number" aria-label="Maximum price" placeholder="Max $" className="products-price-input" value={maxPrice} min={0} onChange={(event) => { setMaxPrice(event.target.value); setCurrentPage(1); }} />
                   </div>
                 </div>
               </div>
@@ -512,7 +558,18 @@ export default function ProductsPageClient() {
                 <h3 className="products-filter-title">Rating</h3>
                 {[4.5, 4, 3.5].map((r) => (
                   <label key={r} className="products-rating-label">
-                    <input type="radio" name="mobile-rating-filter" />
+                    <input
+                      type="radio"
+                      name="mobile-rating-filter"
+                      checked={minimumRating === r}
+                      onChange={() => { setMinimumRating(r); setCurrentPage(1); }}
+                      onClick={() => {
+                        if (minimumRating === r) {
+                          setMinimumRating(null);
+                          setCurrentPage(1);
+                        }
+                      }}
+                    />
                     <span style={{ color: "#F59E0B" }}>{"★".repeat(Math.floor(r))}</span>
                     <span> {r}+ stars</span>
                   </label>
@@ -527,6 +584,10 @@ export default function ProductsPageClient() {
                 onClick={() => {
                   setSelectedCategory("");
                   setSearchQuery("");
+                  setMinPrice("0");
+                  setMaxPrice("200");
+                  setMinimumRating(null);
+                  setCurrentPage(1);
                   setMobileFiltersOpen(false);
                 }}
               >
