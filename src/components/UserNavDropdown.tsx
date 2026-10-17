@@ -42,7 +42,7 @@ export default function UserNavDropdown({ user, onLogout }: UserNavDropdownProps
   const role = user.role || "buyer";
 
   const roleLabel =
-    role === "admin" ? "Admin" : role === "vendor" ? "Vendor" : "User";
+    role === "admin" ? "Admin" : role === "vendor" ? "Vendor" : "Buyer";
 
   const roleTagClass =
     role === "admin"

@@ -14,9 +14,10 @@ interface PageLayoutProps {
   children: React.ReactNode;
   activeNav?: string;
   noContainer?: boolean;
+  headerClassName?: string;
 }
 
-export default function PageLayout({ children, activeNav, noContainer }: PageLayoutProps) {
+export default function PageLayout({ children, activeNav, noContainer, headerClassName }: PageLayoutProps) {
   const pathname = usePathname();
   const { user, requestLogout, isAuthOpen, authMode, openAuth, closeAuth } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -62,7 +63,7 @@ export default function PageLayout({ children, activeNav, noContainer }: PageLay
 
   return (
     <>
-      <header className="navbar-wrapper">
+      <header className={`navbar-wrapper${headerClassName ? ` ${headerClassName}` : ""}`}>
         <div className="container">
           <nav className="navbar" aria-label="Main Navigation">
             {/* Logo */}

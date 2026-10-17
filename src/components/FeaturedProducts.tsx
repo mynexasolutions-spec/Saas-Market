@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   getStoredVendorProducts,
-  mergeVendorListingsIntoProducts,
+  resolveFeaturedProducts,
   VENDOR_PRODUCTS_EVENT_KEY,
   VENDOR_PRODUCTS_STORAGE_KEY,
 } from "@/utils/vendorProducts";
@@ -223,18 +223,21 @@ export default function FeaturedProducts({
   // Sync with dynamic products managed by Admin Console and Vendor Dashboard
   React.useEffect(() => {
     const loadMergedProducts = () => {
-      let baseList = FEATURED_PRODUCTS_LIST;
+      let curated: ProductItem[] | null = null;
       try {
         const saved = localStorage.getItem("saas_mrkt_featured_products");
         if (saved) {
-          const parsed = JSON.parse(saved);
+          const parsed: unknown = JSON.parse(saved);
           if (Array.isArray(parsed)) {
-            baseList = parsed;
+            curated = parsed as ProductItem[];
           }
         }
       } catch {}
 
-      setProductsList(mergeVendorListingsIntoProducts(baseList, getStoredVendorProducts()));
+      const vendorListings = getStoredVendorProducts();
+      const nextProducts = resolveFeaturedProducts(curated, vendorListings, FEATURED_PRODUCTS_LIST);
+
+      setProductsList(nextProducts);
     };
 
     const handleStorage = (event: StorageEvent) => {

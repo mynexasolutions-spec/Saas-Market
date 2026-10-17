@@ -248,6 +248,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (
       pathname &&
       (pathname.startsWith("/vendor") ||
+        pathname.startsWith("/dashboard") ||
         pathname.startsWith("/profile") ||
         pathname.startsWith("/admin"))
     ) {

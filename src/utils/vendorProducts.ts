@@ -35,6 +35,29 @@ export interface VendorSaaSListing {
   deleted?: boolean;
 }
 
+export function isVendorSaaSListing(value: unknown): value is VendorSaaSListing {
+  if (typeof value !== "object" || value === null) return false;
+
+  const listing = value as Partial<VendorSaaSListing>;
+  return (
+    typeof listing.id === "string" &&
+    typeof listing.name === "string" &&
+    typeof listing.category === "string" &&
+    typeof listing.tagline === "string" &&
+    typeof listing.price === "number" &&
+    Number.isFinite(listing.price) &&
+    typeof listing.period === "string" &&
+    typeof listing.pricingModel === "string" &&
+    typeof listing.description === "string" &&
+    typeof listing.website === "string" &&
+    typeof listing.brandColor === "string" &&
+    typeof listing.brandLetter === "string" &&
+    Array.isArray(listing.features) &&
+    listing.features.every((feature) => typeof feature === "string") &&
+    (listing.status === "Live & Active" || listing.status === "Under Review" || listing.status === "Paused")
+  );
+}
+
 export function normalizeMarketplaceCategory(category: string): string {
   return MARKETPLACE_CATEGORY_ALIASES[category] || category;
 }
@@ -77,7 +100,7 @@ export function getStoredVendorProducts(): VendorSaaSListing[] {
     const raw = localStorage.getItem(VENDOR_PRODUCTS_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? parsed.filter(isVendorSaaSListing) : [];
   } catch {
     return [];
   }
@@ -108,12 +131,30 @@ export function getAllMarketplaceProducts(): ProductItem[] {
   return mergeVendorListingsIntoProducts(ALL_PRODUCTS, getStoredVendorProducts());
 }
 
+export function resolveFeaturedProducts(
+  curated: ProductItem[] | null,
+  vendorListings: VendorSaaSListing[],
+  fallbackBase: ProductItem[],
+): ProductItem[] {
+  const merged = mergeVendorListingsIntoProducts(fallbackBase, vendorListings);
+  if (!curated) return merged;
+  const mergedById = new Map(merged.map((product) => [product.id, product]));
+  const vendorListingIds = new Set(vendorListings.map((listing) => listing.id));
+  return curated.flatMap((item) => {
+    if (vendorListingIds.has(item.id)) {
+      const liveItem = mergedById.get(item.id);
+      return liveItem ? [liveItem] : [];
+    }
+    return [mergedById.get(item.id) ?? item];
+  });
+}
+
 export function findProductByIdIncludingCustom(id: string): ProductItem | null {
   const vendorListings = getStoredVendorProducts();
   const foundVendor = vendorListings.find((v) => v.id === id);
   const foundStatic = ALL_PRODUCTS.find((p) => p.id === id);
   if (foundVendor) {
-    if (foundVendor.deleted) return null;
+    if (foundVendor.deleted || foundVendor.status !== "Live & Active") return null;
     return convertVendorListingToProductItem(foundVendor, foundStatic);
   }
   return foundStatic || null;

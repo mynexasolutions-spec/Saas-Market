@@ -11,6 +11,7 @@ import {
   VENDOR_PRODUCTS_EVENT_KEY,
   VENDOR_PRODUCTS_STORAGE_KEY,
 } from "@/utils/vendorProducts";
+import "./products-page.css";
 
 const CATEGORIES = [
   { label: "All Products", value: "" },
@@ -34,6 +35,33 @@ const SORT_OPTIONS = [
 ];
 
 const ITEMS_PER_PAGE = 24;
+
+const CARD_AVATARS = [
+  "/images/avatars/alex.jpg",
+  "/images/avatars/ayesha.jpg",
+  "/images/avatars/david.jpg",
+];
+
+function CategoryIcon(): React.ReactElement {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="7" height="7" rx="2" />
+      <rect x="14" y="3" width="7" height="7" rx="2" />
+      <rect x="3" y="14" width="7" height="7" rx="2" />
+      <rect x="14" y="14" width="7" height="7" rx="2" />
+    </svg>
+  );
+}
 
 export default function ProductsPageClient() {
   const router = useRouter();
@@ -124,31 +152,61 @@ export default function ProductsPageClient() {
   };
 
   return (
-    <PageLayout activeNav="products" noContainer>
-      <div className="products-animated-page-wrapper">
-        {/* Dynamic Animated Colorful Ambient Background Canvas */}
-        <div className="products-bg-mesh" aria-hidden="true">
-          <div className="products-mesh-orb orb-purple" />
-          <div className="products-mesh-orb orb-cyan" />
-          <div className="products-mesh-orb orb-pink" />
-          <div className="products-mesh-orb orb-amber" />
-          <div className="products-mesh-orb orb-emerald" />
-          <div className="products-mesh-grid-pattern" />
-          <div className="products-floating-particles">
-            <span className="particle p1" />
-            <span className="particle p2" />
-            <span className="particle p3" />
-            <span className="particle p4" />
-            <span className="particle p5" />
-          </div>
-        </div>
-
+    <PageLayout activeNav="products" noContainer headerClassName="products-reference-header">
+      <div className="products-animated-page-wrapper products-reference-page">
         <section className="products-marketplace-hero">
+          <Image
+            src="/product_banner.png"
+            alt="SaaS analytics dashboard with flowing purple waves"
+            fill
+            priority
+            sizes="100vw"
+            className="products-marketplace-hero-image"
+          />
+          <div className="products-marketplace-hero-shade" aria-hidden="true" />
           <div className="container">
             <div className="products-marketplace-hero-content">
-              <p className="products-marketplace-eyebrow">Explore solutions</p>
-              <h1>Discover software built for <span>better work</span></h1>
-              <p>Compare trusted SaaS products, transparent pricing, and verified customer feedback in one place.</p>
+              <h1>
+                Discover the Best<br />
+                <span>SaaS Tools</span> for Your Business
+              </h1>
+              <p>
+                Compare trusted SaaS products, transparent pricing, and verified customer feedback to find the perfect tools for your team.
+              </p>
+              <div className="products-hero-trust-row" aria-label="Marketplace highlights">
+                <div className="products-hero-trust-item">
+                  <span className="products-hero-trust-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M12 2 4 6v12l8 4 8-4V6l-8-4Z" /><path d="m8 12 3 3 5-6" />
+                    </svg>
+                  </span>
+                  <span><strong>{productsList.length}+</strong>SaaS Products</span>
+                </div>
+                <div className="products-hero-trust-item">
+                  <span className="products-hero-trust-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" />
+                    </svg>
+                  </span>
+                  <span><strong>10K+</strong>Happy Businesses</span>
+                </div>
+                <div className="products-hero-trust-item">
+                  <span className="products-hero-trust-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m8.5 12 2.2 2.2 4.8-4.8" />
+                    </svg>
+                  </span>
+                  <span><strong>Verified</strong>Real Reviews</span>
+                </div>
+                <div className="products-hero-trust-item">
+                  <span className="products-hero-trust-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <rect x="4" y="4" width="16" height="16" rx="4" /><path d="M8 12h8M12 8v8" />
+                    </svg>
+                  </span>
+                  <span><strong>Easy Compare</strong>Side by Side</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -169,7 +227,15 @@ export default function ProductsPageClient() {
                           className={`products-filter-item${selectedCategory === cat.value ? " products-filter-item--active" : ""}`}
                           onClick={() => handleCategorySelect(cat.value)}
                         >
-                          <span>{cat.label}</span>
+                          <span className="products-filter-item-label">
+                            <CategoryIcon />
+                            <span>{cat.label}</span>
+                          </span>
+                          <span className="products-filter-count">
+                            {cat.value
+                              ? productsList.filter((product) => product.category === cat.value).length
+                              : productsList.length}
+                          </span>
                         </button>
                       </li>
                     ))}
@@ -309,7 +375,15 @@ export default function ProductsPageClient() {
                         key={product.id}
                         id={product.id}
                         className="product-card saas-discovery-card"
+                        role="link"
+                        tabIndex={0}
                         onClick={() => router.push(`/products/${product.id}`)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            router.push(`/products/${product.id}`);
+                          }
+                        }}
                       >
                         {/* Product Preview Image Banner */}
                         <div className="discovery-card-image-wrap">
@@ -348,6 +422,22 @@ export default function ProductsPageClient() {
                                 </div>
                               )}
                               <h3 className="discovery-card-title">{product.name}</h3>
+                              <span className="discovery-verified-mark" title="Verified product" aria-label="Verified product">
+                                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                                  <circle cx="6" cy="6" r="6" fill="#2563EB" />
+                                  <path d="m3.4 6.1 1.55 1.5L8.7 4" stroke="white" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              </span>
+                            </div>
+
+                            <div className="discovery-card-header-rating">
+                              <span aria-hidden="true">★</span>
+                              <strong>{product.rating.toFixed(1)}</strong>
+                              <span>
+                                ({product.reviewCount >= 1000
+                                  ? `${(product.reviewCount / 1000).toFixed(1)}K`
+                                  : product.reviewCount})
+                              </span>
                             </div>
 
                             <span
@@ -388,6 +478,15 @@ export default function ProductsPageClient() {
                               {product.price > 0 && <span className="discovery-price-period">{product.period === "once" ? "one-time" : `/${product.period}`}</span>}
                             </div>
 
+                            <div className="discovery-card-community" aria-label="Reviewed by marketplace customers">
+                              <span className="discovery-card-avatars" aria-hidden="true">
+                                {CARD_AVATARS.map((avatar) => (
+                                  <Image key={avatar} src={avatar} alt="" width={18} height={18} />
+                                ))}
+                              </span>
+                              <span>+{Math.max(100, Math.round(product.reviewCount / 4))}</span>
+                            </div>
+
                             <div className="discovery-rating-inline">
                               <span className="discovery-stars">★</span>
                               <span className="discovery-rating-score">
@@ -401,6 +500,12 @@ export default function ProductsPageClient() {
                                   : product.reviewCount})
                               </span>
                             </div>
+
+                            <span className="discovery-card-arrow" aria-hidden="true">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
+                              </svg>
+                            </span>
                           </div>
 
                           {/* Primary CTA Button */}

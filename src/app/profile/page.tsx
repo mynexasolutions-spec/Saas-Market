@@ -100,6 +100,7 @@ const DEFAULT_APPLIED_PRODUCTS: AppliedProduct[] = [
 export default function ProfilePage() {
   const { user, updateUser, loginAsRole, isInitialized } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [shouldOpenPhotoPicker, setShouldOpenPhotoPicker] = useState(false);
 
   // Active tab: "applied" | "edit" (User views products applied to contact vendor & edit profile)
   const [activeTab, setActiveTab] = useState<"applied" | "edit">("applied");
@@ -159,6 +160,16 @@ export default function ProfilePage() {
     });
     return () => window.cancelAnimationFrame(frameId);
   }, [user]);
+
+  useEffect(() => {
+    if (activeTab !== "edit" || !shouldOpenPhotoPicker) return;
+
+    const frameId = window.requestAnimationFrame(() => {
+      fileInputRef.current?.click();
+      setShouldOpenPhotoPicker(false);
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [activeTab, shouldOpenPhotoPicker]);
 
   // Save applied products to localStorage
   const saveAppliedProducts = (updated: AppliedProduct[]) => {
@@ -360,8 +371,8 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={() => {
+                    setShouldOpenPhotoPicker(true);
                     setActiveTab("edit");
-                    fileInputRef.current?.click();
                   }}
                   title="Change profile picture"
                   style={{

@@ -9,6 +9,7 @@ import PageLayout from "@/components/PageLayout";
 import { ProductItem, getSimilarProducts } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
 import { isWishlisted, toggleWishlist, WISHLIST_EVENT_NAME } from "@/utils/wishlist";
+import { createContactInquiry, upsertVendorInquiry } from "@/utils/vendorInquiries";
 
 interface ProductDetailClientProps {
   product: ProductItem;
@@ -106,7 +107,17 @@ export default function ProductDetailClient({ product: initialProduct }: Product
       // Ignore
     }
 
-    showToast(`Application sent to ${product.sellerName || "the vendor"}! It is now pending vendor review in your profile.`);
+    try {
+      upsertVendorInquiry(createContactInquiry(product, {
+        buyerName: contactForm.name || user?.name || "",
+        buyerEmail: contactForm.email || user?.email || "",
+        message: contactForm.message,
+      }));
+    } catch {
+      // Ignore
+    }
+
+    showToast(`Inquiry sent to ${product.sellerName || "the vendor"}! The seller can review it in their Vendor Portal, and you can track it in your profile.`);
     setContactForm({ name: "", email: "", message: "" });
   };
 

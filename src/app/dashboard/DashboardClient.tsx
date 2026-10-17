@@ -6,6 +6,12 @@ import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/context/AuthContext";
 import { ALL_PRODUCTS, ProductItem } from "@/data/products";
 import { getWishlist, removeFromWishlist, WISHLIST_EVENT_NAME } from "@/utils/wishlist";
+import {
+  BUYER_ORDERS_EVENT_NAME,
+  BUYER_ORDERS_STORAGE_KEY,
+  BuyerOrder,
+  getBuyerOrders,
+} from "@/utils/buyerOrders";
 
 interface SavedInquiry {
   id: string;
@@ -28,6 +34,81 @@ interface StackItem {
   seats: number;
   monthlyCostPerSeat: number;
   billing: "Monthly" | "Annual";
+}
+
+interface DossierSummary {
+  id: string;
+  name: string;
+  category: string;
+  mrr: string;
+  sla: string;
+  soc2: string;
+  color: string;
+}
+
+function isStackItem(value: unknown): value is StackItem {
+  if (!value || typeof value !== "object") return false;
+
+  const item = value as Partial<StackItem>;
+  return (
+    typeof item.id === "string"
+    && typeof item.name === "string"
+    && typeof item.category === "string"
+    && typeof item.seats === "number"
+    && Number.isFinite(item.seats)
+    && item.seats >= 1
+    && typeof item.monthlyCostPerSeat === "number"
+    && Number.isFinite(item.monthlyCostPerSeat)
+    && item.monthlyCostPerSeat >= 0
+    && (item.billing === "Monthly" || item.billing === "Annual")
+  );
+}
+
+function escapePdfText(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+
+function downloadDossierPdf(dossier: DossierSummary): void {
+  const lines = [
+    "SaaS MRKT - Due Diligence Audit",
+    dossier.name,
+    `Category: ${dossier.category}`,
+    `Audited MRR: ${dossier.mrr}`,
+    `Infrastructure SLA: ${dossier.sla}`,
+    `Compliance Audit: ${dossier.soc2}`,
+    "Generated from the Buyer Executive Dashboard.",
+  ];
+  const stream = lines
+    .map((line, index) => `BT /F1 ${index < 2 ? 18 : 12} Tf 72 ${750 - index * 42} Td (${escapePdfText(line)}) Tj ET`)
+    .join("\n");
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
+  ];
+
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((object, index) => {
+    offsets.push(pdf.length);
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xrefOffset = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  pdf += offsets.slice(1).map((offset) => `${offset.toString().padStart(10, "0")} 00000 n \n`).join("");
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+  const blob = new Blob([pdf], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${dossier.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-due-diligence.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 const DEFAULT_INQUIRIES: SavedInquiry[] = [
@@ -81,7 +162,7 @@ const DEFAULT_STACK: StackItem[] = [
 
 export default function DashboardClient() {
   const { user, loginAsRole, openAuth, isInitialized } = useAuth();
-  const [activeTab, setActiveTab] = useState<"wishlist" | "inquiries" | "dossiers" | "stack">("wishlist");
+  const [activeTab, setActiveTab] = useState<"wishlist" | "orders" | "inquiries" | "dossiers" | "stack">("wishlist");
 
   // Wishlist State
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
@@ -89,6 +170,9 @@ export default function DashboardClient() {
 
   // Inquiries State
   const [inquiries] = useState<SavedInquiry[]>(DEFAULT_INQUIRIES);
+
+  // Orders State
+  const [orders, setOrders] = useState<BuyerOrder[]>([]);
 
   // Stack State
   const [stackItems, setStackItems] = useState<StackItem[]>(DEFAULT_STACK);
@@ -127,18 +211,62 @@ export default function DashboardClient() {
     };
   }, []);
 
+  useEffect(() => {
+    if (window.location.hash !== "#orders") return;
+    const frameId = window.requestAnimationFrame(() => setActiveTab("orders"));
+    return () => window.cancelAnimationFrame(frameId);
+  }, []);
+
+  useEffect(() => {
+    let frameId: number | null = null;
+    const loadOrders = () => {
+      try {
+        const savedOrders = getBuyerOrders();
+        frameId = window.requestAnimationFrame(() => setOrders(savedOrders));
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Saved orders could not be loaded.";
+        frameId = window.requestAnimationFrame(() => setToastNotice(message));
+      }
+    };
+    const handleOrderUpdate = (event: Event) => {
+      const detail = (event as CustomEvent<BuyerOrder[]>).detail;
+      if (Array.isArray(detail)) {
+        setOrders(detail);
+      } else {
+        loadOrders();
+      }
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === BUYER_ORDERS_STORAGE_KEY) loadOrders();
+    };
+
+    loadOrders();
+    window.addEventListener(BUYER_ORDERS_EVENT_NAME, handleOrderUpdate);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(BUYER_ORDERS_EVENT_NAME, handleOrderUpdate);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
   // Load stack from localStorage
   useEffect(() => {
     let frameId: number | null = null;
     try {
       const saved = localStorage.getItem("saas_mrkt_buyer_stack");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          frameId = window.requestAnimationFrame(() => setStackItems(parsed));
+      if (saved !== null) {
+        const parsed: unknown = JSON.parse(saved);
+        if (!Array.isArray(parsed)) {
+          throw new TypeError("Saved tech stack is not in the expected format.");
         }
+        const validItems = parsed.filter(isStackItem);
+        frameId = window.requestAnimationFrame(() => setStackItems(validItems));
       }
-    } catch {}
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Saved tech stack could not be loaded.";
+      frameId = window.requestAnimationFrame(() => setToastNotice(message));
+    }
     return () => {
       if (frameId !== null) window.cancelAnimationFrame(frameId);
     };
@@ -154,20 +282,31 @@ export default function DashboardClient() {
     e.preventDefault();
     if (!newStackName.trim()) return;
 
+    const seats = Number.parseInt(newStackSeats, 10);
+    const monthlyCostPerSeat = Number.parseFloat(newStackCost);
+    if (!Number.isFinite(seats) || seats < 1 || !Number.isFinite(monthlyCostPerSeat) || monthlyCostPerSeat < 0) {
+      showToast("Enter a valid seat count and a non-negative monthly seat cost.");
+      return;
+    }
+
     const newItem: StackItem = {
       id: `s-${Date.now()}`,
       name: newStackName.trim(),
       category: newStackCategory,
-      seats: parseInt(newStackSeats, 10) || 5,
-      monthlyCostPerSeat: parseFloat(newStackCost) || 15,
+      seats,
+      monthlyCostPerSeat,
       billing: "Monthly",
     };
 
     const updated = [newItem, ...stackItems];
-    setStackItems(updated);
     try {
       localStorage.setItem("saas_mrkt_buyer_stack", JSON.stringify(updated));
-    } catch {}
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "The tech stack could not be saved.";
+      showToast(`Unable to add the software: ${message}`);
+      return;
+    }
+    setStackItems(updated);
 
     setIsAddStackModalOpen(false);
     setNewStackName("");
@@ -178,11 +317,20 @@ export default function DashboardClient() {
 
   const handleDeleteStackItem = (id: string, name: string) => {
     const updated = stackItems.filter((i) => i.id !== id);
-    setStackItems(updated);
     try {
       localStorage.setItem("saas_mrkt_buyer_stack", JSON.stringify(updated));
-    } catch {}
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "The tech stack could not be saved.";
+      showToast(`Unable to remove the software: ${message}`);
+      return;
+    }
+    setStackItems(updated);
     showToast(`Removed "${name}" from stack.`);
+  };
+
+  const handleExportDossier = (dossier: DossierSummary) => {
+    downloadDossierPdf(dossier);
+    showToast(`Downloaded the Due Diligence Audit PDF for ${dossier.name}.`);
   };
 
   // Compute wishlisted products
@@ -197,7 +345,7 @@ export default function DashboardClient() {
 
   if (!isInitialized) {
     return (
-      <PageLayout activeNav="buyers" noContainer>
+      <PageLayout activeNav="dashboard" noContainer>
         <div className="container" style={{ paddingTop: "6rem", paddingBottom: "8rem", textAlign: "center" }}>
           <p style={{ color: "#64748B", fontSize: "0.95rem" }}>Loading Buyer Executive Dashboard...</p>
         </div>
@@ -208,7 +356,7 @@ export default function DashboardClient() {
   // Auth gate if guest
   if (!user) {
     return (
-      <PageLayout activeNav="buyers" noContainer>
+      <PageLayout activeNav="dashboard" noContainer>
         <div className="container" style={{ paddingTop: "5rem", paddingBottom: "7rem", textAlign: "center" }}>
           <div
             style={{
@@ -278,7 +426,7 @@ export default function DashboardClient() {
   const buyerCompany = user.company || "Acme Cloud Ventures";
 
   return (
-    <PageLayout activeNav="buyers" noContainer>
+    <PageLayout activeNav="dashboard" noContainer>
       {/* Toast Notice */}
       {toastNotice && (
         <div
@@ -414,6 +562,14 @@ export default function DashboardClient() {
               </div>
 
               <div style={{ background: "#F8FAFC", padding: "1.1rem 1.25rem", borderRadius: "14px", border: "1px solid #E2E8F0" }}>
+                <span style={{ fontSize: "0.8rem", color: "#64748B", fontWeight: 600 }}>Completed Purchases</span>
+                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#7C3AED", marginTop: "0.2rem" }}>
+                  {orders.length}
+                </div>
+                <span style={{ fontSize: "0.75rem", color: "#64748B" }}>Active licenses and order records</span>
+              </div>
+
+              <div style={{ background: "#F8FAFC", padding: "1.1rem 1.25rem", borderRadius: "14px", border: "1px solid #E2E8F0" }}>
                 <span style={{ fontSize: "0.8rem", color: "#64748B", fontWeight: 600 }}>Active Purchase Quotes</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#059669", marginTop: "0.2rem" }}>
                   {inquiries.length}
@@ -450,6 +606,8 @@ export default function DashboardClient() {
               borderRadius: "14px",
               marginBottom: "2rem",
               width: "fit-content",
+              maxWidth: "100%",
+              flexWrap: "wrap",
             }}
           >
             <button
@@ -475,6 +633,33 @@ export default function DashboardClient() {
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
               Saved Wishlist ({savedProducts.length})
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("orders")}
+              style={{
+                border: "none",
+                background: activeTab === "orders" ? "#FFFFFF" : "transparent",
+                color: activeTab === "orders" ? "#5E4BEE" : "#475569",
+                fontWeight: 700,
+                fontSize: "0.88rem",
+                padding: "0.6rem 1.25rem",
+                borderRadius: "10px",
+                cursor: "pointer",
+                boxShadow: activeTab === "orders" ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.45rem",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M6 2h12l2 5H4l2-5Z" />
+                <path d="M4 7v13h16V7" />
+                <path d="M9 11h6" />
+              </svg>
+              Orders &amp; Purchases ({orders.length})
             </button>
 
             <button
@@ -579,7 +764,7 @@ export default function DashboardClient() {
                 </div>
                 {savedProducts.length > 1 && (
                   <Link
-                    href={`/compare?item1=${savedProducts[0]?.id}&item2=${savedProducts[1]?.id}`}
+                    href={`/compare?tool1=${savedProducts[0]?.slug || savedProducts[0]?.id}&tool2=${savedProducts[1]?.slug || savedProducts[1]?.id}`}
                     className="btn-secondary"
                     style={{ textDecoration: "none", fontSize: "0.85rem" }}
                   >
@@ -768,7 +953,86 @@ export default function DashboardClient() {
             </div>
           )}
 
-          {/* TAB 2: INQUIRIES & ACTIVE QUOTES */}
+          {/* TAB 2: ORDERS & PURCHASES */}
+          {activeTab === "orders" && (
+            <div id="orders">
+              <div style={{ marginBottom: "1.25rem" }}>
+                <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
+                  Orders &amp; Software Purchases
+                </h2>
+                <p style={{ color: "#64748B", fontSize: "0.85rem", marginTop: "0.2rem" }}>
+                  Review completed marketplace orders, active license keys, and seller details.
+                </p>
+              </div>
+
+              {orders.length === 0 ? (
+                <div style={{ background: "#FFFFFF", borderRadius: "18px", padding: "4rem 2rem", textAlign: "center", border: "1px dashed #CBD5E1" }}>
+                  <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0F172A", marginBottom: "0.4rem" }}>
+                    No Completed Orders Yet
+                  </h3>
+                  <p style={{ color: "#64748B", fontSize: "0.9rem", maxWidth: "440px", margin: "0 auto 1.5rem" }}>
+                    Purchases completed through a product checkout will appear here with their order and license details.
+                  </p>
+                  <Link href="/products" className="btn-primary" style={{ textDecoration: "none", display: "inline-flex" }}>
+                    Browse Marketplace Products
+                  </Link>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  {orders.map((order) => (
+                    <article key={order.id} style={{ background: "#FFFFFF", borderRadius: "18px", border: "1px solid #E2E8F0", padding: "1.5rem 1.75rem", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", flexWrap: "wrap" }}>
+                            <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>{order.productName}</h3>
+                            <span style={{ background: "#ECFDF5", color: "#047857", fontSize: "0.75rem", fontWeight: 700, padding: "0.2rem 0.65rem", borderRadius: "999px" }}>
+                              {order.status}
+                            </span>
+                          </div>
+                          <span style={{ color: "#64748B", fontSize: "0.8rem" }}>{order.category}</span>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <strong style={{ display: "block", color: "#0F172A", fontSize: "0.9rem" }}>{order.id}</strong>
+                          <span style={{ color: "#64748B", fontSize: "0.78rem" }}>
+                            {new Date(order.purchasedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "0.75rem", padding: "1rem", background: "#F8FAFC", borderRadius: "12px", marginBottom: "1rem" }}>
+                        <div>
+                          <span style={{ display: "block", color: "#64748B", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>Amount Paid</span>
+                          <strong style={{ color: "#059669" }}>${order.price.toLocaleString()} / {order.period}</strong>
+                        </div>
+                        <div>
+                          <span style={{ display: "block", color: "#64748B", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>Payment</span>
+                          <strong style={{ color: "#0F172A" }}>
+                            {order.paymentMethod === "card" ? "Credit / Debit Card" : order.paymentMethod === "paypal" ? "PayPal" : "Digital Wallet"}
+                          </strong>
+                        </div>
+                        <div>
+                          <span style={{ display: "block", color: "#64748B", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>Seller</span>
+                          <strong style={{ color: "#0F172A" }}>{order.sellerName}</strong>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+                        <div>
+                          <span style={{ color: "#64748B", fontSize: "0.75rem", fontWeight: 700 }}>LICENSE KEY</span>
+                          <code style={{ display: "block", color: "#4F46E5", fontSize: "0.85rem", marginTop: "0.2rem" }}>{order.licenseKey}</code>
+                        </div>
+                        <Link href={`/products/${order.productId}`} className="btn-secondary" style={{ textDecoration: "none", fontSize: "0.82rem", padding: "0.5rem 0.9rem" }}>
+                          View Product
+                        </Link>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: INQUIRIES & ACTIVE QUOTES */}
           {activeTab === "inquiries" && (
             <div>
               <div style={{ marginBottom: "1.25rem" }}>
@@ -888,7 +1152,7 @@ export default function DashboardClient() {
             </div>
           )}
 
-          {/* TAB 3: UNLOCKED DOSSIERS */}
+          {/* TAB 4: UNLOCKED DOSSIERS */}
           {activeTab === "dossiers" && (
             <div>
               <div style={{ marginBottom: "1.25rem" }}>
@@ -994,7 +1258,7 @@ export default function DashboardClient() {
                       </Link>
                       <button
                         type="button"
-                        onClick={() => showToast(`Generating Due Diligence Audit PDF for ${dos.name}... Download started!`)}
+                        onClick={() => handleExportDossier(dos)}
                         className="btn-secondary"
                         style={{ fontSize: "0.82rem", padding: "0.55rem", justifyContent: "center" }}
                       >
@@ -1007,7 +1271,7 @@ export default function DashboardClient() {
             </div>
           )}
 
-          {/* TAB 4: MY TECH STACK & SPEND */}
+          {/* TAB 5: MY TECH STACK & SPEND */}
           {activeTab === "stack" && (
             <div>
               <div
@@ -1249,6 +1513,7 @@ export default function DashboardClient() {
                   <input
                     type="number"
                     min="1"
+                    required
                     value={newStackSeats}
                     onChange={(e) => setNewStackSeats(e.target.value)}
                     style={{
@@ -1269,6 +1534,7 @@ export default function DashboardClient() {
                     type="number"
                     min="0"
                     step="0.5"
+                    required
                     value={newStackCost}
                     onChange={(e) => setNewStackCost(e.target.value)}
                     style={{

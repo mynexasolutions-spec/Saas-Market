@@ -5,6 +5,8 @@ import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { ProductItem } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
+import { BuyerOrder, saveBuyerOrder } from "@/utils/buyerOrders";
+import { createCheckoutInquiry, upsertVendorInquiry } from "@/utils/vendorInquiries";
 
 interface BuyProductClientProps {
   product: ProductItem;
@@ -19,6 +21,8 @@ export default function BuyProductClient({ product }: BuyProductClientProps) {
   const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal" | "applepay">("card");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [completedOrder, setCompletedOrder] = useState<BuyerOrder | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: user?.name || "Alex Morgan",
     email: user?.email || "alex.morgan@company.com",
@@ -42,17 +46,47 @@ export default function BuyProductClient({ product }: BuyProductClientProps) {
 
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
+    setCheckoutError(null);
     setIsProcessing(true);
     setTimeout(() => {
-      setIsProcessing(false);
-      setIsSuccess(true);
+      try {
+        const purchaseTimestamp = Date.now();
+        const order: BuyerOrder = {
+          id: `ORD-${purchaseTimestamp}-${productCode % 1000}`,
+          productId: product.id,
+          productName: product.name,
+          category: product.category,
+          price: priceVal,
+          period: product.period || "mo",
+          paymentMethod,
+          status: "Active",
+          purchasedAt: new Date(purchaseTimestamp).toISOString(),
+          buyerName: formData.fullName.trim(),
+          buyerEmail: formData.email.trim(),
+          licenseKey,
+          sellerName,
+        };
+        saveBuyerOrder(order);
+        try {
+          upsertVendorInquiry(createCheckoutInquiry(order, formData.company));
+        } catch {
+          // Ignore
+        }
+        setCompletedOrder(order);
+        setIsSuccess(true);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "The order could not be saved.";
+        setCheckoutError(`Purchase could not be completed: ${message}`);
+      } finally {
+        setIsProcessing(false);
+      }
     }, 1200);
   };
 
   const priceVal = product.price ?? 19;
   const sellerName = product.sellerName || "Elena Rostova";
   const productCode = getStableProductCode(product.id);
-  const orderNumber = `ORD-${String(100000 + (productCode % 900000))}`;
+  const orderNumber = completedOrder?.id || `ORD-${String(100000 + (productCode % 900000))}`;
   const licenseKey = `SMRKT-${product.name.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4)}-${productCode.toString(36).slice(0, 6).padStart(6, "0").toUpperCase()}`;
   const handleDownloadZip = () => {
     const packageInfo = `=====================================================
@@ -74,11 +108,11 @@ INCLUDED ASSETS & QUICK START:
 
 For questions or assistance, contact support@saas-mrkt.dev.
 `;
-    const blob = new Blob([packageInfo], { type: "application/zip" });
+    const blob = new Blob([packageInfo], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${product.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-source-bundle.zip`;
+    link.download = `${product.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-license-package.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -144,6 +178,9 @@ For questions or assistance, contact support@saas-mrkt.dev.
               </div>
 
               <div className="checkout-success-actions">
+                <Link href="/dashboard#orders" className="checkout-btn-back">
+                  View Buyer Orders
+                </Link>
                 <Link href={`/products/${product.id}`} className="checkout-btn-back">
                   Back to {product.name}
                 </Link>
@@ -157,7 +194,7 @@ For questions or assistance, contact support@saas-mrkt.dev.
                     <polyline points="7 10 12 15 17 10" />
                     <line x1="12" y1="15" x2="12" y2="3" />
                   </svg>
-                  Download Zip File
+                  Download License File
                 </button>
               </div>
             </div>
@@ -352,6 +389,11 @@ For questions or assistance, contact support@saas-mrkt.dev.
                         </>
                       )}
                     </button>
+                    {checkoutError && (
+                      <p role="alert" style={{ margin: "0.75rem 0 0", color: "#B91C1C", fontSize: "0.875rem", fontWeight: 600 }}>
+                        {checkoutError}
+                      </p>
+                    )}
                   </form>
                 </div>
               </div>

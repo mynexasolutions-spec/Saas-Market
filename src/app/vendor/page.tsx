@@ -5,27 +5,19 @@ import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/context/AuthContext";
 import {
+  isVendorSaaSListing,
   normalizeMarketplaceCategory,
   VendorSaaSListing,
   VENDOR_PRODUCTS_EVENT_KEY,
   VENDOR_PRODUCTS_STORAGE_KEY,
 } from "@/utils/vendorProducts";
-
-interface PurchaseInquiry {
-  id: string;
-  buyerName: string;
-  buyerEmail: string;
-  buyerPhone: string;
-  buyerWhatsapp: string;
-  companyName: string;
-  softwareName: string;
-  purchaseType: "Direct Purchase" | "Enterprise License" | "Custom Quote" | "Volume Discount";
-  teamSize: string;
-  budgetOffer: string;
-  inquiryDate: string;
-  message: string;
-  status: "New Request" | "Contacted" | "Quote Sent" | "Purchased";
-}
+import {
+  getStoredVendorInquiries,
+  PurchaseInquiry,
+  saveVendorInquiries,
+  VENDOR_INQUIRIES_EVENT_KEY,
+  VENDOR_INQUIRIES_STORAGE_KEY,
+} from "@/utils/vendorInquiries";
 
 const DEFAULT_VENDOR_LISTINGS: VendorSaaSListing[] = [
   {
@@ -84,6 +76,84 @@ const DEFAULT_VENDOR_LISTINGS: VendorSaaSListing[] = [
   },
 ];
 
+const DEFAULT_PURCHASE_INQUIRIES: PurchaseInquiry[] = [
+  {
+    id: "inq-101",
+    buyerName: "Sarah Jenkins",
+    buyerEmail: "sarah.j@finscale.ai",
+    buyerPhone: "+1 (415) 890-2341",
+    buyerWhatsapp: "14158902341",
+    companyName: "FinScale AI",
+    softwareName: "GrowthFlow AI",
+    purchaseType: "Enterprise License",
+    teamSize: "75 seats",
+    budgetOffer: "$7,500 / year",
+    inquiryDate: "Oct 11, 2026",
+    message: "We need 75 enterprise seats for our product marketing team. Ready to purchase via corporate invoice or ACH transfer once SSO details are confirmed.",
+    status: "New Request",
+  },
+  {
+    id: "inq-102",
+    buyerName: "David Vance",
+    buyerEmail: "dvance@cloudcore.io",
+    buyerPhone: "+1 (206) 555-8910",
+    buyerWhatsapp: "12065558910",
+    companyName: "CloudCore Systems",
+    softwareName: "DevEdge Edge Cloud",
+    purchaseType: "Direct Purchase",
+    teamSize: "30 developers",
+    budgetOffer: "$3,600 / year",
+    inquiryDate: "Oct 10, 2026",
+    message: "Looking to purchase 30 developer licenses immediately. Please send direct payment link and procurement order confirmation.",
+    status: "Contacted",
+  },
+  {
+    id: "inq-103",
+    buyerName: "Elena Rostova",
+    buyerEmail: "e.rostova@acuityhealth.org",
+    buyerPhone: "+1 (617) 442-9901",
+    buyerWhatsapp: "16174429901",
+    companyName: "Acuity Healthtech",
+    softwareName: "CloudSentinel AI",
+    purchaseType: "Custom Quote",
+    teamSize: "200+ employees",
+    budgetOffer: "$14,400 / year",
+    inquiryDate: "Oct 09, 2026",
+    message: "Evaluating for hospital-wide cybersecurity compliance. Need HIPAA business associate agreement and multi-year volume pricing discount.",
+    status: "Quote Sent",
+  },
+  {
+    id: "inq-104",
+    buyerName: "Marcus Vance",
+    buyerEmail: "marcus@vanceretail.com",
+    buyerPhone: "+1 (312) 771-4820",
+    buyerWhatsapp: "13127714820",
+    companyName: "Vance Retail Labs",
+    softwareName: "GrowthFlow AI",
+    purchaseType: "Direct Purchase",
+    teamSize: "15 seats",
+    budgetOffer: "$1,800 / year",
+    inquiryDate: "Oct 07, 2026",
+    message: "Confirmed purchase order approved by our CFO. Awaiting license key activation and onboarding setup documentation.",
+    status: "Purchased",
+  },
+  {
+    id: "inq-105",
+    buyerName: "Amanda Brooks",
+    buyerEmail: "abrooks@starlightfin.com",
+    buyerPhone: "+1 (212) 330-9411",
+    buyerWhatsapp: "12123309411",
+    companyName: "Starlight Financial",
+    softwareName: "DataPulse 2.0 Engine",
+    purchaseType: "Volume Discount",
+    teamSize: "50 seats",
+    budgetOffer: "$6,000 / year",
+    inquiryDate: "Oct 05, 2026",
+    message: "We want to purchase DataPulse 2.0 for our quantitative trading research team. Can you provide a vendor W-9 and direct ACH payment details?",
+    status: "Contacted",
+  },
+];
+
 interface CompanyDocument {
   id: string;
   title: string;
@@ -93,6 +163,121 @@ interface CompanyDocument {
   uploadedDate: string;
   status: "Verified" | "In Review" | "Action Required";
   verifiedBy: string;
+  dataUrl?: string;
+  mimeType?: string;
+}
+
+function writeVendorListingsToStorage(products: VendorSaaSListing[]): boolean {
+  try {
+    localStorage.setItem(VENDOR_PRODUCTS_STORAGE_KEY, JSON.stringify(products));
+    window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: products }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+interface PendingDocumentFile {
+  name: string;
+  size: number;
+  type: string;
+  dataUrl: string;
+}
+
+const VENDOR_DOCUMENTS_STORAGE_KEY = "saas_mrkt_vendor_documents";
+const MAX_DOCUMENT_BYTES = 1024 * 1024;
+
+function formatListedDate(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(date);
+}
+
+function isCompanyDocument(value: unknown): value is CompanyDocument {
+  if (typeof value !== "object" || value === null) return false;
+  const document = value as Partial<CompanyDocument>;
+  return (
+    typeof document.id === "string" &&
+    typeof document.title === "string" &&
+    typeof document.category === "string" &&
+    typeof document.fileName === "string" &&
+    typeof document.fileSize === "string" &&
+    typeof document.uploadedDate === "string" &&
+    typeof document.status === "string" &&
+    typeof document.verifiedBy === "string" &&
+    (document.dataUrl === undefined || typeof document.dataUrl === "string") &&
+    (document.mimeType === undefined || typeof document.mimeType === "string")
+  );
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function escapeCsvCell(value: string): string {
+  return `"${value.replace(/"/g, '""')}"`;
+}
+
+function escapePdfText(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+
+function createDocumentSummaryPdf(document: CompanyDocument): Blob {
+  const lines = [
+    "SaaS MRKT - Vendor Document",
+    document.title,
+    `Category: ${document.category}`,
+    `File: ${document.fileName}`,
+    `Status: ${document.status}`,
+    `Uploaded: ${document.uploadedDate}`,
+    `Verified by: ${document.verifiedBy}`,
+  ];
+  const stream = lines
+    .map((line, index) => `BT /F1 ${index < 2 ? 18 : 12} Tf 72 ${750 - index * 42} Td (${escapePdfText(line)}) Tj ET`)
+    .join("\n");
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((object, index) => {
+    offsets.push(pdf.length);
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xrefOffset = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  pdf += offsets.slice(1).map((offset) => `${offset.toString().padStart(10, "0")} 00000 n \n`).join("");
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+  return new Blob([pdf], { type: "application/pdf" });
+}
+
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [metadata, encodedData] = dataUrl.split(",", 2);
+  if (!metadata || !encodedData) throw new Error("The saved document is invalid.");
+  const mimeType = metadata.match(/^data:([^;]+)/)?.[1] || "application/octet-stream";
+  const binary = atob(encodedData);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return new Blob([bytes], { type: mimeType });
+}
+
+function getDocumentBlob(document: CompanyDocument): Blob {
+  return document.dataUrl ? dataUrlToBlob(document.dataUrl) : createDocumentSummaryPdf(document);
+}
+
+function triggerBlobDownload(blob: Blob, fileName: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = window.document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  window.document.body.appendChild(link);
+  link.click();
+  window.document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 interface ListingFormErrors {
@@ -133,22 +318,25 @@ export default function VendorPage() {
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
   const [docTitle, setDocTitle] = useState("");
   const [docCategory, setDocCategory] = useState<CompanyDocument["category"]>("Legal & Incorporation");
-  const [docFileName, setDocFileName] = useState("");
+  const [docFile, setDocFile] = useState<PendingDocumentFile | null>(null);
+  const [docFileError, setDocFileError] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setToastNotice(msg);
     setTimeout(() => setToastNotice(null), 3500);
   };
 
+  const closeDocumentModal = () => {
+    setIsDocModalOpen(false);
+    setDocTitle("");
+    setDocFile(null);
+    setDocFileError(null);
+  };
+
   const persistVendorProducts = (products: VendorSaaSListing[]): boolean => {
-    try {
-      localStorage.setItem(VENDOR_PRODUCTS_STORAGE_KEY, JSON.stringify(products));
-      window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: products }));
-      return true;
-    } catch {
-      showToast("We could not save that change. Free browser storage and try again.");
-      return false;
-    }
+    if (writeVendorListingsToStorage(products)) return true;
+    showToast("We could not save that change. Free browser storage and try again.");
+    return false;
   };
 
   const resetListingForm = () => {
@@ -198,13 +386,20 @@ export default function VendorPage() {
     const loadSavedListings = () => {
       try {
         const saved = localStorage.getItem(VENDOR_PRODUCTS_STORAGE_KEY);
-        if (saved !== null) {
-          const parsed: unknown = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            frameId = window.requestAnimationFrame(() => setVendorProducts(parsed as VendorSaaSListing[]));
+        if (saved === null) {
+          if (!writeVendorListingsToStorage(DEFAULT_VENDOR_LISTINGS)) {
+            showToast("Your starter listings could not be published to the marketplace.");
           }
+          return;
         }
-      } catch {}
+        const parsed: unknown = JSON.parse(saved);
+        if (!Array.isArray(parsed)) throw new Error("Saved listings must be an array.");
+        const validListings = parsed.filter(isVendorSaaSListing);
+        if (validListings.length !== parsed.length) showToast("Some invalid saved listings were ignored.");
+        frameId = window.requestAnimationFrame(() => setVendorProducts(validListings));
+      } catch {
+        showToast("Saved listings could not be loaded. Your current catalog is still available.");
+      }
     };
     const handleStorage = (event: StorageEvent) => {
       if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) loadSavedListings();
@@ -268,7 +463,8 @@ export default function VendorPage() {
       status: existingListing?.status || "Under Review",
       inquiriesCount: existingListing?.inquiriesCount || 0,
       viewsCount: existingListing?.viewsCount || 0,
-      listedDate: existingListing?.listedDate || "Just now",
+      listedDate: existingListing?.listedDate || formatListedDate(),
+      sellerName: existingListing?.sellerName || (user?.name || "David Miller").replace(/\s*\(NexaSaaS\)/gi, "").trim(),
       deleted: false,
     };
 
@@ -285,6 +481,15 @@ export default function VendorPage() {
   };
 
   const handleToggleListingStatus = (id: string) => {
+    const currentListing = vendorProducts.find((listing) => listing.id === id);
+    if (!currentListing) {
+      showToast("That listing could not be found.");
+      return;
+    }
+    if (currentListing.status === "Under Review") {
+      showToast(`"${currentListing.name}" is still awaiting marketplace review.`);
+      return;
+    }
     const updated = vendorProducts.map((p) => {
       if (p.id === id) {
         const nextStatus = p.status === "Live & Active" ? "Paused" : "Live & Active";
@@ -308,84 +513,7 @@ export default function VendorPage() {
     showToast(`"${name}" has been removed from your listings.`);
   };
 
-  // List of users who want to contact the vendor to purchase software
-  const [inquiries, setInquiries] = useState<PurchaseInquiry[]>([
-    {
-      id: "inq-101",
-      buyerName: "Sarah Jenkins",
-      buyerEmail: "sarah.j@finscale.ai",
-      buyerPhone: "+1 (415) 890-2341",
-      buyerWhatsapp: "14158902341",
-      companyName: "FinScale AI",
-      softwareName: "GrowthFlow AI",
-      purchaseType: "Enterprise License",
-      teamSize: "75 seats",
-      budgetOffer: "$7,500 / year",
-      inquiryDate: "Oct 11, 2026",
-      message: "We need 75 enterprise seats for our product marketing team. Ready to purchase via corporate invoice or ACH transfer once SSO details are confirmed.",
-      status: "New Request",
-    },
-    {
-      id: "inq-102",
-      buyerName: "David Vance",
-      buyerEmail: "dvance@cloudcore.io",
-      buyerPhone: "+1 (206) 555-8910",
-      buyerWhatsapp: "12065558910",
-      companyName: "CloudCore Systems",
-      softwareName: "DevEdge Edge Cloud",
-      purchaseType: "Direct Purchase",
-      teamSize: "30 developers",
-      budgetOffer: "$3,600 / year",
-      inquiryDate: "Oct 10, 2026",
-      message: "Looking to purchase 30 developer licenses immediately. Please send direct payment link and procurement order confirmation.",
-      status: "Contacted",
-    },
-    {
-      id: "inq-103",
-      buyerName: "Elena Rostova",
-      buyerEmail: "e.rostova@acuityhealth.org",
-      buyerPhone: "+1 (617) 442-9901",
-      buyerWhatsapp: "16174429901",
-      companyName: "Acuity Healthtech",
-      softwareName: "CloudSentinel AI",
-      purchaseType: "Custom Quote",
-      teamSize: "200+ employees",
-      budgetOffer: "$14,400 / year",
-      inquiryDate: "Oct 09, 2026",
-      message: "Evaluating for hospital-wide cybersecurity compliance. Need HIPAA business associate agreement and multi-year volume pricing discount.",
-      status: "Quote Sent",
-    },
-    {
-      id: "inq-104",
-      buyerName: "Marcus Vance",
-      buyerEmail: "marcus@vanceretail.com",
-      buyerPhone: "+1 (312) 771-4820",
-      buyerWhatsapp: "13127714820",
-      companyName: "Vance Retail Labs",
-      softwareName: "GrowthFlow AI",
-      purchaseType: "Direct Purchase",
-      teamSize: "15 seats",
-      budgetOffer: "$1,800 / year",
-      inquiryDate: "Oct 07, 2026",
-      message: "Confirmed purchase order approved by our CFO. Awaiting license key activation and onboarding setup documentation.",
-      status: "Purchased",
-    },
-    {
-      id: "inq-105",
-      buyerName: "Amanda Brooks",
-      buyerEmail: "abrooks@starlightfin.com",
-      buyerPhone: "+1 (212) 330-9411",
-      buyerWhatsapp: "12123309411",
-      companyName: "Starlight Financial",
-      softwareName: "DataPulse 2.0 Engine",
-      purchaseType: "Volume Discount",
-      teamSize: "50 seats",
-      budgetOffer: "$6,000 / year",
-      inquiryDate: "Oct 05, 2026",
-      message: "We want to purchase DataPulse 2.0 for our quantitative trading research team. Can you provide a vendor W-9 and direct ACH payment details?",
-      status: "Contacted",
-    },
-  ]);
+  const [inquiries, setInquiries] = useState<PurchaseInquiry[]>(DEFAULT_PURCHASE_INQUIRIES);
 
   // Company Documents
   const [documents, setDocuments] = useState<CompanyDocument[]>([
@@ -451,33 +579,168 @@ export default function VendorPage() {
     },
   ]);
 
+  useEffect(() => {
+    let frameId: number | null = null;
+
+    const applyStoredState = () => {
+      let storedInquiries: PurchaseInquiry[] | null = null;
+      let storedDocuments: CompanyDocument[] | null = null;
+      let loadWarning: string | null = null;
+
+      try {
+        if (localStorage.getItem(VENDOR_INQUIRIES_STORAGE_KEY) === null) {
+          saveVendorInquiries(DEFAULT_PURCHASE_INQUIRIES);
+        } else {
+          storedInquiries = getStoredVendorInquiries();
+        }
+      } catch {
+        loadWarning = "Saved purchase requests could not be loaded.";
+      }
+
+      try {
+        const documentData = localStorage.getItem(VENDOR_DOCUMENTS_STORAGE_KEY);
+        if (documentData !== null) {
+          const parsedDocuments: unknown = JSON.parse(documentData);
+          if (!Array.isArray(parsedDocuments)) throw new Error("Saved documents must be an array.");
+          storedDocuments = parsedDocuments.filter(isCompanyDocument);
+          if (storedDocuments.length !== parsedDocuments.length) loadWarning = "Some invalid company documents were ignored.";
+        }
+      } catch {
+        loadWarning = "Saved company documents could not be loaded.";
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        if (storedInquiries) setInquiries(storedInquiries);
+        if (storedDocuments) setDocuments(storedDocuments);
+        if (loadWarning) showToast(loadWarning);
+      });
+    };
+
+    const syncInquiries = () => {
+      const storedInquiries = getStoredVendorInquiries();
+      frameId = window.requestAnimationFrame(() => setInquiries(storedInquiries));
+    };
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === VENDOR_INQUIRIES_STORAGE_KEY) syncInquiries();
+      if (event.key === VENDOR_DOCUMENTS_STORAGE_KEY) applyStoredState();
+    };
+
+    applyStoredState();
+    window.addEventListener(VENDOR_INQUIRIES_EVENT_KEY, syncInquiries);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(VENDOR_INQUIRIES_EVENT_KEY, syncInquiries);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  const persistDocuments = (nextDocuments: CompanyDocument[]): boolean => {
+    try {
+      localStorage.setItem(VENDOR_DOCUMENTS_STORAGE_KEY, JSON.stringify(nextDocuments));
+      return true;
+    } catch {
+      showToast("The document could not be saved. Free browser storage or choose a smaller file.");
+      return false;
+    }
+  };
+
   const handleUpdateInquiryStatus = (id: string, status: PurchaseInquiry["status"]) => {
-    setInquiries((prev) =>
-      prev.map((inq) => (inq.id === id ? { ...inq, status } : inq))
-    );
+    const updated = inquiries.map((inquiry) => inquiry.id === id ? { ...inquiry, status } : inquiry);
+    try {
+      saveVendorInquiries(updated);
+    } catch {
+      showToast("Purchase requests could not be saved. Free browser storage and try again.");
+      return;
+    }
+    setInquiries(updated);
+    setSelectedInquiry((current) => current?.id === id ? { ...current, status } : current);
     showToast(`Purchase request updated to: "${status}".`);
+  };
+
+  const handleDocumentFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setDocFile(null);
+    setDocFileError(null);
+    if (!file) return;
+
+    const extension = file.name.split(".").pop()?.toLowerCase();
+    if (extension !== "pdf" && extension !== "doc" && extension !== "docx") {
+      setDocFileError("Choose a PDF, DOC, or DOCX document.");
+      event.target.value = "";
+      return;
+    }
+    if (file.size > MAX_DOCUMENT_BYTES) {
+      setDocFileError("Choose a document no larger than 1 MB so it can be saved securely in this browser.");
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onerror = () => setDocFileError("This document could not be read. Choose the file again.");
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        setDocFileError("This document could not be read. Choose the file again.");
+        return;
+      }
+      setDocFile({
+        name: file.name,
+        size: file.size,
+        type: file.type || "application/octet-stream",
+        dataUrl: reader.result,
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleUploadDocument = (e: React.FormEvent) => {
     e.preventDefault();
     if (!docTitle.trim()) return;
+    if (!docFile) {
+      setDocFileError("Attach a PDF, DOC, or DOCX document before submitting.");
+      return;
+    }
 
     const newDoc: CompanyDocument = {
       id: `doc-${Date.now()}`,
       title: docTitle.trim(),
       category: docCategory,
-      fileName: docFileName.trim() || `${docTitle.toLowerCase().replace(/[^a-z0-9]/g, "_")}.pdf`,
-      fileSize: "1.4 MB",
+      fileName: docFile.name,
+      fileSize: formatFileSize(docFile.size),
       uploadedDate: "Today",
       status: "In Review",
       verifiedBy: "Pending Admin Verification",
+      dataUrl: docFile.dataUrl,
+      mimeType: docFile.type,
     };
 
-    setDocuments([newDoc, ...documents]);
-    setIsDocModalOpen(false);
-    setDocTitle("");
-    setDocFileName("");
+    const updated = [newDoc, ...documents];
+    if (!persistDocuments(updated)) return;
+    setDocuments(updated);
+    closeDocumentModal();
     showToast(`"${newDoc.title}" uploaded! Sent to compliance team for review.`);
+  };
+
+  const handleViewDocument = (document: CompanyDocument) => {
+    try {
+      const url = URL.createObjectURL(getDocumentBlob(document));
+      const preview = window.open(url, "_blank");
+      if (preview) preview.opener = null;
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      showToast(`Opened "${document.fileName}" in a new tab.`);
+    } catch {
+      showToast(`"${document.fileName}" could not be opened.`);
+    }
+  };
+
+  const handleDownloadDocument = (document: CompanyDocument) => {
+    try {
+      triggerBlobDownload(getDocumentBlob(document), document.fileName);
+      showToast(`Downloading "${document.fileName}".`);
+    } catch {
+      showToast(`"${document.fileName}" could not be downloaded.`);
+    }
   };
 
   const filteredInquiries = inquiries.filter((inq) => {
@@ -499,6 +762,29 @@ export default function VendorPage() {
     return true;
   });
 
+  const handleExportContacts = () => {
+    if (filteredInquiries.length === 0) {
+      showToast("There are no buyer contacts to export for this filter.");
+      return;
+    }
+    const headers = ["Buyer", "Email", "Phone", "Company", "Software", "Purchase Type", "Team Size", "Budget", "Inquiry Date", "Status"];
+    const rows = filteredInquiries.map((inquiry) => [
+      inquiry.buyerName,
+      inquiry.buyerEmail,
+      inquiry.buyerPhone,
+      inquiry.companyName,
+      inquiry.softwareName,
+      inquiry.purchaseType,
+      inquiry.teamSize,
+      inquiry.budgetOffer,
+      inquiry.inquiryDate,
+      inquiry.status,
+    ]);
+    const csv = [headers, ...rows].map((row) => row.map(escapeCsvCell).join(",")).join("\r\n");
+    triggerBlobDownload(new Blob([csv], { type: "text/csv;charset=utf-8" }), "saas-mrkt-buyer-contacts.csv");
+    showToast(`Exported ${filteredInquiries.length} buyer contact${filteredInquiries.length === 1 ? "" : "s"}.`);
+  };
+
   const visibleVendorProducts = vendorProducts.filter((product) => !product.deleted);
   const filteredVendorListings = visibleVendorProducts.filter((prod) => {
     if (listingCategoryFilter !== "all" && normalizeMarketplaceCategory(prod.category) !== listingCategoryFilter) return false;
@@ -512,6 +798,9 @@ export default function VendorPage() {
     }
     return true;
   });
+
+  const inquiryCountForListing = (listing: VendorSaaSListing): number =>
+    inquiries.filter((inquiry) => inquiry.softwareName === listing.name).length;
 
   if (!isInitialized) {
     return (
@@ -553,6 +842,46 @@ export default function VendorPage() {
               </button>
               <Link href="/" className="btn-secondary" style={{ width: "100%", justifyContent: "center", textDecoration: "none" }}>
                 Return to Marketplace
+              </Link>
+            </div>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (user.role !== "vendor") {
+    return (
+      <PageLayout activeNav="sellers" noContainer>
+        <div className="container" style={{ paddingTop: "5rem", paddingBottom: "7rem", textAlign: "center" }}>
+          <div style={{ maxWidth: "480px", margin: "0 auto", background: "#FFFFFF", padding: "2.75rem 2rem", borderRadius: "20px", border: "1px solid #E2E8F0", boxShadow: "0 10px 30px -5px rgba(0,0,0,0.06)" }}>
+            <div style={{ width: "62px", height: "62px", borderRadius: "50%", background: "#FEF3C7", color: "#D97706", display: "inline-flex", alignItems: "center", justifyContent: "center", marginBottom: "1.25rem" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+              </svg>
+            </div>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0F172A", marginBottom: "0.5rem" }}>
+              Vendor Account Required
+            </h2>
+            <p style={{ color: "#64748B", fontSize: "0.92rem", lineHeight: 1.55, marginBottom: "1.75rem" }}>
+              You are signed in as <strong>{user.name}</strong> with a {user.role} account. SaaS listings, buyer purchase requests, and company documents are managed from vendor accounts.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => loginAsRole("vendor")}
+                style={{ width: "100%", justifyContent: "center" }}
+              >
+                Switch to Vendor Account (David Miller)
+              </button>
+              <Link
+                href={user.role === "admin" ? "/admin" : "/dashboard"}
+                className="btn-secondary"
+                style={{ width: "100%", justifyContent: "center", textDecoration: "none" }}
+              >
+                {user.role === "admin" ? "Return to Admin Console" : "Return to Buyer Dashboard"}
               </Link>
             </div>
           </div>
@@ -1034,8 +1363,14 @@ export default function VendorPage() {
                       <div style={{ display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
                         <div style={{ textAlign: "right", minWidth: "110px" }}>
                           <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0F172A" }}>
-                            ${prod.price}
-                            <span style={{ fontSize: "0.82rem", fontWeight: 500, color: "#64748B" }}>/{prod.period}</span>
+                            {prod.pricingModel === "Free" ? "Free" : (
+                              <>
+                                ${prod.price}
+                                <span style={{ fontSize: "0.82rem", fontWeight: 500, color: "#64748B" }}>
+                                  /{prod.period === "once" ? "one-time" : prod.period}
+                                </span>
+                              </>
+                            )}
                           </div>
                           <div style={{ fontSize: "0.78rem", color: "#64748B", textTransform: "uppercase", fontWeight: 600 }}>
                             {prod.pricingModel}
@@ -1044,7 +1379,7 @@ export default function VendorPage() {
 
                         <div style={{ borderLeft: "1px solid #E2E8F0", paddingLeft: "1.25rem", textAlign: "left" }}>
                           <div style={{ fontSize: "0.85rem", color: "#334155", fontWeight: 700 }}>
-                            {prod.inquiriesCount || 0} Inquiries
+                            {inquiryCountForListing(prod)} Inquiries
                           </div>
                           <div style={{ fontSize: "0.78rem", color: "#64748B" }}>
                             {(prod.viewsCount || 0).toLocaleString()} Buyer Views
@@ -1072,10 +1407,17 @@ export default function VendorPage() {
 
                           <Link
                             href={`/products/${prod.id}`}
+                            onClick={(event) => {
+                              if (prod.status !== "Live & Active") {
+                                event.preventDefault();
+                                showToast(`"${prod.name}" is ${prod.status === "Under Review" ? "still awaiting marketplace review" : "currently paused"}. The public page is available once the listing is live.`);
+                              }
+                            }}
+                            title={prod.status === "Live & Active" ? "Open the public product page" : "Public page is unavailable while the listing is not live"}
                             style={{
                               background: "#F8FAFC",
                               border: "1px solid #CBD5E1",
-                              color: "#334155",
+                              color: prod.status === "Live & Active" ? "#334155" : "#94A3B8",
                               padding: "0.5rem 0.85rem",
                               borderRadius: "8px",
                               fontSize: "0.82rem",
@@ -1093,18 +1435,19 @@ export default function VendorPage() {
                           <button
                             type="button"
                             onClick={() => handleToggleListingStatus(prod.id)}
+                            disabled={prod.status === "Under Review"}
                             style={{
                               background: "#FFFFFF",
                               border: "1px solid #CBD5E1",
-                              color: prod.status === "Live & Active" ? "#D97706" : "#059669",
+                              color: prod.status === "Under Review" ? "#94A3B8" : prod.status === "Live & Active" ? "#D97706" : "#059669",
                               padding: "0.5rem 0.75rem",
                               borderRadius: "8px",
                               fontSize: "0.82rem",
                               fontWeight: 700,
-                              cursor: "pointer",
+                              cursor: prod.status === "Under Review" ? "not-allowed" : "pointer",
                             }}
                           >
-                            {prod.status === "Live & Active" ? "Pause" : "Activate"}
+                            {prod.status === "Under Review" ? "Pending Review" : prod.status === "Live & Active" ? "Pause" : "Activate"}
                           </button>
 
                           <button
@@ -1207,7 +1550,7 @@ export default function VendorPage() {
                 <button
                   type="button"
                   className="btn-secondary"
-                  onClick={() => showToast("Exporting buyer contact list (.csv)...")}
+                  onClick={handleExportContacts}
                 >
                   Export Contact List (.csv)
                 </button>
@@ -1260,6 +1603,7 @@ export default function VendorPage() {
                               <strong style={{ fontSize: "0.95rem", color: "#0F172A" }}>{inq.buyerName}</strong>
                             </td>
                             <td>
+                              {inq.buyerWhatsapp ? (
                               <a
                                 href={`https://wa.me/${inq.buyerWhatsapp}?text=${encodeURIComponent(`Hello ${inq.buyerName}, I am contacting you from SaaS MRKT regarding your purchase inquiry for ${inq.softwareName}.`)}`}
                                 target="_blank"
@@ -1284,6 +1628,9 @@ export default function VendorPage() {
                                 </svg>
                                 {inq.buyerPhone}
                               </a>
+                              ) : (
+                                <span style={{ fontSize: "0.85rem", color: "#64748B" }}>{inq.buyerPhone}</span>
+                              )}
                             </td>
                             <td>
                               <div style={{ display: "flex", flexDirection: "column" }}>
@@ -1331,6 +1678,7 @@ export default function VendorPage() {
                                 >
                                   View Details
                                 </button>
+                                {inq.buyerWhatsapp && (
                                 <a
                                   href={`https://wa.me/${inq.buyerWhatsapp}?text=${encodeURIComponent(
                                     `Hello ${inq.buyerName}, I'm reaching out from SaaS MRKT regarding your purchase inquiry for ${inq.softwareName} (${inq.purchaseType}). Are you ready to proceed?`
@@ -1353,6 +1701,7 @@ export default function VendorPage() {
                                   </svg>
                                   WhatsApp
                                 </a>
+                                )}
                               </div>
                             </td>
                           </tr>
@@ -1476,14 +1825,14 @@ export default function VendorPage() {
                               <button
                                 type="button"
                                 className="vendor-btn-small"
-                                onClick={() => showToast(`Opening preview of "${doc.fileName}"...`)}
+                                onClick={() => handleViewDocument(doc)}
                               >
                                 View
                               </button>
                               <button
                                 type="button"
                                 className="vendor-btn-small primary"
-                                onClick={() => showToast(`Downloading "${doc.fileName}"...`)}
+                                onClick={() => handleDownloadDocument(doc)}
                               >
                                 Download
                               </button>
@@ -1536,7 +1885,13 @@ export default function VendorPage() {
               >
                 <div>
                   <span style={{ color: "#64748B", display: "block" }}>Target Software:</span>
-                  <strong style={{ color: "#0F172A", fontSize: "1rem" }}>{selectedInquiry.softwareName}</strong>
+                  {selectedInquiry.productId ? (
+                    <Link href={`/products/${selectedInquiry.productId}`} style={{ color: "#4F46E5", fontSize: "1rem", fontWeight: 700, textDecoration: "none" }}>
+                      {selectedInquiry.softwareName} ↗
+                    </Link>
+                  ) : (
+                    <strong style={{ color: "#0F172A", fontSize: "1rem" }}>{selectedInquiry.softwareName}</strong>
+                  )}
                 </div>
                 <div>
                   <span style={{ color: "#64748B", display: "block" }}>Purchase Type:</span>
@@ -1544,6 +1899,7 @@ export default function VendorPage() {
                 </div>
                 <div>
                   <span style={{ color: "#64748B", display: "block" }}>WhatsApp Number:</span>
+                  {selectedInquiry.buyerWhatsapp ? (
                   <a
                     href={`https://wa.me/${selectedInquiry.buyerWhatsapp}?text=${encodeURIComponent(
                       `Hello ${selectedInquiry.buyerName}, reaching out regarding your purchase inquiry for ${selectedInquiry.softwareName} on SaaS MRKT.`
@@ -1564,6 +1920,9 @@ export default function VendorPage() {
                     </svg>
                     {selectedInquiry.buyerPhone} (Direct WhatsApp)
                   </a>
+                  ) : (
+                    <span style={{ color: "#0F172A", fontWeight: 600 }}>{selectedInquiry.buyerPhone}</span>
+                  )}
                 </div>
                 <div>
                   <span style={{ color: "#64748B", display: "block" }}>Buyer Email:</span>
@@ -1621,6 +1980,7 @@ export default function VendorPage() {
             </div>
 
             <div style={{ display: "flex", gap: "0.75rem" }}>
+              {selectedInquiry.buyerWhatsapp && (
               <a
                 href={`https://wa.me/${selectedInquiry.buyerWhatsapp}?text=${encodeURIComponent(
                   `Hello ${selectedInquiry.buyerName}, I'm reaching out from SaaS MRKT regarding your purchase inquiry for ${selectedInquiry.softwareName} (${selectedInquiry.purchaseType}). Let's discuss your deployment and license activation!`
@@ -1648,6 +2008,7 @@ export default function VendorPage() {
                 </svg>
                 <span>Chat with Buyer on WhatsApp</span>
               </a>
+              )}
               <button
                 type="button"
                 className="btn-secondary"
@@ -1664,7 +2025,7 @@ export default function VendorPage() {
           MODAL: UPLOAD COMPANY DOCUMENT
          ========================================================================= */}
       {isDocModalOpen && (
-        <div className="modal-backdrop" onClick={() => setIsDocModalOpen(false)}>
+        <div className="modal-backdrop" onClick={closeDocumentModal}>
           <div className="modal-container vendor-modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="vendor-modal-header">
               <div>
@@ -1674,7 +2035,7 @@ export default function VendorPage() {
               <button
                 type="button"
                 className="modal-close-btn"
-                onClick={() => setIsDocModalOpen(false)}
+                onClick={closeDocumentModal}
               >
                 ✕
               </button>
@@ -1707,18 +2068,8 @@ export default function VendorPage() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="doc-file-input">PDF File Name</label>
-                <input
-                  id="doc-file-input"
-                  type="text"
-                  placeholder="e.g. iso_27001_certificate_2026.pdf"
-                  value={docFileName}
-                  onChange={(e) => setDocFileName(e.target.value)}
-                />
-              </div>
-
-              <div
+              <label
+                htmlFor="doc-file-input"
                 style={{
                   border: "2px dashed #CBD5E1",
                   borderRadius: "12px",
@@ -1727,16 +2078,31 @@ export default function VendorPage() {
                   background: "#F8FAFC",
                   color: "#64748B",
                   fontSize: "0.85rem",
+                  cursor: "pointer",
                 }}
               >
+                <input
+                  id="doc-file-input"
+                  type="file"
+                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  onChange={handleDocumentFileChange}
+                  style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", opacity: 0 }}
+                />
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ margin: "0 auto 0.5rem" }}>
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
                 </svg>
-                <strong style={{ display: "block", color: "#334155" }}>Click or drag PDF document to attach</strong>
-                <span>Supports PDF, DOCX up to 25 MB</span>
-              </div>
+                <strong style={{ display: "block", color: "#334155" }}>
+                  {docFile ? docFile.name : "Click to attach a company document"}
+                </strong>
+                <span>{docFile ? formatFileSize(docFile.size) : "Supports PDF, DOC, and DOCX up to 1 MB"}</span>
+              </label>
+              {docFileError && (
+                <p role="alert" style={{ margin: "-0.4rem 0 0", color: "#DC2626", fontSize: "0.82rem", fontWeight: 600 }}>
+                  {docFileError}
+                </p>
+              )}
 
               <div className="vendor-modal-actions">
                 <button type="submit" className="btn-primary" style={{ width: "100%" }}>
@@ -1746,7 +2112,7 @@ export default function VendorPage() {
                   type="button"
                   className="btn-secondary"
                   style={{ width: "100%" }}
-                  onClick={() => setIsDocModalOpen(false)}
+                  onClick={closeDocumentModal}
                 >
                   Cancel
                 </button>

@@ -7,95 +7,41 @@ import { useAuth } from "@/context/AuthContext";
 import { ProductItem } from "@/components/FeaturedProducts";
 import {
   getStoredVendorProducts,
-  normalizeMarketplaceCategory,
   VendorSaaSListing,
   VENDOR_PRODUCTS_EVENT_KEY,
   VENDOR_PRODUCTS_STORAGE_KEY,
 } from "@/utils/vendorProducts";
+import {
+  AdminCatalogProduct as VendorCatalogProduct,
+  AdminVendorDocument as VendorDocument,
+  AdminVendorProject as VendorProject,
+  buildHomeCatalog,
+  formatAdminDate,
+  getStoredAdminDocuments,
+  getStoredAdminProjects,
+  getStoredPlatformUsers,
+  mergeAdminProjects,
+  PlatformUser,
+  saveAdminDocuments,
+  saveAdminProjects,
+  savePlatformUsers,
+  ADMIN_DOCUMENTS_EVENT_KEY,
+  ADMIN_DOCUMENTS_STORAGE_KEY,
+  ADMIN_PROJECTS_EVENT_KEY,
+  ADMIN_PROJECTS_STORAGE_KEY,
+  PLATFORM_USERS_EVENT_KEY,
+  PLATFORM_USERS_STORAGE_KEY,
+} from "@/utils/adminStore";
+import {
+  BUYER_ORDERS_EVENT_NAME,
+  BUYER_ORDERS_STORAGE_KEY,
+  BuyerOrder,
+  getBuyerOrders,
+} from "@/utils/buyerOrders";
 
 // ============================================================================
-// Types
-// ============================================================================
-interface VendorDocument {
-  id: string;
-  title: string;
-  vendorName: string;
-  vendorEmail: string;
-  category: "Legal & Incorporation" | "Tax & Financial" | "Security & Compliance" | "Service Level Agreement";
-  fileName: string;
-  fileSize: string;
-  uploadedDate: string;
-  status: "Pending Approval" | "Approved & Verified" | "Rejected";
-  verifiedBy?: string;
-  verifiedDate?: string;
-}
-
-interface PlatformUser {
-  id: string;
-  name: string;
-  email: string;
-  role: "Buyer" | "Vendor" | "Admin";
-  status: "Active" | "Verified" | "Suspended";
-  joinedDate: string;
-  company?: string;
-}
-
-interface VendorProject {
-  id: string;
-  name: string;
-  vendor: string;
-  vendorEmail: string;
-  category: string;
-  price: string;
-  submittedDate: string;
-  securityScan: "Passed" | "Pending" | "Flagged";
-  status: "Pending Review" | "Approved" | "Live";
-}
-
-interface VendorCatalogProduct {
-  id: string;
-  name: string;
-  vendor: string;
-  vendorEmail: string;
-  category: string;
-  price: number;
-  period: string;
-  rating: number;
-  reviewCount: number;
-  description: string;
-  image: string;
-  brandColor: string;
-  brandLetter: string;
-  topBadge: string;
-  tags: string[];
-  features: string[];
-  uploadedDate: string;
-}
-
-function vendorListingToProject(listing: VendorSaaSListing): VendorProject {
-  const price = listing.pricingModel === "Free"
-    ? "Free"
-    : `$${listing.price}/${listing.period || "mo"}`;
-  const status: VendorProject["status"] = listing.status === "Live & Active"
-    ? "Live"
-    : listing.status === "Paused"
-      ? "Approved"
-      : "Pending Review";
-
-  return {
-    id: listing.id,
-    name: listing.name,
-    vendor: listing.sellerName || "Marketplace vendor",
-    vendorEmail: "Submitted through vendor dashboard",
-    category: normalizeMarketplaceCategory(listing.category),
-    price,
-    submittedDate: listing.listedDate || "Recently",
-    securityScan: "Passed",
-    status,
-  };
-}
-
 // Initial verified products uploaded exclusively by vendors
+// ============================================================================
 const VENDOR_UPLOADED_PRODUCTS: VendorCatalogProduct[] = [
   {
     id: "prod-manage360",
@@ -329,182 +275,285 @@ const VENDOR_UPLOADED_PRODUCTS: VendorCatalogProduct[] = [
   },
 ];
 
+function getPaymentMethodLabel(method: BuyerOrder["paymentMethod"]): string {
+  if (method === "paypal") return "PayPal";
+  if (method === "applepay") return "Digital Wallet";
+  return "Credit / Debit Card";
+}
+
+const DEFAULT_ADMIN_DOCUMENTS: VendorDocument[] = [
+  {
+    id: "doc-1",
+    title: "Certificate of Incorporation & Corporate Registration",
+    vendorName: "David Miller",
+    vendorEmail: "vendor@saasmrkt.com",
+    category: "Legal & Incorporation",
+    fileName: "saasmrkt_cert_of_incorporation_2026.pdf",
+    fileSize: "2.4 MB",
+    uploadedDate: "Oct 11, 2026",
+    status: "Pending Approval",
+  },
+  {
+    id: "doc-2",
+    title: "Corporate Tax ID & Form W-9 Verification",
+    vendorName: "David Miller",
+    vendorEmail: "vendor@saasmrkt.com",
+    category: "Tax & Financial",
+    fileName: "saasmrkt_tax_w9_form_2026.pdf",
+    fileSize: "1.1 MB",
+    uploadedDate: "Oct 10, 2026",
+    status: "Pending Approval",
+  },
+  {
+    id: "doc-3",
+    title: "SOC-2 Type II Compliance & Data Security Audit Report",
+    vendorName: "Marcus Vance",
+    vendorEmail: "marcus@vanceretail.com",
+    category: "Security & Compliance",
+    fileName: "soc2_type2_security_audit_report.pdf",
+    fileSize: "5.6 MB",
+    uploadedDate: "Oct 09, 2026",
+    status: "Pending Approval",
+  },
+  {
+    id: "doc-4",
+    title: "Vendor Marketplace Master SaaS Agreement",
+    vendorName: "David Miller",
+    vendorEmail: "vendor@saasmrkt.com",
+    category: "Legal & Incorporation",
+    fileName: "vendor_marketplace_master_agreement_signed.pdf",
+    fileSize: "3.8 MB",
+    uploadedDate: "Oct 01, 2026",
+    status: "Approved & Verified",
+    verifiedBy: "Admin",
+    verifiedDate: "Oct 02, 2026",
+  },
+  {
+    id: "doc-5",
+    title: "Master Enterprise SLA & 99.9% Uptime Guarantee Terms",
+    vendorName: "David Miller",
+    vendorEmail: "vendor@saasmrkt.com",
+    category: "Service Level Agreement",
+    fileName: "saasmrkt_enterprise_sla_terms.pdf",
+    fileSize: "1.8 MB",
+    uploadedDate: "Sep 28, 2026",
+    status: "Approved & Verified",
+    verifiedBy: "Admin",
+    verifiedDate: "Sep 29, 2026",
+  },
+  {
+    id: "doc-6",
+    title: "California Privacy Rights (CPRA) & GDPR Vendor Addendum",
+    vendorName: "Sarah Jenkins",
+    vendorEmail: "sarah.j@finscale.ai",
+    category: "Legal & Incorporation",
+    fileName: "finscale_gdpr_compliance_addendum.pdf",
+    fileSize: "2.1 MB",
+    uploadedDate: "Oct 08, 2026",
+    status: "Pending Approval",
+  },
+];
+
+const DEFAULT_ADMIN_PROJECTS: VendorProject[] = [
+  {
+    id: "proj-1",
+    name: "DataPulse 2.0 Engine",
+    vendor: "David Miller",
+    vendorEmail: "vendor@saasmrkt.com",
+    category: "Analytics & BI",
+    price: "$180/mo",
+    submittedDate: "Oct 11, 2026",
+    securityScan: "Passed",
+    status: "Pending Review",
+  },
+  {
+    id: "proj-2",
+    name: "OmniChat Support AI",
+    vendor: "OmniSystems Labs",
+    vendorEmail: "ops@omnisystems.io",
+    category: "Customer Support",
+    price: "$79/mo",
+    submittedDate: "Oct 10, 2026",
+    securityScan: "Passed",
+    status: "Pending Review",
+  },
+  {
+    id: "proj-3",
+    name: "Kubescape Orchestrator",
+    vendor: "KubeLabs Cloud",
+    vendorEmail: "devops@kubelabs.tech",
+    category: "DevOps & Cloud",
+    price: "$210/mo",
+    submittedDate: "Oct 09, 2026",
+    securityScan: "Pending",
+    status: "Pending Review",
+  },
+  {
+    id: "proj-4",
+    name: "GrowthFlow AI",
+    vendor: "Sarah Jenkins",
+    vendorEmail: "sarah.j@finscale.ai",
+    category: "Marketing & Growth",
+    price: "$120/mo",
+    submittedDate: "Oct 05, 2026",
+    securityScan: "Passed",
+    status: "Live",
+  },
+  {
+    id: "proj-5",
+    name: "TaskFlow Enterprise",
+    vendor: "Workflow Systems",
+    vendorEmail: "contact@workflow.co",
+    category: "Project Management",
+    price: "$95/mo",
+    submittedDate: "Oct 01, 2026",
+    securityScan: "Passed",
+    status: "Live",
+  },
+];
+
+const DEFAULT_PLATFORM_USERS: PlatformUser[] = [
+  {
+    id: "usr-1",
+    name: "Admin",
+    email: "admin@saasmrkt.com",
+    role: "Admin",
+    status: "Verified",
+    joinedDate: "Oct 2024",
+    company: "SaaS MRKT Operations",
+  },
+  {
+    id: "usr-2",
+    name: "Alex Morgan",
+    email: "alex@company.com",
+    role: "Buyer",
+    status: "Verified",
+    joinedDate: "Jan 2025",
+    company: "Acme Cloud Ventures",
+  },
+  {
+    id: "usr-3",
+    name: "David Miller",
+    email: "vendor@saasmrkt.com",
+    role: "Vendor",
+    status: "Verified",
+    joinedDate: "Feb 2025",
+    company: "SaaS MRKT Solutions",
+  },
+  {
+    id: "usr-4",
+    name: "Elena Rostova",
+    email: "e.rostova@acuityhealth.org",
+    role: "Buyer",
+    status: "Active",
+    joinedDate: "Apr 2025",
+    company: "Acuity Health Network",
+  },
+  {
+    id: "usr-5",
+    name: "Marcus Vance",
+    email: "marcus@vanceretail.com",
+    role: "Vendor",
+    status: "Active",
+    joinedDate: "May 2025",
+    company: "Vance Retail Global",
+  },
+  {
+    id: "usr-6",
+    name: "Rachel Green",
+    email: "rachel@ralphops.com",
+    role: "Buyer",
+    status: "Active",
+    joinedDate: "Jun 2025",
+    company: "RalphOps Tech",
+  },
+];
+
 // ============================================================================
 // Main Admin Page Component
 // ============================================================================
 export default function AdminPage() {
   const { user, loginAsRole, isInitialized } = useAuth();
   
-  // 4 Core Admin Tabs per specification:
+  // Core Admin Tabs:
   // 1. "documents" -> Approve Vendor Documents
   // 2. "projects"  -> Remove / Moderate Vendor Projects
   // 3. "users"     -> Remove Users and Vendors
-  // 4. "home"      -> Select Vendor-Uploaded Products to Show on Home Page
-  const [activeTab, setActiveTab] = useState<"documents" | "projects" | "users" | "home">("documents");
+  // 4. "orders"    -> Marketplace Orders Oversight
+  // 5. "home"      -> Select Vendor-Uploaded Products to Show on Home Page
+  const [activeTab, setActiveTab] = useState<"documents" | "projects" | "users" | "orders" | "home">("documents");
   const [toastNotice, setToastNotice] = useState<string | null>(null);
+  const [storedVendorListings, setStoredVendorListings] = useState<VendorSaaSListing[]>([]);
 
   // --------------------------------------------------------------------------
   // 1. Vendor Documents State (Admin approves vendor documents)
   // --------------------------------------------------------------------------
-  const [documents, setDocuments] = useState<VendorDocument[]>([
-    {
-      id: "doc-1",
-      title: "Certificate of Incorporation & Corporate Registration",
-      vendorName: "David Miller",
-      vendorEmail: "vendor@saasmrkt.com",
-      category: "Legal & Incorporation",
-      fileName: "saasmrkt_cert_of_incorporation_2026.pdf",
-      fileSize: "2.4 MB",
-      uploadedDate: "Oct 11, 2026",
-      status: "Pending Approval",
-    },
-    {
-      id: "doc-2",
-      title: "Corporate Tax ID & Form W-9 Verification",
-      vendorName: "David Miller",
-      vendorEmail: "vendor@saasmrkt.com",
-      category: "Tax & Financial",
-      fileName: "saasmrkt_tax_w9_form_2026.pdf",
-      fileSize: "1.1 MB",
-      uploadedDate: "Oct 10, 2026",
-      status: "Pending Approval",
-    },
-    {
-      id: "doc-3",
-      title: "SOC-2 Type II Compliance & Data Security Audit Report",
-      vendorName: "Marcus Vance",
-      vendorEmail: "marcus@vanceretail.com",
-      category: "Security & Compliance",
-      fileName: "soc2_type2_security_audit_report.pdf",
-      fileSize: "5.6 MB",
-      uploadedDate: "Oct 09, 2026",
-      status: "Pending Approval",
-    },
-    {
-      id: "doc-4",
-      title: "Vendor Marketplace Master SaaS Agreement",
-      vendorName: "David Miller",
-      vendorEmail: "vendor@saasmrkt.com",
-      category: "Legal & Incorporation",
-      fileName: "vendor_marketplace_master_agreement_signed.pdf",
-      fileSize: "3.8 MB",
-      uploadedDate: "Oct 01, 2026",
-      status: "Approved & Verified",
-      verifiedBy: "Admin",
-      verifiedDate: "Oct 02, 2026",
-    },
-    {
-      id: "doc-5",
-      title: "Master Enterprise SLA & 99.9% Uptime Guarantee Terms",
-      vendorName: "David Miller",
-      vendorEmail: "vendor@saasmrkt.com",
-      category: "Service Level Agreement",
-      fileName: "saasmrkt_enterprise_sla_terms.pdf",
-      fileSize: "1.8 MB",
-      uploadedDate: "Sep 28, 2026",
-      status: "Approved & Verified",
-      verifiedBy: "Admin",
-      verifiedDate: "Sep 29, 2026",
-    },
-    {
-      id: "doc-6",
-      title: "California Privacy Rights (CPRA) & GDPR Vendor Addendum",
-      vendorName: "Sarah Jenkins",
-      vendorEmail: "sarah.j@finscale.ai",
-      category: "Legal & Incorporation",
-      fileName: "finscale_gdpr_compliance_addendum.pdf",
-      fileSize: "2.1 MB",
-      uploadedDate: "Oct 08, 2026",
-      status: "Pending Approval",
-    },
-  ]);
+  const [documents, setDocuments] = useState<VendorDocument[]>(DEFAULT_ADMIN_DOCUMENTS);
 
   const [docFilter, setDocFilter] = useState<string>("all");
+
+  useEffect(() => {
+    let frameId: number | null = null;
+    const applyStoredDocuments = () => {
+      const storedDocuments = getStoredAdminDocuments();
+      frameId = window.requestAnimationFrame(() => setDocuments(storedDocuments));
+    };
+    try {
+      if (localStorage.getItem(ADMIN_DOCUMENTS_STORAGE_KEY) === null) {
+        saveAdminDocuments(DEFAULT_ADMIN_DOCUMENTS);
+      }
+    } catch {
+      // Ignore
+    }
+    applyStoredDocuments();
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === ADMIN_DOCUMENTS_STORAGE_KEY) applyStoredDocuments();
+    };
+    window.addEventListener(ADMIN_DOCUMENTS_EVENT_KEY, applyStoredDocuments);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(ADMIN_DOCUMENTS_EVENT_KEY, applyStoredDocuments);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
 
   // --------------------------------------------------------------------------
   // 2. Vendor Projects State (Admin can remove vendor project)
   // --------------------------------------------------------------------------
-  const [projects, setProjects] = useState<VendorProject[]>([
-    {
-      id: "proj-1",
-      name: "DataPulse 2.0 Engine",
-      vendor: "David Miller",
-      vendorEmail: "vendor@saasmrkt.com",
-      category: "Analytics & BI",
-      price: "$180/mo",
-      submittedDate: "Oct 11, 2026",
-      securityScan: "Passed",
-      status: "Pending Review",
-    },
-    {
-      id: "proj-2",
-      name: "OmniChat Support AI",
-      vendor: "OmniSystems Labs",
-      vendorEmail: "ops@omnisystems.io",
-      category: "Customer Support",
-      price: "$79/mo",
-      submittedDate: "Oct 10, 2026",
-      securityScan: "Passed",
-      status: "Pending Review",
-    },
-    {
-      id: "proj-3",
-      name: "Kubescape Orchestrator",
-      vendor: "KubeLabs Cloud",
-      vendorEmail: "devops@kubelabs.tech",
-      category: "DevOps & Cloud",
-      price: "$210/mo",
-      submittedDate: "Oct 09, 2026",
-      securityScan: "Pending",
-      status: "Pending Review",
-    },
-    {
-      id: "proj-4",
-      name: "GrowthFlow AI",
-      vendor: "Sarah Jenkins",
-      vendorEmail: "sarah.j@finscale.ai",
-      category: "Marketing & Growth",
-      price: "$120/mo",
-      submittedDate: "Oct 05, 2026",
-      securityScan: "Passed",
-      status: "Live",
-    },
-    {
-      id: "proj-5",
-      name: "TaskFlow Enterprise",
-      vendor: "Workflow Systems",
-      vendorEmail: "contact@workflow.co",
-      category: "Project Management",
-      price: "$95/mo",
-      submittedDate: "Oct 01, 2026",
-      securityScan: "Passed",
-      status: "Live",
-    },
-  ]);
+  const [projects, setProjects] = useState<VendorProject[]>(DEFAULT_ADMIN_PROJECTS);
 
   useEffect(() => {
     let frameId: number | null = null;
-    const refreshVendorProjects = () => {
-      const vendorProjects = getStoredVendorProducts()
-        .filter((listing) => !listing.deleted)
-        .map(vendorListingToProject);
+    const applyStoredState = () => {
+      const storedProjects = getStoredAdminProjects();
+      const storedListings = getStoredVendorProducts();
       frameId = window.requestAnimationFrame(() => {
-        setProjects((current) => [
-          ...current.filter((project) => project.id.startsWith("proj-")),
-          ...vendorProjects,
-        ]);
+        setProjects(mergeAdminProjects(storedProjects, storedListings));
+        setStoredVendorListings(storedListings);
       });
     };
+
+    try {
+      if (localStorage.getItem(ADMIN_PROJECTS_STORAGE_KEY) === null) {
+        saveAdminProjects(DEFAULT_ADMIN_PROJECTS);
+      }
+    } catch {
+      // Ignore
+    }
+
     const handleStorage = (event: StorageEvent) => {
-      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) refreshVendorProjects();
+      if (event.key === ADMIN_PROJECTS_STORAGE_KEY || event.key === VENDOR_PRODUCTS_STORAGE_KEY) applyStoredState();
     };
 
-    refreshVendorProjects();
-    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, refreshVendorProjects);
+    applyStoredState();
+    window.addEventListener(ADMIN_PROJECTS_EVENT_KEY, applyStoredState);
+    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, applyStoredState);
     window.addEventListener("storage", handleStorage);
     return () => {
       if (frameId !== null) window.cancelAnimationFrame(frameId);
-      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, refreshVendorProjects);
+      window.removeEventListener(ADMIN_PROJECTS_EVENT_KEY, applyStoredState);
+      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, applyStoredState);
       window.removeEventListener("storage", handleStorage);
     };
   }, []);
@@ -512,70 +561,79 @@ export default function AdminPage() {
   // --------------------------------------------------------------------------
   // 3. User & Vendor Directory State (Admin can remove user and vendor)
   // --------------------------------------------------------------------------
-  const [users, setUsers] = useState<PlatformUser[]>([
-    {
-      id: "usr-1",
-      name: "Admin",
-      email: "admin@saasmrkt.com",
-      role: "Admin",
-      status: "Verified",
-      joinedDate: "Oct 2024",
-      company: "SaaS MRKT Operations",
-    },
-    {
-      id: "usr-2",
-      name: "Alex Morgan",
-      email: "alex@company.com",
-      role: "Buyer",
-      status: "Verified",
-      joinedDate: "Jan 2025",
-      company: "Acme Cloud Ventures",
-    },
-    {
-      id: "usr-3",
-      name: "David Miller",
-      email: "vendor@saasmrkt.com",
-      role: "Vendor",
-      status: "Verified",
-      joinedDate: "Feb 2025",
-      company: "SaaS MRKT Solutions",
-    },
-    {
-      id: "usr-4",
-      name: "Elena Rostova",
-      email: "e.rostova@acuityhealth.org",
-      role: "Buyer",
-      status: "Active",
-      joinedDate: "Apr 2025",
-      company: "Acuity Health Network",
-    },
-    {
-      id: "usr-5",
-      name: "Marcus Vance",
-      email: "marcus@vanceretail.com",
-      role: "Vendor",
-      status: "Active",
-      joinedDate: "May 2025",
-      company: "Vance Retail Global",
-    },
-    {
-      id: "usr-6",
-      name: "Rachel Green",
-      email: "rachel@ralphops.com",
-      role: "Buyer",
-      status: "Active",
-      joinedDate: "Jun 2025",
-      company: "RalphOps Tech",
-    },
-  ]);
+  const [users, setUsers] = useState<PlatformUser[]>(DEFAULT_PLATFORM_USERS);
 
   const [searchUserQuery, setSearchUserQuery] = useState("");
   const [userRoleFilter, setUserRoleFilter] = useState<string>("all");
 
+  useEffect(() => {
+    let frameId: number | null = null;
+    const applyStoredUsers = () => {
+      const storedUsers = getStoredPlatformUsers();
+      frameId = window.requestAnimationFrame(() => setUsers(storedUsers));
+    };
+    try {
+      if (localStorage.getItem(PLATFORM_USERS_STORAGE_KEY) === null) {
+        savePlatformUsers(DEFAULT_PLATFORM_USERS);
+      }
+    } catch {
+      // Ignore
+    }
+    applyStoredUsers();
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === PLATFORM_USERS_STORAGE_KEY) applyStoredUsers();
+    };
+    window.addEventListener(PLATFORM_USERS_EVENT_KEY, applyStoredUsers);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(PLATFORM_USERS_EVENT_KEY, applyStoredUsers);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
   // --------------------------------------------------------------------------
-  // 4. Home Page Products Curation (Vendor-Uploaded Products ONLY)
+  // 4. Marketplace Orders Oversight (Buyer Orders - Read Only)
   // --------------------------------------------------------------------------
-  const [vendorProducts] = useState<VendorCatalogProduct[]>(VENDOR_UPLOADED_PRODUCTS);
+  const [orders, setOrders] = useState<BuyerOrder[]>([]);
+  const [orderSearch, setOrderSearch] = useState("");
+
+  useEffect(() => {
+    let frameId: number | null = null;
+    const loadOrders = () => {
+      try {
+        const savedOrders = getBuyerOrders();
+        frameId = window.requestAnimationFrame(() => setOrders(savedOrders));
+      } catch {
+        // Ignore
+      }
+    };
+    const handleOrderUpdate = (event: Event) => {
+      const detail = (event as CustomEvent<BuyerOrder[]>).detail;
+      if (Array.isArray(detail)) {
+        setOrders(detail);
+      } else {
+        loadOrders();
+      }
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === BUYER_ORDERS_STORAGE_KEY) loadOrders();
+    };
+
+    loadOrders();
+    window.addEventListener(BUYER_ORDERS_EVENT_NAME, handleOrderUpdate);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      window.removeEventListener(BUYER_ORDERS_EVENT_NAME, handleOrderUpdate);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  // --------------------------------------------------------------------------
+  // 5. Home Page Products Curation (Vendor-Uploaded Products ONLY)
+  // --------------------------------------------------------------------------
+  const homeCatalogProducts = buildHomeCatalog(VENDOR_UPLOADED_PRODUCTS, storedVendorListings);
   const [homeProductIds, setHomeProductIds] = useState<string[]>([
     "prod-manage360",
     "prod-taskflow",
@@ -609,10 +667,13 @@ export default function AdminPage() {
   }, []);
 
   const saveLiveHomeProducts = (updatedIds: string[]) => {
-    setHomeProductIds(updatedIds);
-    // Build list of ProductItem from vendor catalog
-    const activeProducts: ProductItem[] = vendorProducts
-      .filter((vp) => updatedIds.includes(vp.id))
+    const productById = new Map(homeCatalogProducts.map((product) => [product.id, product]));
+    const curatedIds = updatedIds.filter((id) => productById.has(id));
+    setHomeProductIds(curatedIds);
+    // Build list of ProductItem from the curated vendor catalog in showcase order
+    const activeProducts: ProductItem[] = curatedIds
+      .map((id) => productById.get(id))
+      .filter((product): product is VendorCatalogProduct => Boolean(product))
       .map((vp) => ({
         id: vp.id,
         name: vp.name,
@@ -653,36 +714,61 @@ export default function AdminPage() {
     }
   };
 
+  const persistAdminDocuments = (nextDocuments: VendorDocument[]): boolean => {
+    try {
+      saveAdminDocuments(nextDocuments);
+      return true;
+    } catch {
+      showToast("The document decision could not be saved. Free browser storage and try again.");
+      return false;
+    }
+  };
+
+  const persistAdminProjects = (nextProjects: VendorProject[]): boolean => {
+    try {
+      saveAdminProjects(nextProjects);
+      return true;
+    } catch {
+      showToast("The project change could not be saved. Free browser storage and try again.");
+      return false;
+    }
+  };
+
+  const persistPlatformUsers = (nextUsers: PlatformUser[]): boolean => {
+    try {
+      savePlatformUsers(nextUsers);
+      return true;
+    } catch {
+      showToast("The user change could not be saved. Free browser storage and try again.");
+      return false;
+    }
+  };
+
   // --------------------------------------------------------------------------
   // Handlers for 1. Vendor Document Approval
   // --------------------------------------------------------------------------
   const handleApproveDocument = (id: string, title: string) => {
-    setDocuments((prev) =>
-      prev.map((doc) =>
-        doc.id === id
-          ? {
-              ...doc,
-              status: "Approved & Verified",
-              verifiedBy: "Admin",
-              verifiedDate: "Oct 11, 2026",
-            }
-          : doc
-      )
+    const updated = documents.map((doc) =>
+      doc.id === id
+        ? {
+            ...doc,
+            status: "Approved & Verified" as const,
+            verifiedBy: "Admin",
+            verifiedDate: formatAdminDate(),
+          }
+        : doc
     );
+    if (!persistAdminDocuments(updated)) return;
+    setDocuments(updated);
     showToast(`✓ Approved vendor document: "${title}". Verified badge assigned.`);
   };
 
   const handleRejectDocument = (id: string, title: string) => {
-    setDocuments((prev) =>
-      prev.map((doc) =>
-        doc.id === id
-          ? {
-              ...doc,
-              status: "Rejected",
-            }
-          : doc
-      )
+    const updated = documents.map((doc) =>
+      doc.id === id ? { ...doc, status: "Rejected" as const } : doc
     );
+    if (!persistAdminDocuments(updated)) return;
+    setDocuments(updated);
     showToast(`Document "${title}" marked as rejected. Revision requested from vendor.`);
   };
 
@@ -690,21 +776,23 @@ export default function AdminPage() {
   // Handlers for 2. Remove Vendor Project
   // --------------------------------------------------------------------------
   const handleRemoveProject = (id: string, name: string) => {
-    if (confirm(`Are you sure you want to remove vendor project "${name}" from the marketplace?`)) {
-      const storedListings = getStoredVendorProducts();
-      if (storedListings.some((listing) => listing.id === id)) {
-        const updatedListings = storedListings.map((listing) => (
-          listing.id === id ? { ...listing, deleted: true, status: "Paused" as const } : listing
-        ));
-        if (!persistVendorListings(updatedListings)) return;
-      }
-      setProjects((prev) => prev.filter((p) => p.id !== id));
-      // Also remove from home page if present
-      if (homeProductIds.includes(id)) {
-        saveLiveHomeProducts(homeProductIds.filter((pid) => pid !== id));
-      }
-      showToast(`✓ Removed vendor project "${name}" from SaaS MRKT marketplace.`);
+    if (!confirm(`Are you sure you want to remove vendor project "${name}" from the marketplace?`)) return;
+    const storedListings = getStoredVendorProducts();
+    if (storedListings.some((listing) => listing.id === id)) {
+      const updatedListings = storedListings.map((listing) => (
+        listing.id === id ? { ...listing, deleted: true, status: "Paused" as const } : listing
+      ));
+      if (!persistVendorListings(updatedListings)) return;
+    } else {
+      const storedProjects = getStoredAdminProjects();
+      if (!persistAdminProjects(storedProjects.filter((project) => project.id !== id))) return;
     }
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+    // Also remove from home page if present
+    if (homeProductIds.includes(id)) {
+      saveLiveHomeProducts(homeProductIds.filter((pid) => pid !== id));
+    }
+    showToast(`✓ Removed vendor project "${name}" from SaaS MRKT marketplace.`);
   };
 
   const handleApproveProject = (id: string, name: string) => {
@@ -714,6 +802,12 @@ export default function AdminPage() {
         listing.id === id ? { ...listing, status: "Live & Active" as const } : listing
       ));
       if (!persistVendorListings(updatedListings)) return;
+    } else {
+      const storedProjects = getStoredAdminProjects();
+      const updatedProjects = storedProjects.map((project) => (
+        project.id === id ? { ...project, status: "Live" as const } : project
+      ));
+      if (!persistAdminProjects(updatedProjects)) return;
     }
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: "Live" } : p))
@@ -729,9 +823,16 @@ export default function AdminPage() {
       alert("Platform Super Administrator account cannot be removed.");
       return;
     }
+    const targetUser = users.find((u) => u.id === id);
+    if (targetUser && targetUser.email && user?.email && targetUser.email.toLowerCase() === user.email.toLowerCase()) {
+      alert("Your own signed-in account cannot be removed.");
+      return;
+    }
     const label = role === "Vendor" ? "Vendor" : "User";
     if (confirm(`Are you sure you want to permanently remove ${label} "${name}"? This action cannot be undone.`)) {
-      setUsers((prev) => prev.filter((u) => u.id !== id));
+      const updated = users.filter((u) => u.id !== id);
+      if (!persistPlatformUsers(updated)) return;
+      setUsers(updated);
       showToast(`✓ ${label} "${name}" has been permanently removed from the platform.`);
     }
   };
@@ -781,7 +882,23 @@ export default function AdminPage() {
     return matchesSearch && matchesRole;
   });
 
-  const filteredVendorProducts = vendorProducts.filter((vp) => {
+  const filteredOrders = orders.filter((order) => {
+    if (!orderSearch.trim()) return true;
+    const query = orderSearch.toLowerCase();
+    return (
+      order.id.toLowerCase().includes(query) ||
+      order.licenseKey.toLowerCase().includes(query) ||
+      order.buyerName.toLowerCase().includes(query) ||
+      order.buyerEmail.toLowerCase().includes(query) ||
+      order.productName.toLowerCase().includes(query) ||
+      order.sellerName.toLowerCase().includes(query)
+    );
+  });
+
+  const totalOrderValue = orders.reduce((sum, order) => sum + order.price, 0);
+  const homeLiveCount = homeCatalogProducts.filter((vp) => homeProductIds.includes(vp.id)).length;
+
+  const filteredVendorProducts = homeCatalogProducts.filter((vp) => {
     const isLive = homeProductIds.includes(vp.id);
     if (homeFilter === "live" && !isLive) return false;
     if (homeFilter === "not-live" && isLive) return false;
@@ -959,7 +1076,7 @@ export default function AdminPage() {
               >
                 <span className="admin-kpi-label">Home Page Showcase</span>
                 <div className="admin-kpi-val-row">
-                  <span className="admin-kpi-val">{homeProductIds.length}</span>
+                  <span className="admin-kpi-val">{homeLiveCount}</span>
                   <span className="admin-kpi-trend positive">Live on Home</span>
                 </div>
                 <span className="admin-kpi-note">Only vendor-uploaded products allowed</span>
@@ -1020,6 +1137,19 @@ export default function AdminPage() {
 
             <button
               type="button"
+              className={`admin-tab-btn${activeTab === "orders" ? " active" : ""}`}
+              onClick={() => setActiveTab("orders")}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              <span>Orders &amp; Revenue ({orders.length})</span>
+            </button>
+
+            <button
+              type="button"
               className={`admin-tab-btn${activeTab === "home" ? " active" : ""}`}
               onClick={() => setActiveTab("home")}
             >
@@ -1027,7 +1157,7 @@ export default function AdminPage() {
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 <polyline points="9 22 9 12 15 12 15 22" />
               </svg>
-              <span>Curate Home Page ({homeProductIds.length} Live)</span>
+              <span>Curate Home Page ({homeLiveCount} Live)</span>
             </button>
           </div>
 
@@ -1351,8 +1481,109 @@ export default function AdminPage() {
           )}
 
           {/* ================================================================
-              TAB 4: CURATE HOME PAGE (Vendor-Uploaded Products ONLY)
+              TAB 4: MARKETPLACE ORDERS & REVENUE OVERSIGHT (Read Only)
               ================================================================ */}
+          {activeTab === "orders" && (
+            <div className="admin-tab-content">
+              <div className="admin-card">
+                <div className="admin-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                  <div>
+                    <h2 className="profile-section-title">Marketplace Orders &amp; Revenue Oversight</h2>
+                    <p className="profile-section-desc">
+                      Every completed buyer checkout across SaaS MRKT is synced here live from the buyer orders ledger.{" "}
+                      {orders.length > 0 && (
+                        <>
+                          <strong>{orders.length}</strong> order{orders.length === 1 ? "" : "s"} &bull;{" "}
+                          <strong>${totalOrderValue.toLocaleString()}</strong> total order value.
+                        </>
+                      )}
+                    </p>
+                  </div>
+
+                  <input
+                    type="text"
+                    className="admin-search-input"
+                    placeholder="Search order, buyer, product, seller..."
+                    value={orderSearch}
+                    onChange={(e) => setOrderSearch(e.target.value)}
+                    style={{ width: "280px" }}
+                  />
+                </div>
+
+                <div className="admin-table-wrap">
+                  <table className="admin-data-table">
+                    <thead>
+                      <tr>
+                        <th>Order &amp; License</th>
+                        <th>Buyer</th>
+                        <th>Product</th>
+                        <th>Amount</th>
+                        <th>Payment</th>
+                        <th>Seller</th>
+                        <th>Purchased</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredOrders.length === 0 ? (
+                        <tr>
+                          <td colSpan={8} style={{ textAlign: "center", color: "#64748B", fontSize: "0.9rem", padding: "2.25rem" }}>
+                            {orders.length === 0
+                              ? "No marketplace orders yet. Orders appear here as soon as a buyer completes checkout."
+                              : "No orders match your search."}
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredOrders.map((order) => (
+                          <tr key={order.id}>
+                            <td>
+                              <div className="listing-cell-main">
+                                <strong style={{ color: "#0F172A", fontSize: "0.88rem" }}>{order.id}</strong>
+                                <code style={{ fontSize: "0.75rem", color: "#4F46E5" }}>{order.licenseKey}</code>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <strong style={{ fontSize: "0.88rem", color: "#1E293B" }}>{order.buyerName}</strong>
+                                <div style={{ fontSize: "0.78rem", color: "#64748B" }}>{order.buyerEmail}</div>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <strong style={{ fontSize: "0.88rem", color: "#1E293B" }}>{order.productName}</strong>
+                                <div style={{ fontSize: "0.78rem", color: "#64748B" }}>{order.category}</div>
+                              </div>
+                            </td>
+                            <td>
+                              <strong>${order.price}</strong> <span style={{ fontSize: "0.78rem", color: "#64748B" }}>/{order.period}</span>
+                            </td>
+                            <td>
+                              <span className="admin-status-pill" style={{ background: "#EEF2FF", color: "#4F46E5" }}>
+                                {getPaymentMethodLabel(order.paymentMethod)}
+                              </span>
+                            </td>
+                            <td style={{ fontSize: "0.85rem", color: "#475569" }}>{order.sellerName}</td>
+                            <td>
+                              <span style={{ fontSize: "0.82rem", color: "#64748B" }}>
+                                {new Date(order.purchasedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="admin-status-pill approved">✓ {order.status}</span>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ================================================================
+              TAB 5: CURATE HOME PAGE (Vendor-Uploaded Products ONLY)
+               ================================================================ */}
           {activeTab === "home" && (
             <div className="admin-tab-content">
               <div className="admin-card">
@@ -1397,21 +1628,21 @@ export default function AdminPage() {
                         className={`admin-btn-action ${homeFilter === "all" ? "status-toggle" : "view"}`}
                         onClick={() => setHomeFilter("all")}
                       >
-                        All ({vendorProducts.length})
+                        All ({homeCatalogProducts.length})
                       </button>
                       <button
                         type="button"
                         className={`admin-btn-action ${homeFilter === "live" ? "status-toggle" : "view"}`}
                         onClick={() => setHomeFilter("live")}
                       >
-                        Live on Home ({homeProductIds.length})
+                        Live on Home ({homeLiveCount})
                       </button>
                       <button
                         type="button"
                         className={`admin-btn-action ${homeFilter === "not-live" ? "status-toggle" : "view"}`}
                         onClick={() => setHomeFilter("not-live")}
                       >
-                        Available ({vendorProducts.length - homeProductIds.length})
+                        Available ({homeCatalogProducts.length - homeLiveCount})
                       </button>
                     </div>
                   </div>
