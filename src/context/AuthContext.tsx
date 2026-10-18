@@ -1,381 +1,175 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import AuthSuccessPopup, { AuthPopupData } from "@/components/AuthSuccessPopup";
 import LogoutConfirmModal from "@/components/LogoutConfirmModal";
+import { dashboardFor, type User, type UserRole, type PublicRole } from "@/lib/auth-types";
+import { VENDOR_PRODUCTS_STORAGE_KEY, VENDOR_PRODUCTS_EVENT_KEY } from "@/utils/vendorProducts";
+export type { User, UserRole } from "@/lib/auth-types";
 
-export type UserRole = "buyer" | "vendor" | "admin";
-
-export interface User {
-  name: string;
-  email: string;
-  initials: string;
-  role: UserRole;
-  title?: string;
-  company?: string;
-  bio?: string;
-  location?: string;
-  website?: string;
-  phone?: string;
-  avatarUrl?: string;
-}
-
+interface AuthResult { user: User | null; message?: string }
 interface AuthContextType {
   user: User | null;
   isInitialized: boolean;
-  login: (email: string, name?: string, role?: UserRole) => void;
-  signup: (email: string, name?: string, role?: UserRole) => void;
+  login: (email: string, password: string, role: PublicRole) => Promise<AuthResult>;
+  signup: (email: string, password: string, name: string, role: PublicRole) => Promise<AuthResult>;
+  loginWithOtp: (email: string, otp: string, role: PublicRole) => Promise<AuthResult>;
+  signupWithOtp: (email: string, otp: string, name: string, role: PublicRole) => Promise<AuthResult>;
+  sendOtp: (email: string, purpose: "login" | "signup", role: PublicRole, name?: string) => Promise<{ success: boolean; message: string; expiresInMinutes: number }>;
   logout: () => void;
   requestLogout: () => void;
   cancelLogout: () => void;
   confirmLogout: () => void;
   isLogoutConfirmOpen: boolean;
-  updateUser: (updated: Partial<User>) => void;
+  updateUser: (updated: Partial<User>) => Promise<void>;
   loginAsRole: (role: UserRole) => void;
   isAuthOpen: boolean;
   authMode: "login" | "signup";
-  authDefaultRole: UserRole;
+  authDefaultRole: PublicRole;
   openAuth: (mode?: "login" | "signup", defaultRole?: UserRole) => void;
   closeAuth: () => void;
   showPopupMessage: (title: string, subtitle: string, type?: "login" | "signup" | "logout") => void;
 }
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const ROLE_PRESETS: Record<UserRole, { name: string; email: string; title: string; company: string }> = {
-  buyer: {
-    name: "Alex Morgan",
-    email: "alex@company.com",
-    title: "Head of Product & Growth",
-    company: "Acme Cloud Ventures",
-  },
-  vendor: {
-    name: "David Miller",
-    email: "vendor@saasmrkt.com",
-    title: "Founder & Lead Architect",
-    company: "SaaS MRKT",
-  },
-  admin: {
-    name: "Admin",
-    email: "admin@saasmrkt.com",
-    title: "Platform Super Administrator",
-    company: "SaaS MRKT Operations",
-  },
-};
+async function authRequest(path: string, body: unknown): Promise<AuthResult> {
+  const response = await fetch(path, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body), cache: "no-store",
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Authentication failed.");
+  return data;
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pathname = usePathname();
-
   const [user, setUser] = useState<User | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
-  const [authDefaultRole, setAuthDefaultRole] = useState<UserRole>("buyer");
+  const [authDefaultRole, setAuthDefaultRole] = useState<PublicRole>("buyer");
   const [authPopup, setAuthPopup] = useState<AuthPopupData | null>(null);
   const [popupToast, setPopupToast] = useState<string | null>(null);
-
-  // Logout Confirmation Modal state
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Restore user session from localStorage or set initial default demo buyer
   useEffect(() => {
-    let restoredUser: User | null = null;
-    try {
-      const isExplicitlyLoggedOut = localStorage.getItem("saas_mrkt_logged_out") === "true";
-      if (!isExplicitlyLoggedOut) {
-        const savedUserStr = localStorage.getItem("saas_mrkt_user_session");
-        if (savedUserStr) {
-          const parsed = JSON.parse(savedUserStr) as User;
-          if (parsed?.email && parsed.role) {
-            restoredUser = {
-              ...parsed,
-              name: parsed.name?.replace(/\s*\(NexaSaaS\)/gi, "").trim() || parsed.name,
-              email: parsed.email.replace("nexasaas.io", "saasmrkt.com"),
-              company: parsed.company?.includes("NexaSaaS") ? "SaaS MRKT" : parsed.company,
-            };
-            localStorage.setItem("saas_mrkt_user_session", JSON.stringify(restoredUser));
-          }
+    let disposed = false;
+    let pending = false;
+    const refresh = async () => {
+      if (pending) return;
+      pending = true;
+      try {
+        const response = await fetch("/api/auth/session", { cache: "no-store" });
+        const data = await response.json();
+        if (!disposed) {
+          setUser(response.ok ? data.user : null);
+          if (!response.ok && response.status !== 401) setPopupToast(data.error || "Session verification failed.");
         }
+      } catch {
+        if (!disposed) { setUser(null); setPopupToast("Could not verify your session. Please try again."); }
+      } finally {
+        pending = false;
+        if (!disposed) setIsInitialized(true);
       }
-    } catch {
-      // Ignore
-    }
-
-    const frameId = window.requestAnimationFrame(() => {
-      setUser(restoredUser);
-      setIsInitialized(true);
+    };
+    // Legacy localStorage data is never used as authentication.
+    try { localStorage.removeItem("saas_mrkt_user_session"); } catch { /* Storage may be disabled. */ }
+    const frame = requestAnimationFrame(() => {
+      if (new URLSearchParams(window.location.search).has("signin")) setIsAuthOpen(true);
+      void refresh();
     });
-    return () => window.cancelAnimationFrame(frameId);
+    window.addEventListener("focus", refresh);
+    const timer = window.setInterval(refresh, 60_000);
+    return () => { disposed = true; cancelAnimationFrame(frame); clearInterval(timer); window.removeEventListener("focus", refresh); };
   }, []);
-
+  useEffect(() => {
+    const syncCatalog = async () => {
+      try {
+        const response = await fetch("/api/catalog", { cache: "no-store" });
+        if (!response.ok) return;
+        const catalog = await response.json();
+        localStorage.setItem(VENDOR_PRODUCTS_STORAGE_KEY, JSON.stringify(catalog.listings));
+        window.dispatchEvent(new Event(VENDOR_PRODUCTS_EVENT_KEY));
+      } catch { /* A catalog failure must not change authentication state. */ }
+    };
+    void syncCatalog();
+    window.addEventListener("focus", syncCatalog);
+    return () => window.removeEventListener("focus", syncCatalog);
+  }, []);
   useEffect(() => {
     if (!popupToast) return;
-    const timer = setTimeout(() => {
-      setPopupToast(null);
-    }, 3800);
+    const timer = setTimeout(() => setPopupToast(null), 5000);
     return () => clearTimeout(timer);
   }, [popupToast]);
 
-  const getInitials = (name: string, email: string) => {
-    if (name && name.trim()) {
-      const parts = name.trim().split(" ");
-      if (parts.length >= 2) {
-        return (parts[0][0] + parts[1][0]).toUpperCase();
-      }
-      return parts[0].slice(0, 2).toUpperCase();
+  const acceptAuth = (result: AuthResult): AuthResult => {
+    if (result.user) {
+      setUser(result.user);
+      setIsAuthOpen(false);
+      router.push(dashboardFor(result.user.role));
+      router.refresh();
     }
-    return email.slice(0, 2).toUpperCase();
+    return result;
   };
-
-  const detectRoleFromEmail = (email: string, fallbackRole?: UserRole): UserRole => {
-    if (fallbackRole) return fallbackRole;
-    const lower = email.toLowerCase();
-    if (lower.includes("admin")) return "admin";
-    if (lower.includes("vendor") || lower.includes("seller")) return "vendor";
-    return "buyer";
-  };
-
-  const login = (email: string, name?: string, role?: UserRole) => {
-    const determinedRole = detectRoleFromEmail(email, role);
-    const computedName =
-      name && name.trim()
-        ? name.trim()
-        : ROLE_PRESETS[determinedRole]?.name || email.split("@")[0];
-
-    const newUser: User = {
-      name: computedName,
-      email,
-      initials: getInitials(computedName, email),
-      role: determinedRole,
-      title: ROLE_PRESETS[determinedRole]?.title,
-      company: ROLE_PRESETS[determinedRole]?.company,
-    };
-
-    setUser(newUser);
-    try {
-      localStorage.removeItem("saas_mrkt_logged_out");
-      localStorage.setItem("saas_mrkt_user_session", JSON.stringify(newUser));
-    } catch {
-      // Ignore
-    }
-
-    setIsAuthOpen(false);
-
-    const roleLabel =
-      determinedRole === "admin"
-        ? "Platform Administrator"
-        : determinedRole === "vendor"
-        ? "SaaS Vendor"
-        : "Software Buyer";
-
-    setAuthPopup({
-      isOpen: true,
-      type: "login",
-      title: "Welcome Back! 👋",
-      subtitle: `Signed in as ${computedName} (${roleLabel}).`,
-      email,
-      name: computedName,
+  const login = async (email: string, password: string, role: PublicRole) =>
+    acceptAuth(await authRequest("/api/auth/login", { email, password, role }));
+  const signup = async (email: string, password: string, name: string, role: PublicRole) =>
+    acceptAuth(await authRequest("/api/auth/signup", { email, password, name, role }));
+  const sendOtp = async (email: string, purpose: "login" | "signup", role: PublicRole, name?: string) => {
+    const response = await fetch("/api/auth/otp/send", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, purpose, role, name }), cache: "no-store",
     });
-
-    setPopupToast(`Logged in as ${email} [${roleLabel}]`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Failed to send verification code.");
+    return data;
   };
+  const loginWithOtp = async (email: string, otp: string, role: PublicRole) =>
+    acceptAuth(await authRequest("/api/auth/otp/verify", { email, otp, purpose: "login", role }));
+  const signupWithOtp = async (email: string, otp: string, name: string, role: PublicRole) =>
+    acceptAuth(await authRequest("/api/auth/otp/verify", { email, otp, purpose: "signup", role, name }));
 
-  const signup = (email: string, name?: string, role?: UserRole) => {
-    const determinedRole = detectRoleFromEmail(email, role);
-    const computedName =
-      name && name.trim()
-        ? name.trim()
-        : ROLE_PRESETS[determinedRole]?.name || email.split("@")[0];
-
-    const newUser: User = {
-      name: computedName,
-      email,
-      initials: getInitials(computedName, email),
-      role: determinedRole,
-      title: ROLE_PRESETS[determinedRole]?.title,
-      company: ROLE_PRESETS[determinedRole]?.company,
-    };
-
-    setUser(newUser);
-    try {
-      localStorage.removeItem("saas_mrkt_logged_out");
-      localStorage.setItem("saas_mrkt_user_session", JSON.stringify(newUser));
-    } catch {
-      // Ignore
-    }
-
-    setIsAuthOpen(false);
-
-    const roleLabel =
-      determinedRole === "admin"
-        ? "Platform Administrator"
-        : determinedRole === "vendor"
-        ? "SaaS Vendor"
-        : "Software Buyer";
-
-    setAuthPopup({
-      isOpen: true,
-      type: "signup",
-      title: "Account Created Successfully! 🎉",
-      subtitle: `Welcome to SaaS MRKT, ${computedName}! Registered as ${roleLabel}.`,
-      email,
-      name: computedName,
-    });
-
-    setPopupToast(`Account created! Logged in as ${roleLabel}`);
+  const openAuth = (mode: "login" | "signup" = "login", role: UserRole = "buyer") => {
+    setAuthMode(mode); setAuthDefaultRole(role === "vendor" ? "vendor" : "buyer"); setIsAuthOpen(true);
   };
-
-  const loginAsRole = (role: UserRole) => {
-    const preset = ROLE_PRESETS[role];
-    login(preset.email, preset.name, role);
-  };
-
-  const executeLogout = () => {
-    setUser(null);
-    try {
-      localStorage.removeItem("saas_mrkt_user_session");
-      localStorage.setItem("saas_mrkt_logged_out", "true");
-    } catch {
-      // Ignore
-    }
-
-    setPopupToast("Signed out successfully.");
-
-    // If currently on a protected page, navigate smoothly to home without page refresh
-    if (
-      pathname &&
-      (pathname.startsWith("/vendor") ||
-        pathname.startsWith("/dashboard") ||
-        pathname.startsWith("/profile") ||
-        pathname.startsWith("/admin"))
-    ) {
-      router.push("/");
-    }
-  };
-
-  const logout = () => {
-    executeLogout();
-  };
-
-  const requestLogout = () => {
-    setIsLogoutConfirmOpen(true);
-  };
-
-  const cancelLogout = () => {
-    setIsLogoutConfirmOpen(false);
-  };
-
-  const confirmLogout = () => {
+  const executeLogout = async () => {
     setIsLoggingOut(true);
-    setTimeout(() => {
-      executeLogout();
-      setIsLoggingOut(false);
-      setIsLogoutConfirmOpen(false);
-    }, 220);
+    try {
+      await authRequest("/api/auth/logout", {});
+      setUser(null); setIsLogoutConfirmOpen(false);
+      router.push("/"); router.refresh();
+      setPopupToast("Signed out successfully.");
+    } catch (error) { setPopupToast(error instanceof Error ? error.message : "Sign out failed."); }
+    finally { setIsLoggingOut(false); }
   };
-
-  const updateUser = (updated: Partial<User>) => {
-    setUser((prev) => {
-      if (!prev) return null;
-      const baseName = updated.name || prev.name;
-      const baseEmail = updated.email || prev.email;
-      const initials = getInitials(baseName, baseEmail);
-      const updatedUser: User = {
-        ...prev,
-        ...updated,
-        initials,
-      };
-      try {
-        localStorage.setItem("saas_mrkt_user_session", JSON.stringify(updatedUser));
-      } catch {
-        // Ignore
-      }
-      return updatedUser;
-    });
+  const updateUser = async (updated: Partial<User>) => {
+    const result = await authRequest("/api/profile", updated);
+    setUser(result.user);
+    if (result.message) setPopupToast(result.message);
   };
-
-  const openAuth = (mode: "login" | "signup" = "login", defaultRole: UserRole = "buyer") => {
-    setAuthMode(mode);
-    setAuthDefaultRole(defaultRole);
-    setIsAuthOpen(true);
-  };
-
-  const closeAuth = () => {
-    setIsAuthOpen(false);
-  };
-
-  const showPopupMessage = (
-    title: string,
-    subtitle: string,
-    type: "login" | "signup" | "logout" = "login"
-  ) => {
-    setAuthPopup({
-      isOpen: true,
-      type,
-      title,
-      subtitle,
-      email: user?.email,
-      name: user?.name,
-    });
-  };
-
+  const showPopupMessage = (title: string, subtitle: string, type: "login" | "signup" | "logout" = "login") =>
+    setAuthPopup({ isOpen: true, title, subtitle, type, email: user?.email, name: user?.name });
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isInitialized,
-        login,
-        signup,
-        logout,
-        requestLogout,
-        cancelLogout,
-        confirmLogout,
-        isLogoutConfirmOpen,
-        updateUser,
-        loginAsRole,
-        isAuthOpen,
-        authMode,
-        authDefaultRole,
-        openAuth,
-        closeAuth,
-        showPopupMessage,
-      }}
-    >
+    <AuthContext.Provider value={{
+      user, isInitialized, login, signup, loginWithOtp, signupWithOtp, sendOtp, logout: () => { void executeLogout(); },
+      requestLogout: () => setIsLogoutConfirmOpen(true),
+      cancelLogout: () => setIsLogoutConfirmOpen(false),
+      confirmLogout: () => { void executeLogout(); }, isLogoutConfirmOpen,
+      updateUser, loginAsRole: (role) => openAuth("login", role),
+      isAuthOpen, authMode, authDefaultRole, openAuth, closeAuth: () => setIsAuthOpen(false), showPopupMessage,
+    }}>
       {children}
-
-      {/* Global Logout Confirmation Modal */}
-      <LogoutConfirmModal
-        isOpen={isLogoutConfirmOpen}
-        user={user}
-        onCancel={cancelLogout}
-        onConfirm={confirmLogout}
-        isLoggingOut={isLoggingOut}
-      />
-
-      {/* Global Success Popup Message Modal */}
-      <AuthSuccessPopup
-        data={authPopup}
-        onClose={() => setAuthPopup(null)}
-      />
-
-      {/* Global Floating Popup Toast Banner */}
-      {popupToast && (
-        <div className="toast-notice" role="status">
-          <span>⚡</span>
-          <span>{popupToast}</span>
-        </div>
-      )}
+      <LogoutConfirmModal isOpen={isLogoutConfirmOpen} user={user} onCancel={() => setIsLogoutConfirmOpen(false)}
+        onConfirm={() => { void executeLogout(); }} isLoggingOut={isLoggingOut} />
+      <AuthSuccessPopup data={authPopup} onClose={() => setAuthPopup(null)} />
+      {popupToast && <div className="toast-notice" role="status">{popupToast}</div>}
     </AuthContext.Provider>
   );
 }
-
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 }

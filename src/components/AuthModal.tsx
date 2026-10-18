@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth, UserRole } from "@/context/AuthContext";
+import Image from "next/image";
+import React, { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import type { PublicRole } from "@/lib/auth-types";
+import styles from "./AuthModal.module.css";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -11,508 +13,337 @@ interface AuthModalProps {
   onSuccess: (email: string) => void;
 }
 
-export default function AuthModal({
-  isOpen,
-  initialMode,
-  onClose,
-  onSuccess,
-}: AuthModalProps) {
-  const router = useRouter();
-  const { login, signup, authDefaultRole } = useAuth();
-  const [mode, setMode] = useState<"login" | "signup">(initialMode);
-  const [selectedRole, setSelectedRole] = useState<UserRole>(authDefaultRole || "buyer");
-  const [email, setEmail] = useState("alex@company.com");
-  const [password, setPassword] = useState("••••••••");
-  const [name, setName] = useState("Alex Morgan");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+type AuthMethod = "password" | "otp";
+type OtpStep = "send" | "verify";
 
-  // Set default credentials whenever selected role changes
-  useEffect(() => {
-    const frameId = window.requestAnimationFrame(() => {
-      if (selectedRole === "buyer") {
-        setEmail("alex@company.com");
-        setName("Alex Morgan");
-      } else if (selectedRole === "vendor") {
-        setEmail("vendor@saasmrkt.com");
-        setName("David Miller");
-      } else if (selectedRole === "admin") {
-        setEmail("admin@saasmrkt.com");
-        setName("Admin");
-      }
-    });
-    return () => window.cancelAnimationFrame(frameId);
-  }, [selectedRole]);
+export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModalProps) {
+  const { login, signup, loginWithOtp, signupWithOtp, sendOtp, authDefaultRole } = useAuth();
+  const [mode, setMode] = useState<"login" | "signup">(initialMode);
+  const [selectedRole, setSelectedRole] = useState<PublicRole>(authDefaultRole || "buyer");
+  const [authMethod, setAuthMethod] = useState<AuthMethod>("password");
+  const [otpStep, setOtpStep] = useState<OtpStep>("send");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [otp, setOtp] = useState<string[]>(() => Array(6).fill(""));
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [resendCountdown, setResendCountdown] = useState(0);
+
+  const resetForm = useCallback(() => {
+    setIsSubmitting(false);
+    setFormError("");
+    setNotice("");
+    setPassword("");
+    setOtp(Array(6).fill(""));
+    setOtpStep("send");
+    setResendCountdown(0);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
     const frameId = window.requestAnimationFrame(() => {
       setMode(initialMode);
-      setIsSubmitting(false);
+      setAuthMethod("password");
+      resetForm();
       if (authDefaultRole) setSelectedRole(authDefaultRole);
     });
     return () => window.cancelAnimationFrame(frameId);
-  }, [isOpen, initialMode, authDefaultRole]);
+  }, [isOpen, initialMode, authDefaultRole, resetForm]);
 
-  // Handle escape key
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
+    if (resendCountdown > 0) {
+      const timer = setInterval(() => setResendCountdown((previous) => previous - 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [resendCountdown]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isOpen) onClose();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  const handleOtpInputChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const value = event.target.value.replace(/\D/g, "").slice(0, 1);
+    const nextOtp = [...otp];
+    nextOtp[index] = value;
+    setOtp(nextOtp);
+    if (value && index < 5) {
+      document.querySelector<HTMLInputElement>(`input[data-otp-index="${index + 1}"]`)?.focus();
+    }
+    if (nextOtp.every(Boolean)) window.setTimeout(() => void handleOtpSubmit(nextOtp.join("")), 100);
+  };
+
+  const handleOtpPaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (pasted.length === 6) {
+      setOtp(pasted.split(""));
+      window.setTimeout(() => void handleOtpSubmit(pasted), 100);
+    }
+  };
+
+  const handleSendOtp = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (isSendingOtp || !email.trim()) return;
+    setIsSendingOtp(true);
+    setFormError("");
+    setNotice("");
+    try {
+      const result = await sendOtp(email.trim(), mode, selectedRole, mode === "signup" ? name.trim() : undefined);
+      setOtpStep("verify");
+      setNotice(result.message);
+      setResendCountdown(90);
+      window.setTimeout(() => document.querySelector<HTMLInputElement>('input[data-otp-index="0"]')?.focus(), 100);
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Failed to send code. Please try again.");
+    } finally {
+      setIsSendingOtp(false);
+    }
+  };
+
+  const handleOtpSubmit = async (otpValue: string) => {
+    if (isSubmitting || otpValue.length !== 6) return;
+    setIsSubmitting(true);
+    setFormError("");
+    try {
+      const result = mode === "signup"
+        ? await signupWithOtp(email.trim(), otpValue, name.trim(), selectedRole)
+        : await loginWithOtp(email.trim(), otpValue, selectedRole);
+      if (result.user) {
+        setOtp(Array(6).fill(""));
+        onClose();
+        onSuccess(result.user.email);
+      } else {
+        setNotice(result.message || "Verification successful.");
+      }
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Invalid code. Please try again.");
+      setOtp(Array(6).fill(""));
+      window.setTimeout(() => document.querySelector<HTMLInputElement>('input[data-otp-index="0"]')?.focus(), 100);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCountdown > 0 || isSendingOtp) return;
+    setFormError("");
+    setNotice("");
+    try {
+      const result = await sendOtp(email.trim(), mode, selectedRole, mode === "signup" ? name.trim() : undefined);
+      setNotice(result.message);
+      setResendCountdown(90);
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Failed to resend code. Please try again.");
+    }
+  };
+
+  const handlePasswordSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setFormError("");
+    setNotice("");
+    try {
+      const result = mode === "signup"
+        ? await signup(email.trim(), password, name.trim(), selectedRole)
+        : await login(email.trim(), password, selectedRole);
+      if (result.user) {
+        setPassword("");
+        onClose();
+        onSuccess(result.user.email);
+      } else {
+        setNotice(result.message || "Check your email to confirm your account.");
+      }
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Unable to sign in. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const switchToSignup = () => {
+    setMode("signup");
+    resetForm();
+  };
+
+  const switchToLogin = () => {
+    setMode("login");
+    resetForm();
+  };
+
   if (!isOpen) return null;
 
-  const performAuth = (authEmail: string, authName: string, role: UserRole) => {
-    setIsSubmitting(true);
-    setTimeout(() => {
-      if (mode === "signup") {
-        signup(authEmail, authName, role);
-      } else {
-        login(authEmail, authName, role);
-      }
-      setIsSubmitting(false);
-      onClose();
-      onSuccess(authEmail);
+  const isSignup = mode === "signup";
+  const accountLabel = selectedRole === "vendor" ? "Vendor" : "User";
+  const submitLabel = isSignup ? `Create ${accountLabel} Account` : `Sign In as ${accountLabel}`;
+  const submittingLabel = isSignup ? "Creating account..." : "Signing in...";
+  const otpSubmittingLabel = isSignup ? "Creating account..." : "Verifying...";
+  const subtitle = isSignup
+    ? "Enter your details to create your account"
+    : "Enter your credentials to access your account";
 
-      // Route to the respective dashboard
-      if (role === "admin") {
-        router.push("/admin");
-      } else if (role === "vendor") {
-        router.push("/vendor");
-      } else {
-        router.push("/profile");
-      }
-    }, 250);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const effectiveEmail = email.trim() || (selectedRole === "admin" ? "admin@saasmrkt.com" : selectedRole === "vendor" ? "vendor@saasmrkt.com" : "alex@company.com");
-    const effectiveName = name.trim() || (selectedRole === "admin" ? "Sarah Connor" : selectedRole === "vendor" ? "David Miller" : "Alex Morgan");
-    performAuth(effectiveEmail, effectiveName, selectedRole);
-  };
+  const modePrompt = (
+    <p className={styles.footerPrompt}>
+      {isSignup ? "Already have an account? " : "New to SaaS MRKT? "}
+      <button type="button" className={styles.textButton} onClick={isSignup ? switchToLogin : switchToSignup}>
+        {isSignup ? "Sign in" : "Create an account"}
+      </button>
+    </p>
+  );
 
   return (
-    <div
-      className="modal-backdrop"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      style={{
-        position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(6px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 9999,
-        padding: "1rem",
-      }}
-    >
-      <div
-        className="modal-container"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          maxWidth: "460px",
-          width: "100%",
-          backgroundColor: "#ffffff",
-          borderRadius: "1.25rem",
-          padding: "2rem",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-          position: "relative",
-          animation: "modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-        }}
-      >
-        <button
-          type="button"
-          className="modal-close-btn"
-          onClick={onClose}
-          aria-label="Close modal"
-          style={{
-            position: "absolute",
-            top: "1.25rem",
-            right: "1.25rem",
-            width: "36px",
-            height: "36px",
-            borderRadius: "50%",
-            border: "none",
-            backgroundColor: "#F1F5F9",
-            color: "#64748B",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            transition: "all 0.15s ease",
-          }}
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
+    <div className={styles.backdrop} onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+      <div className={styles.card} data-role={selectedRole} onClick={(event) => event.stopPropagation()}>
+        <button type="button" className={styles.closeButton} onClick={onClose} aria-label="Close authentication dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round">
+            <path d="M6 6l12 12M18 6 6 18" />
           </svg>
         </button>
 
-        {/* Brand Header */}
-        <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "12px",
-              background: "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
-              color: "#ffffff",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: "0.75rem",
-              boxShadow: "0 8px 16px rgba(99, 102, 241, 0.3)",
-            }}
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
+        <header className={styles.brandHeader}>
+          <div className={styles.logoShell}>
+            <Image className={styles.logo} src="/logo.png" alt="SaaS MRKT logo" width={43} height={43} priority />
           </div>
-          <h2
-            style={{
-              fontSize: "1.45rem",
-              fontWeight: 800,
-              color: "#0F172A",
-              margin: 0,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {mode === "login" ? "Sign In to SaaS MRKT" : "Create Account"}
-          </h2>
-          <p
-            style={{
-              fontSize: "0.85rem",
-              color: "#64748B",
-              marginTop: "0.3rem",
-              marginBottom: 0,
-            }}
-          >
-            Select your account type to access your dedicated portal
-          </p>
-        </div>
+          <h2 className={styles.title} id="auth-modal-title">SaaS <span className={styles.titleAccent}>MRKT</span></h2>
+          <p className={styles.subtitle}>{subtitle}</p>
+        </header>
 
-        {/* Distinct Role Selector Tabs */}
-        <div style={{ marginBottom: "1rem" }}>
-          <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.45rem" }}>
-            Select Account Role:
-          </label>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: "6px",
-              background: "#F1F5F9",
-              padding: "4px",
-              borderRadius: "12px",
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setSelectedRole("buyer")}
-              style={{
-                padding: "0.5rem 0.25rem",
-                borderRadius: "9px",
-                fontSize: "0.785rem",
-                fontWeight: 700,
-                border: "none",
-                cursor: "pointer",
-                backgroundColor: selectedRole === "buyer" ? "#FFFFFF" : "transparent",
-                color: selectedRole === "buyer" ? "#4F46E5" : "#64748B",
-                boxShadow: selectedRole === "buyer" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.15s ease",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "2px",
-              }}
-            >
-              <span>👤 User</span>
-              <span style={{ fontSize: "0.68rem", fontWeight: 500 }}>Buyer Profile</span>
+        <section className={styles.section} aria-labelledby="account-role-label">
+          <p className={styles.sectionLabel} id="account-role-label">Select Account Role</p>
+          <div className={styles.segments}>
+            <button type="button" className={`${styles.segmentButton} ${styles.roleButton} ${selectedRole === "buyer" ? styles.segmentButtonActive : ""}`} aria-pressed={selectedRole === "buyer"} onClick={() => { setSelectedRole("buyer"); resetForm(); }}>
+              <span className={styles.segmentIcon}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+              </span>
+              <span className={styles.segmentCopy}><span className={styles.segmentTitle}>Buyer</span><span className={styles.segmentCaption}>Personal workspace</span></span>
             </button>
-
-            <button
-              type="button"
-              onClick={() => setSelectedRole("vendor")}
-              style={{
-                padding: "0.5rem 0.25rem",
-                borderRadius: "9px",
-                fontSize: "0.785rem",
-                fontWeight: 700,
-                border: "none",
-                cursor: "pointer",
-                backgroundColor: selectedRole === "vendor" ? "#FFFFFF" : "transparent",
-                color: selectedRole === "vendor" ? "#059669" : "#64748B",
-                boxShadow: selectedRole === "vendor" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.15s ease",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "2px",
-              }}
-            >
-              <span>🏢 Vendor</span>
-              <span style={{ fontSize: "0.68rem", fontWeight: 500 }}>SaaS Seller</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSelectedRole("admin")}
-              style={{
-                padding: "0.5rem 0.25rem",
-                borderRadius: "9px",
-                fontSize: "0.785rem",
-                fontWeight: 700,
-                border: "none",
-                cursor: "pointer",
-                backgroundColor: selectedRole === "admin" ? "#FFFFFF" : "transparent",
-                color: selectedRole === "admin" ? "#D97706" : "#64748B",
-                boxShadow: selectedRole === "admin" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.15s ease",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "2px",
-              }}
-            >
-              <span>🛡️ Admin</span>
-              <span style={{ fontSize: "0.68rem", fontWeight: 500 }}>Platform Ops</span>
+            <button type="button" className={`${styles.segmentButton} ${styles.roleButton} ${selectedRole === "vendor" ? styles.segmentButtonActive : ""}`} aria-pressed={selectedRole === "vendor"} onClick={() => { setSelectedRole("vendor"); resetForm(); }}>
+              <span className={styles.segmentIcon}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h2m2 0h2M9 14h2m2 0h2M10 21v-3h4v3" /></svg>
+              </span>
+              <span className={styles.segmentCopy}><span className={styles.segmentTitle}>Vendor</span><span className={styles.segmentCaption}>SaaS seller portal</span></span>
             </button>
           </div>
-        </div>
+        </section>
 
-        {/* Role Description Banner */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.6rem 0.85rem",
-            backgroundColor: selectedRole === "admin" ? "#FFFBEB" : selectedRole === "vendor" ? "#ECFDF5" : "#EEF2FF",
-            border: `1px solid ${selectedRole === "admin" ? "#FDE68A" : selectedRole === "vendor" ? "#A7F3D0" : "#C7D2FE"}`,
-            borderRadius: "0.65rem",
-            marginBottom: "1rem",
-            fontSize: "0.8rem",
-            color: selectedRole === "admin" ? "#92400E" : selectedRole === "vendor" ? "#065F46" : "#3730A3",
-          }}
-        >
-          <span>⚡</span>
-          <span>
-            {selectedRole === "admin"
-              ? "Administrator login (admin@saasmrkt.com). Accesses Admin Console."
-              : selectedRole === "vendor"
-              ? "Vendor login (vendor@saasmrkt.com). Accesses Vendor Hub & Listings."
-              : "User login (alex@company.com). Accesses Buyer Profile & Licenses."}
+        <div className={styles.roleNote}>
+          <span className={styles.roleNoteIcon}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2 5 14h6l-1 8 8-12h-6l1-8Z" /></svg>
           </span>
+          <span>{selectedRole === "vendor" ? "Manage products, listings, orders, and seller activity." : "Access purchases, orders, and your buyer dashboard."}</span>
         </div>
 
-        {/* Tab Switcher (Login vs Sign Up) */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            background: "#F1F5F9",
-            padding: "4px",
-            borderRadius: "9999px",
-            marginBottom: "1.25rem",
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => setMode("login")}
-            style={{
-              padding: "0.45rem",
-              borderRadius: "9999px",
-              fontSize: "0.85rem",
-              fontWeight: 600,
-              border: "none",
-              cursor: "pointer",
-              backgroundColor: mode === "login" ? "#ffffff" : "transparent",
-              color: mode === "login" ? "#0F172A" : "#64748B",
-              boxShadow: mode === "login" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-              transition: "all 0.15s ease",
-            }}
-          >
-            Log In
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("signup")}
-            style={{
-              padding: "0.45rem",
-              borderRadius: "9999px",
-              fontSize: "0.85rem",
-              fontWeight: 600,
-              border: "none",
-              cursor: "pointer",
-              backgroundColor: mode === "signup" ? "#ffffff" : "transparent",
-              color: mode === "signup" ? "#0F172A" : "#64748B",
-              boxShadow: mode === "signup" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-              transition: "all 0.15s ease",
-            }}
-          >
-            Sign Up
-          </button>
-        </div>
+        <section className={styles.section} aria-labelledby="sign-in-method-label">
+          <p className={styles.sectionLabel} id="sign-in-method-label">Sign in with</p>
+          <div className={styles.segments}>
+            <button type="button" className={`${styles.segmentButton} ${styles.methodButton} ${authMethod === "password" ? styles.segmentButtonActive : ""}`} aria-pressed={authMethod === "password"} onClick={() => { setAuthMethod("password"); resetForm(); }}>
+              <span className={styles.segmentIcon}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="3" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
+              </span>
+              <span className={styles.segmentCopy}><span className={styles.segmentTitle}>Password</span></span>
+            </button>
+            <button type="button" className={`${styles.segmentButton} ${styles.methodButton} ${authMethod === "otp" ? styles.segmentButtonActive : ""}`} aria-pressed={authMethod === "otp"} onClick={() => { setAuthMethod("otp"); resetForm(); }}>
+              <span className={styles.segmentIcon}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7 8 6 8-6" /></svg>
+              </span>
+              <span className={styles.segmentCopy}><span className={styles.segmentTitle}>Email OTP</span></span>
+            </button>
+          </div>
+        </section>
 
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}
-        >
-          {mode === "signup" && (
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.825rem",
-                  fontWeight: 600,
-                  color: "#334155",
-                  marginBottom: "0.35rem",
-                }}
-              >
-                Full Name / Organization
+        {formError && <p className={`${styles.message} ${styles.error}`} role="alert">{formError}</p>}
+        {notice && <p className={`${styles.message} ${styles.notice}`} role="status">{notice}</p>}
+
+        {authMethod === "password" && (
+          <form className={styles.form} onSubmit={handlePasswordSubmit}>
+            {isSignup && (
+              <label className={styles.fieldGroup}>
+                <span className={styles.fieldLabel}>Full name or organization</span>
+                <input className={`${styles.field} ${styles.nameField}`} type="text" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Enter your name" />
               </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem 0.95rem",
-                  border: "1px solid #CBD5E1",
-                  borderRadius: "0.65rem",
-                  fontSize: "0.925rem",
-                  outline: "none",
-                  boxSizing: "border-box",
-                  backgroundColor: "#F8FAFC",
-                }}
-              />
-            </div>
-          )}
-
-          <div>
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.825rem",
-                fontWeight: 600,
-                color: "#334155",
-                marginBottom: "0.35rem",
-              }}
-            >
-              Email Address ({selectedRole === "admin" ? "Admin" : selectedRole === "vendor" ? "Vendor" : "Work"})
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "0.75rem 0.95rem",
-                border: "1px solid #CBD5E1",
-                borderRadius: "0.65rem",
-                fontSize: "0.925rem",
-                outline: "none",
-                boxSizing: "border-box",
-                backgroundColor: "#F8FAFC",
-              }}
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.825rem",
-                fontWeight: 600,
-                color: "#334155",
-                marginBottom: "0.35rem",
-              }}
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "0.75rem 0.95rem",
-                border: "1px solid #CBD5E1",
-                borderRadius: "0.65rem",
-                fontSize: "0.925rem",
-                outline: "none",
-                boxSizing: "border-box",
-                backgroundColor: "#F8FAFC",
-              }}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="btn-primary"
-            style={{
-              width: "100%",
-              marginTop: "0.35rem",
-              padding: "0.85rem",
-              background:
-                selectedRole === "admin"
-                  ? "linear-gradient(135deg, #D97706 0%, #B45309 100%)"
-                  : selectedRole === "vendor"
-                  ? "linear-gradient(135deg, #059669 0%, #047857 100%)"
-                  : "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "0.75rem",
-              fontWeight: 700,
-              fontSize: "0.95rem",
-              cursor: isSubmitting ? "not-allowed" : "pointer",
-              boxShadow: "0 4px 14px rgba(0, 0, 0, 0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.5rem",
-              opacity: isSubmitting ? 0.8 : 1,
-            }}
-          >
-            {isSubmitting ? (
-              <span>Signing in...</span>
-            ) : mode === "login" ? (
-              `Sign In as ${selectedRole === "admin" ? "Admin" : selectedRole === "vendor" ? "Vendor" : "User"}`
-            ) : (
-              `Create ${selectedRole === "admin" ? "Admin" : selectedRole === "vendor" ? "Vendor" : "User"} Account`
             )}
-          </button>
-        </form>
+            <label className={styles.fieldGroup}>
+              <span className={styles.fieldLabel}>{selectedRole === "vendor" ? "Vendor email address" : "Work email address"}</span>
+              <input className={`${styles.field} ${styles.emailField}`} type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" required />
+            </label>
+            <label className={styles.fieldGroup}>
+              <span className={styles.fieldLabel}>Password</span>
+              <input className={`${styles.field} ${styles.passwordField}`} type="password" autoComplete={isSignup ? "new-password" : "current-password"} minLength={isSignup ? 8 : undefined} value={password} onChange={(event) => setPassword(event.target.value)} placeholder={isSignup ? "At least 8 characters" : "Enter your password"} required />
+            </label>
+            <button type="submit" className={styles.primaryButton} disabled={isSubmitting}>
+              {isSubmitting ? submittingLabel : submitLabel}
+              {!isSubmitting && <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-5-5 5 5-5 5" /></svg>}
+            </button>
+            {modePrompt}
+          </form>
+        )}
+
+        {authMethod === "otp" && otpStep === "send" && (
+          <form className={styles.form} onSubmit={handleSendOtp}>
+            {isSignup && (
+              <label className={styles.fieldGroup}>
+                <span className={styles.fieldLabel}>Full name or organization</span>
+                <input className={`${styles.field} ${styles.nameField}`} type="text" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Enter your name" />
+              </label>
+            )}
+            <label className={styles.fieldGroup}>
+              <span className={styles.fieldLabel}>{selectedRole === "vendor" ? "Vendor email address" : "Work email address"}</span>
+              <input className={`${styles.field} ${styles.emailField}`} type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" required />
+            </label>
+            <button type="submit" className={styles.primaryButton} disabled={isSendingOtp || !email.trim()}>
+              {isSendingOtp ? "Sending secure code..." : `Send code to ${accountLabel.toLowerCase()} email`}
+              {!isSendingOtp && <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13" /><path d="m22 2-7 20-4-9-9-4 20-7Z" /></svg>}
+            </button>
+            <p className={styles.helperText}>We’ll email a 6-digit code that expires in 10 minutes.</p>
+            {modePrompt}
+          </form>
+        )}
+
+        {authMethod === "otp" && otpStep === "verify" && (
+          <form className={styles.form} onSubmit={(event) => { event.preventDefault(); void handleOtpSubmit(otp.join("")); }}>
+            <p className={styles.otpIntro}>Enter the 6-digit code sent to<span className={styles.otpEmail}>{email}</span></p>
+            <div className={styles.otpGrid}>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <input
+                  key={index}
+                  className={styles.otpInput}
+                  aria-label={`Verification code digit ${index + 1}`}
+                  type="text"
+                  maxLength={1}
+                  value={otp[index] || ""}
+                  onChange={(event) => handleOtpInputChange(event, index)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Backspace" && !otp[index] && index > 0) {
+                      document.querySelector<HTMLInputElement>(`input[data-otp-index="${index - 1}"]`)?.focus();
+                    }
+                  }}
+                  onPaste={handleOtpPaste}
+                  data-otp-index={index}
+                  autoComplete="one-time-code"
+                  inputMode="numeric"
+                />
+              ))}
+            </div>
+            <button type="submit" className={styles.primaryButton} disabled={isSubmitting || otp.some((digit) => !digit)}>
+              {isSubmitting ? otpSubmittingLabel : submitLabel}
+              {!isSubmitting && <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>}
+            </button>
+            <div className={styles.otpActions}>
+              <button type="button" className={styles.textButton} onClick={handleResendOtp} disabled={resendCountdown > 0 || isSendingOtp}>
+                {resendCountdown > 0 ? `Resend available in ${resendCountdown}s` : "Resend verification code"}
+              </button>
+              <button type="button" className={styles.textButton} onClick={() => { setOtpStep("send"); resetForm(); }}>Change email or sign-in method</button>
+            </div>
+            {modePrompt}
+          </form>
+        )}
       </div>
     </div>
   );

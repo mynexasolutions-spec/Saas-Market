@@ -4,10 +4,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  getStoredVendorProducts,
-  resolveFeaturedProducts,
-  VENDOR_PRODUCTS_EVENT_KEY,
-  VENDOR_PRODUCTS_STORAGE_KEY,
+  convertVendorListingToProductItem,
+  type VendorSaaSListing,
 } from "@/utils/vendorProducts";
 
 export interface ProductItem {
@@ -220,39 +218,20 @@ export default function FeaturedProducts({
 }: FeaturedProductsProps) {
   const [productsList, setProductsList] = useState<ProductItem[]>(FEATURED_PRODUCTS_LIST);
 
-  // Sync with dynamic products managed by Admin Console and Vendor Dashboard
   React.useEffect(() => {
-    const loadMergedProducts = () => {
-      let curated: ProductItem[] | null = null;
-      try {
-        const saved = localStorage.getItem("saas_mrkt_featured_products");
-        if (saved) {
-          const parsed: unknown = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            curated = parsed as ProductItem[];
-          }
-        }
-      } catch {}
-
-      const vendorListings = getStoredVendorProducts();
-      const nextProducts = resolveFeaturedProducts(curated, vendorListings, FEATURED_PRODUCTS_LIST);
-
-      setProductsList(nextProducts);
+    let active = true;
+    const load = async () => {
+      const response = await fetch("/api/catalog", { cache:"no-store" });
+      if(!response.ok) throw new Error("Featured catalog unavailable.");
+      const data: {listings: VendorSaaSListing[];featuredIds:string[]} = await response.json();
+      if(active)setProductsList(data.featuredIds.flatMap(id=>{
+        const listing=data.listings.find(p=>p.id===id);
+        return listing ? [convertVendorListingToProductItem(listing)] : [];
+      }));
     };
-
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY || event.key === "saas_mrkt_featured_products") {
-        loadMergedProducts();
-      }
-    };
-
-    loadMergedProducts();
-    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadMergedProducts);
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadMergedProducts);
-      window.removeEventListener("storage", handleStorage);
-    };
+    void load().catch(()=>{if(active)setProductsList([]);});
+    window.addEventListener("focus",load);
+    return ()=>{active=false;window.removeEventListener("focus",load);};
   }, []);
 
   // Filter based on search query or category

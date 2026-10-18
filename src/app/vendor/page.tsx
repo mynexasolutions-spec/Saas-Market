@@ -5,154 +5,12 @@ import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/context/AuthContext";
 import {
-  isVendorSaaSListing,
   normalizeMarketplaceCategory,
   VendorSaaSListing,
-  VENDOR_PRODUCTS_EVENT_KEY,
-  VENDOR_PRODUCTS_STORAGE_KEY,
 } from "@/utils/vendorProducts";
 import {
-  getStoredVendorInquiries,
   PurchaseInquiry,
-  saveVendorInquiries,
-  VENDOR_INQUIRIES_EVENT_KEY,
-  VENDOR_INQUIRIES_STORAGE_KEY,
 } from "@/utils/vendorInquiries";
-
-const DEFAULT_VENDOR_LISTINGS: VendorSaaSListing[] = [
-  {
-    id: "prod-growthflow",
-    name: "GrowthFlow AI",
-    category: "Marketing",
-    tagline: "Autonomous omnichannel AI marketing engine for high-velocity SaaS growth teams",
-    price: 49,
-    period: "mo",
-    pricingModel: "Subscription",
-    description: "Multi-channel lifecycle marketing automation platform with autonomous AI campaign drafting and native conversion attribution.",
-    website: "https://growthflow.ai",
-    brandColor: "#6366F1",
-    brandLetter: "GF",
-    features: ["Autonomous Email & SMS Sequences", "Predictive Churn Attribution", "Cross-Platform Cohort Tracking"],
-    status: "Live & Active",
-    inquiriesCount: 84,
-    viewsCount: 4200,
-    listedDate: "12 Oct 2025",
-  },
-  {
-    id: "prod-manage360",
-    name: "Manage360 Suite",
-    category: "Project Management",
-    tagline: "Unified sprint planning, velocity burndown telemetry, and team capacity orchestration",
-    price: 79,
-    period: "mo",
-    pricingModel: "Subscription",
-    description: "Enterprise agile delivery workspace consolidating Jira issues, GitHub pull requests, and automated product release documentation.",
-    website: "https://manage360.io",
-    brandColor: "#059669",
-    brandLetter: "M3",
-    features: ["Two-Way GitHub & GitLab Sync", "Interactive Multiplayer Gantt Charts", "Capacity & Workload Telemetry"],
-    status: "Live & Active",
-    inquiriesCount: 62,
-    viewsCount: 3100,
-    listedDate: "18 Nov 2025",
-  },
-  {
-    id: "prod-taskflow",
-    name: "TaskFlow Workspace",
-    category: "Project Management",
-    tagline: "Modern collaborative documentation and real-time multiplayer agile coordination",
-    price: 29,
-    period: "mo",
-    pricingModel: "Subscription",
-    description: "High-performance collaborative Kanban and project planning suite for modern remote engineering squads.",
-    website: "https://taskflow.dev",
-    brandColor: "#3B82F6",
-    brandLetter: "TF",
-    features: ["Sub-110ms Edge Collaboration", "SOC 2 Type II Certified", "Automated Sprint Burndowns"],
-    status: "Live & Active",
-    inquiriesCount: 45,
-    viewsCount: 2800,
-    listedDate: "05 Jan 2026",
-  },
-];
-
-const DEFAULT_PURCHASE_INQUIRIES: PurchaseInquiry[] = [
-  {
-    id: "inq-101",
-    buyerName: "Sarah Jenkins",
-    buyerEmail: "sarah.j@finscale.ai",
-    buyerPhone: "+1 (415) 890-2341",
-    buyerWhatsapp: "14158902341",
-    companyName: "FinScale AI",
-    softwareName: "GrowthFlow AI",
-    purchaseType: "Enterprise License",
-    teamSize: "75 seats",
-    budgetOffer: "$7,500 / year",
-    inquiryDate: "Oct 11, 2026",
-    message: "We need 75 enterprise seats for our product marketing team. Ready to purchase via corporate invoice or ACH transfer once SSO details are confirmed.",
-    status: "New Request",
-  },
-  {
-    id: "inq-102",
-    buyerName: "David Vance",
-    buyerEmail: "dvance@cloudcore.io",
-    buyerPhone: "+1 (206) 555-8910",
-    buyerWhatsapp: "12065558910",
-    companyName: "CloudCore Systems",
-    softwareName: "DevEdge Edge Cloud",
-    purchaseType: "Direct Purchase",
-    teamSize: "30 developers",
-    budgetOffer: "$3,600 / year",
-    inquiryDate: "Oct 10, 2026",
-    message: "Looking to purchase 30 developer licenses immediately. Please send direct payment link and procurement order confirmation.",
-    status: "Contacted",
-  },
-  {
-    id: "inq-103",
-    buyerName: "Elena Rostova",
-    buyerEmail: "e.rostova@acuityhealth.org",
-    buyerPhone: "+1 (617) 442-9901",
-    buyerWhatsapp: "16174429901",
-    companyName: "Acuity Healthtech",
-    softwareName: "CloudSentinel AI",
-    purchaseType: "Custom Quote",
-    teamSize: "200+ employees",
-    budgetOffer: "$14,400 / year",
-    inquiryDate: "Oct 09, 2026",
-    message: "Evaluating for hospital-wide cybersecurity compliance. Need HIPAA business associate agreement and multi-year volume pricing discount.",
-    status: "Quote Sent",
-  },
-  {
-    id: "inq-104",
-    buyerName: "Marcus Vance",
-    buyerEmail: "marcus@vanceretail.com",
-    buyerPhone: "+1 (312) 771-4820",
-    buyerWhatsapp: "13127714820",
-    companyName: "Vance Retail Labs",
-    softwareName: "GrowthFlow AI",
-    purchaseType: "Direct Purchase",
-    teamSize: "15 seats",
-    budgetOffer: "$1,800 / year",
-    inquiryDate: "Oct 07, 2026",
-    message: "Confirmed purchase order approved by our CFO. Awaiting license key activation and onboarding setup documentation.",
-    status: "Purchased",
-  },
-  {
-    id: "inq-105",
-    buyerName: "Amanda Brooks",
-    buyerEmail: "abrooks@starlightfin.com",
-    buyerPhone: "+1 (212) 330-9411",
-    buyerWhatsapp: "12123309411",
-    companyName: "Starlight Financial",
-    softwareName: "DataPulse 2.0 Engine",
-    purchaseType: "Volume Discount",
-    teamSize: "50 seats",
-    budgetOffer: "$6,000 / year",
-    inquiryDate: "Oct 05, 2026",
-    message: "We want to purchase DataPulse 2.0 for our quantitative trading research team. Can you provide a vendor W-9 and direct ACH payment details?",
-    status: "Contacted",
-  },
-];
 
 interface CompanyDocument {
   id: string;
@@ -164,17 +22,8 @@ interface CompanyDocument {
   status: "Verified" | "In Review" | "Action Required";
   verifiedBy: string;
   dataUrl?: string;
+  downloadUrl?: string;
   mimeType?: string;
-}
-
-function writeVendorListingsToStorage(products: VendorSaaSListing[]): boolean {
-  try {
-    localStorage.setItem(VENDOR_PRODUCTS_STORAGE_KEY, JSON.stringify(products));
-    window.dispatchEvent(new CustomEvent(VENDOR_PRODUCTS_EVENT_KEY, { detail: products }));
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 interface PendingDocumentFile {
@@ -184,28 +33,10 @@ interface PendingDocumentFile {
   dataUrl: string;
 }
 
-const VENDOR_DOCUMENTS_STORAGE_KEY = "saas_mrkt_vendor_documents";
 const MAX_DOCUMENT_BYTES = 1024 * 1024;
 
 function formatListedDate(date: Date = new Date()): string {
   return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(date);
-}
-
-function isCompanyDocument(value: unknown): value is CompanyDocument {
-  if (typeof value !== "object" || value === null) return false;
-  const document = value as Partial<CompanyDocument>;
-  return (
-    typeof document.id === "string" &&
-    typeof document.title === "string" &&
-    typeof document.category === "string" &&
-    typeof document.fileName === "string" &&
-    typeof document.fileSize === "string" &&
-    typeof document.uploadedDate === "string" &&
-    typeof document.status === "string" &&
-    typeof document.verifiedBy === "string" &&
-    (document.dataUrl === undefined || typeof document.dataUrl === "string") &&
-    (document.mimeType === undefined || typeof document.mimeType === "string")
-  );
 }
 
 function formatFileSize(bytes: number): string {
@@ -290,7 +121,7 @@ interface ListingFormErrors {
 export default function VendorPage() {
   const { user, loginAsRole, isInitialized } = useAuth();
   const [activeTab, setActiveTab] = useState<"listings" | "purchase-requests" | "documents">("listings");
-  const [vendorProducts, setVendorProducts] = useState<VendorSaaSListing[]>(DEFAULT_VENDOR_LISTINGS);
+  const [vendorProducts, setVendorProducts] = useState<VendorSaaSListing[]>([]);
   const [listingSearch, setListingSearch] = useState("");
   const [listingCategoryFilter, setListingCategoryFilter] = useState("all");
 
@@ -333,10 +164,18 @@ export default function VendorPage() {
     setDocFileError(null);
   };
 
-  const persistVendorProducts = (products: VendorSaaSListing[]): boolean => {
-    if (writeVendorListingsToStorage(products)) return true;
-    showToast("We could not save that change. Free browser storage and try again.");
-    return false;
+  const vendorAction = async (body: unknown): Promise<void> => {
+    const response = await fetch("/api/vendor", { method:"POST",
+      headers:{"Content-Type":"application/json"},body:JSON.stringify(body) });
+    const result = await response.json();
+    if(!response.ok) throw new Error(result.error || "Vendor action failed.");
+  };
+  const persistVendorProducts = async (products: VendorSaaSListing[]): Promise<boolean> => {
+    try {
+      const changed = products.filter(p => JSON.stringify(p) !== JSON.stringify(vendorProducts.find(old => old.id === p.id)));
+      for(const listing of changed) await vendorAction({action:"listing",listing});
+      return true;
+    } catch(error) { showToast(error instanceof Error ? error.message : "Listing could not be saved."); return false; }
   };
 
   const resetListingForm = () => {
@@ -380,42 +219,7 @@ export default function VendorPage() {
     resetListingForm();
   };
 
-  // Load vendor listings from localStorage
-  useEffect(() => {
-    let frameId: number | null = null;
-    const loadSavedListings = () => {
-      try {
-        const saved = localStorage.getItem(VENDOR_PRODUCTS_STORAGE_KEY);
-        if (saved === null) {
-          if (!writeVendorListingsToStorage(DEFAULT_VENDOR_LISTINGS)) {
-            showToast("Your starter listings could not be published to the marketplace.");
-          }
-          return;
-        }
-        const parsed: unknown = JSON.parse(saved);
-        if (!Array.isArray(parsed)) throw new Error("Saved listings must be an array.");
-        const validListings = parsed.filter(isVendorSaaSListing);
-        if (validListings.length !== parsed.length) showToast("Some invalid saved listings were ignored.");
-        frameId = window.requestAnimationFrame(() => setVendorProducts(validListings));
-      } catch {
-        showToast("Saved listings could not be loaded. Your current catalog is still available.");
-      }
-    };
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) loadSavedListings();
-    };
-
-    loadSavedListings();
-    window.addEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadSavedListings);
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      if (frameId !== null) window.cancelAnimationFrame(frameId);
-      window.removeEventListener(VENDOR_PRODUCTS_EVENT_KEY, loadSavedListings);
-      window.removeEventListener("storage", handleStorage);
-    };
-  }, []);
-
-  const handleCreateListing = (e: React.FormEvent) => {
+  const handleCreateListing = async (e: React.FormEvent) => {
     e.preventDefault();
     const nextErrors: ListingFormErrors = {};
     if (!newListingName.trim()) nextErrors.name = "Enter the product name buyers will recognize.";
@@ -471,7 +275,7 @@ export default function VendorPage() {
     const updated = existingListing
       ? vendorProducts.map((listing) => listing.id === existingListing.id ? savedListing : listing)
       : [savedListing, ...vendorProducts];
-    if (!persistVendorProducts(updated)) return;
+    if (!await persistVendorProducts(updated)) return;
     setVendorProducts(updated);
     setIsListingModalOpen(false);
     resetListingForm();
@@ -480,7 +284,7 @@ export default function VendorPage() {
       : `"${savedListing.name}" was submitted for marketplace review.`);
   };
 
-  const handleToggleListingStatus = (id: string) => {
+  const handleToggleListingStatus = async (id: string) => {
     const currentListing = vendorProducts.find((listing) => listing.id === id);
     if (!currentListing) {
       showToast("That listing could not be found.");
@@ -497,166 +301,61 @@ export default function VendorPage() {
       }
       return p;
     });
-    if (!persistVendorProducts(updated)) return;
+    if (!await persistVendorProducts(updated)) return;
     setVendorProducts(updated);
     const changedListing = updated.find((listing) => listing.id === id);
     if (changedListing) showToast(`"${changedListing.name}" status changed to ${changedListing.status}.`);
   };
 
-  const handleDeleteListing = (id: string, name: string) => {
+  const handleDeleteListing = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to remove "${name}" from your active listings?`)) return;
     const updated = vendorProducts.map((listing) => (
       listing.id === id ? { ...listing, deleted: true, status: "Paused" as const } : listing
     ));
-    if (!persistVendorProducts(updated)) return;
+    if (!await persistVendorProducts(updated)) return;
     setVendorProducts(updated);
     showToast(`"${name}" has been removed from your listings.`);
   };
 
-  const [inquiries, setInquiries] = useState<PurchaseInquiry[]>(DEFAULT_PURCHASE_INQUIRIES);
+  const [inquiries, setInquiries] = useState<PurchaseInquiry[]>([]);
 
   // Company Documents
-  const [documents, setDocuments] = useState<CompanyDocument[]>([
-    {
-      id: "doc-1",
-      title: "Certificate of Incorporation & Business Registration",
-      category: "Legal & Incorporation",
-      fileName: "saasmrkt_cert_of_incorporation_2024.pdf",
-      fileSize: "2.4 MB",
-      uploadedDate: "Aug 15, 2024",
-      status: "Verified",
-      verifiedBy: "SaaS MRKT Governance Team",
-    },
-    {
-      id: "doc-2",
-      title: "Corporate Tax ID & Form W-9 Verification",
-      category: "Tax & Financial",
-      fileName: "saasmrkt_tax_w9_form_2026.pdf",
-      fileSize: "1.1 MB",
-      uploadedDate: "Jan 10, 2026",
-      status: "Verified",
-      verifiedBy: "SaaS MRKT Finance & Compliance",
-    },
-    {
-      id: "doc-3",
-      title: "Vendor Marketplace Master Agreement",
-      category: "Legal & Incorporation",
-      fileName: "vendor_marketplace_master_agreement_signed.pdf",
-      fileSize: "3.8 MB",
-      uploadedDate: "Oct 01, 2024",
-      status: "Verified",
-      verifiedBy: "Legal Operations",
-    },
-    {
-      id: "doc-4",
-      title: "SOC-2 Type II Compliance & Security Audit Report",
-      category: "Security & Compliance",
-      fileName: "soc2_type2_security_audit_report.pdf",
-      fileSize: "5.6 MB",
-      uploadedDate: "May 20, 2026",
-      status: "Verified",
-      verifiedBy: "Third-Party Auditor (Kroll)",
-    },
-    {
-      id: "doc-5",
-      title: "Master Enterprise SLA & Uptime Guarantee Agreement (99.9%)",
-      category: "Service Level Agreement",
-      fileName: "saasmrkt_enterprise_sla_terms.pdf",
-      fileSize: "1.8 MB",
-      uploadedDate: "Sep 12, 2026",
-      status: "Verified",
-      verifiedBy: "SaaS MRKT Platform Ops",
-    },
-    {
-      id: "doc-6",
-      title: "Corporate Banking & Payout KYC Letter",
-      category: "Tax & Financial",
-      fileName: "chase_bank_kyc_verification_letter.pdf",
-      fileSize: "920 KB",
-      uploadedDate: "Oct 08, 2026",
-      status: "In Review",
-      verifiedBy: "Pending Admin Review",
-    },
-  ]);
+  const [documents, setDocuments] = useState<CompanyDocument[]>([]);
 
   useEffect(() => {
-    let frameId: number | null = null;
-
-    const applyStoredState = () => {
-      let storedInquiries: PurchaseInquiry[] | null = null;
-      let storedDocuments: CompanyDocument[] | null = null;
-      let loadWarning: string | null = null;
-
+    if(user?.role !== "vendor") return;
+    let active = true;
+    const load = async () => {
       try {
-        if (localStorage.getItem(VENDOR_INQUIRIES_STORAGE_KEY) === null) {
-          saveVendorInquiries(DEFAULT_PURCHASE_INQUIRIES);
-        } else {
-          storedInquiries = getStoredVendorInquiries();
-        }
-      } catch {
-        loadWarning = "Saved purchase requests could not be loaded.";
-      }
-
-      try {
-        const documentData = localStorage.getItem(VENDOR_DOCUMENTS_STORAGE_KEY);
-        if (documentData !== null) {
-          const parsedDocuments: unknown = JSON.parse(documentData);
-          if (!Array.isArray(parsedDocuments)) throw new Error("Saved documents must be an array.");
-          storedDocuments = parsedDocuments.filter(isCompanyDocument);
-          if (storedDocuments.length !== parsedDocuments.length) loadWarning = "Some invalid company documents were ignored.";
-        }
-      } catch {
-        loadWarning = "Saved company documents could not be loaded.";
-      }
-
-      frameId = window.requestAnimationFrame(() => {
-        if (storedInquiries) setInquiries(storedInquiries);
-        if (storedDocuments) setDocuments(storedDocuments);
-        if (loadWarning) showToast(loadWarning);
-      });
+        const response = await fetch("/api/vendor",{cache:"no-store"});
+        const result = await response.json();
+        if(!response.ok)throw new Error(result.error);
+        if(active){setVendorProducts(result.products);setDocuments(result.documents);setInquiries(result.inquiries);}
+      } catch(error) { if(active)showToast(error instanceof Error ? error.message : "Vendor dashboard unavailable."); }
     };
+    void load();
+    window.addEventListener("focus",load);
+    return () => {active=false;window.removeEventListener("focus",load);};
+  },[user?.role]);
 
-    const syncInquiries = () => {
-      const storedInquiries = getStoredVendorInquiries();
-      frameId = window.requestAnimationFrame(() => setInquiries(storedInquiries));
-    };
-
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === VENDOR_INQUIRIES_STORAGE_KEY) syncInquiries();
-      if (event.key === VENDOR_DOCUMENTS_STORAGE_KEY) applyStoredState();
-    };
-
-    applyStoredState();
-    window.addEventListener(VENDOR_INQUIRIES_EVENT_KEY, syncInquiries);
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      if (frameId !== null) window.cancelAnimationFrame(frameId);
-      window.removeEventListener(VENDOR_INQUIRIES_EVENT_KEY, syncInquiries);
-      window.removeEventListener("storage", handleStorage);
-    };
-  }, []);
-
-  const persistDocuments = (nextDocuments: CompanyDocument[]): boolean => {
+  const persistDocuments = async (nextDocuments: CompanyDocument[]): Promise<boolean> => {
     try {
-      localStorage.setItem(VENDOR_DOCUMENTS_STORAGE_KEY, JSON.stringify(nextDocuments));
+      for(const document of nextDocuments.filter(d=>!documents.some(old=>old.id===d.id)))
+        await vendorAction({action:"document",document});
+      const response = await fetch("/api/vendor",{cache:"no-store"});
+      const result = await response.json();
+      if(!response.ok)throw new Error(result.error);
+      setDocuments(result.documents);
       return true;
-    } catch {
-      showToast("The document could not be saved. Free browser storage or choose a smaller file.");
-      return false;
-    }
+    } catch(error) { showToast(error instanceof Error ? error.message : "Document could not be saved."); return false; }
   };
-
-  const handleUpdateInquiryStatus = (id: string, status: PurchaseInquiry["status"]) => {
-    const updated = inquiries.map((inquiry) => inquiry.id === id ? { ...inquiry, status } : inquiry);
+  const handleUpdateInquiryStatus = async (id: string, status: PurchaseInquiry["status"]) => {
     try {
-      saveVendorInquiries(updated);
-    } catch {
-      showToast("Purchase requests could not be saved. Free browser storage and try again.");
-      return;
-    }
-    setInquiries(updated);
-    setSelectedInquiry((current) => current?.id === id ? { ...current, status } : current);
-    showToast(`Purchase request updated to: "${status}".`);
+      await vendorAction({action:"inquiry",id,status});
+      setInquiries(previous=>previous.map(inquiry=>inquiry.id===id?{...inquiry,status}:inquiry));
+      setSelectedInquiry(current=>current?.id===id?{...current,status}:current);
+      showToast(`Purchase request updated to: "${status}".`);
+    } catch(error){showToast(error instanceof Error ? error.message : "Inquiry update failed.");}
   };
 
   const handleDocumentFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -694,7 +393,7 @@ export default function VendorPage() {
     reader.readAsDataURL(file);
   };
 
-  const handleUploadDocument = (e: React.FormEvent) => {
+  const handleUploadDocument = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!docTitle.trim()) return;
     if (!docFile) {
@@ -723,6 +422,7 @@ export default function VendorPage() {
   };
 
   const handleViewDocument = (document: CompanyDocument) => {
+    if(document.downloadUrl){window.open(document.downloadUrl,"_blank","noopener,noreferrer");return;}
     try {
       const url = URL.createObjectURL(getDocumentBlob(document));
       const preview = window.open(url, "_blank");
@@ -735,6 +435,7 @@ export default function VendorPage() {
   };
 
   const handleDownloadDocument = (document: CompanyDocument) => {
+    if(document.downloadUrl){window.open(document.downloadUrl,"_blank","noopener,noreferrer");return;}
     try {
       triggerBlobDownload(getDocumentBlob(document), document.fileName);
       showToast(`Downloading "${document.fileName}".`);

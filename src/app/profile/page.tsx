@@ -201,28 +201,33 @@ export default function ProfilePage() {
     }
 
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const result = reader.result as string;
-      setFormData((prev) => ({ ...prev, avatarUrl: result }));
-      updateUser({ avatarUrl: result });
-      setSavedNotice("Profile picture updated successfully.");
+      try {
+        await updateUser({ avatarUrl: result });
+        setFormData((prev) => ({ ...prev, avatarUrl: result }));
+        setSavedNotice("Profile picture updated successfully.");
+      } catch (error) { setSavedNotice(error instanceof Error ? error.message : "Photo could not be saved."); }
       setTimeout(() => setSavedNotice(null), 3500);
     };
     reader.readAsDataURL(file);
   };
 
   // Handle Remove Profile Photo
-  const handleRemovePhoto = () => {
-    setFormData((prev) => ({ ...prev, avatarUrl: "" }));
-    updateUser({ avatarUrl: "" });
-    setSavedNotice("Profile picture removed. Reverted to initials avatar.");
+  const handleRemovePhoto = async () => {
+    try {
+      await updateUser({ avatarUrl: "" });
+      setFormData((prev) => ({ ...prev, avatarUrl: "" }));
+      setSavedNotice("Profile picture removed. Reverted to initials avatar.");
+    } catch (error) { setSavedNotice(error instanceof Error ? error.message : "Photo could not be removed."); }
     setTimeout(() => setSavedNotice(null), 3000);
   };
 
   // Handle Save Profile Form
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateUser({
+    try {
+    await updateUser({
       name: formData.name,
       email: formData.email,
       title: formData.title,
@@ -234,6 +239,7 @@ export default function ProfilePage() {
       avatarUrl: formData.avatarUrl,
     });
     setSavedNotice("Profile details & contact number saved successfully.");
+    } catch (error) { setSavedNotice(error instanceof Error ? error.message : "Profile could not be saved."); }
     setTimeout(() => setSavedNotice(null), 3500);
   };
 

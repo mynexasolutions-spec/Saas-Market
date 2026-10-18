@@ -5,8 +5,6 @@ import Link from "next/link";
 import { ChangeEvent, useState } from "react";
 import PageLayout from "@/components/PageLayout";
 import {
-  VENDOR_PRODUCTS_EVENT_KEY,
-  VENDOR_PRODUCTS_STORAGE_KEY,
   VendorSaaSListing,
 } from "@/utils/vendorProducts";
 
@@ -172,7 +170,7 @@ export default function SubmitProductClient() {
     setField("features", features);
   };
 
-  const submitListing = () => {
+  const submitListing = async () => {
     const newId = `prod-${Math.floor(10000 + Math.random() * 90000)}`;
     const listing: VendorSaaSListing = {
       id: newId,
@@ -198,15 +196,14 @@ export default function SubmitProductClient() {
     };
 
     try {
-      const existingRaw = localStorage.getItem(VENDOR_PRODUCTS_STORAGE_KEY);
-      const parsed: unknown = existingRaw ? JSON.parse(existingRaw) : [];
-      const listings = Array.isArray(parsed) ? parsed : [];
-      localStorage.setItem(VENDOR_PRODUCTS_STORAGE_KEY, JSON.stringify([listing, ...listings]));
-      window.dispatchEvent(new Event(VENDOR_PRODUCTS_EVENT_KEY));
+      const response = await fetch("/api/vendor", {method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action:"listing",listing})});
+      const result = await response.json();
+      if(!response.ok)throw new Error(result.error || "Submission failed.");
       setSubmissionId(newId);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      setErrors({ storage: "Your browser could not save this application. Free some storage or try a smaller screenshot, then submit again." });
+    } catch (error) {
+      setErrors({ storage: error instanceof Error ? error.message : "Submission failed." });
     }
   };
 
