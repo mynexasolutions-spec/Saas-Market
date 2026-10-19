@@ -5,6 +5,7 @@ const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 const BREVO_API_KEY = process.env.BREVO_API_KEY!;
 const BREVO_SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL!;
 const BREVO_SENDER_NAME = process.env.BREVO_SENDER_NAME!;
+const BRAND_LOGO_URL = "https://www.saasmrkt.com/logo.png";
 
 export interface EmailOptions {
   to: string;
@@ -90,11 +91,7 @@ export function createOTPEmailHTML(otp: string, purpose: "login" | "signup", rol
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
           <tr>
             <td style="text-align: center; padding-bottom: 24px; border-bottom: 1px solid #e2e8f0;">
-              <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); margin-bottom: 16px;">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
+              <img src="${BRAND_LOGO_URL}" width="64" height="64" alt="SaaS MRKT Logo" style="display: block; width: 64px; height: 64px; margin: 0 auto 16px; border: 0; object-fit: contain;" />
               <h1 style="margin: 0 0 8px; font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">SaaS MRKT</h1>
               <p style="margin: 0; font-size: 14px; color: #64748b;">${actionLabel}</p>
             </td>
