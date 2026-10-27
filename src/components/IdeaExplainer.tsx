@@ -66,8 +66,25 @@ const CursorIcon = () => (
 );
 
 const CheckIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const CartIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="8" cy="21" r="1.5" />
+    <circle cx="19" cy="21" r="1.5" />
+    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+  </svg>
+);
+
+const StoreIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 9l1-5h16l1 5" />
+    <path d="M2 9h20v2a3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1-2-2V9z" />
+    <path d="M4 14v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+    <path d="M9 22v-5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5" />
   </svg>
 );
 
@@ -342,6 +359,72 @@ export default function IdeaExplainer() {
       onMouseMove={handleMouseMove}
     >
       <div className="idea-bg" aria-hidden="true">
+        {/* Layered fluid 3D wave ribbons */}
+        <svg
+          className="idea-bg-waves"
+          viewBox="0 0 1440 900"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <linearGradient id="ideaWaveLeft1" x1="0%" y1="0%" x2="80%" y2="80%">
+              <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.22" />
+              <stop offset="45%" stopColor="#c4b5fd" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="#ede9fe" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="ideaWaveLeft2" x1="0%" y1="10%" x2="90%" y2="90%">
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.18" />
+              <stop offset="50%" stopColor="#a78bfa" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="ideaWaveRight" x1="100%" y1="20%" x2="30%" y2="80%">
+              <stop offset="0%" stopColor="#c4b5fd" stopOpacity="0.22" />
+              <stop offset="60%" stopColor="#e0e7ff" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="ideaWaveCurve" x1="0%" y1="100%" x2="100%" y2="40%">
+              <stop offset="0%" stopColor="#ddd6fe" stopOpacity="0.25" />
+              <stop offset="50%" stopColor="#e0e7ff" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+
+          {/* Left sweeping fluid waves */}
+          <path
+            d="M-50 -20 C 120 40, 240 240, 160 480 C 100 660, -20 740, -50 820 L -100 820 L -100 -20 Z"
+            fill="url(#ideaWaveLeft1)"
+          />
+          <path
+            d="M-50 40 C 180 120, 320 280, 240 560 C 180 720, 40 820, -50 880 L -100 880 L -100 40 Z"
+            fill="url(#ideaWaveLeft2)"
+          />
+          {/* Bottom center wave flow */}
+          <path
+            d="M0 720 C 280 620, 580 680, 940 580 C 1180 510, 1360 560, 1500 500 L 1500 900 L 0 900 Z"
+            fill="url(#ideaWaveCurve)"
+          />
+          {/* Right edge flowing wave */}
+          <path
+            d="M1490 60 C 1320 180, 1260 360, 1340 560 C 1410 720, 1470 780, 1500 840 L 1520 840 L 1520 60 Z"
+            fill="url(#ideaWaveRight)"
+          />
+        </svg>
+
+        {/* Dot matrix grids matching the reference image */}
+        <div className="idea-dots idea-dots-tl" />
+        <div className="idea-dots idea-dots-tr" />
+        <div className="idea-dots idea-dots-bl" />
+
+        {/* 3D Glossy floating purple spheres */}
+        <div className="idea-sphere idea-sphere-1" />
+        <div className="idea-sphere-wrap idea-sphere-wrap-2">
+          <span className="idea-sphere-string" />
+          <div className="idea-sphere idea-sphere-2" />
+        </div>
+        <div className="idea-sphere idea-sphere-3" />
+
+        {/* Atmospheric ambient glow orbs */}
         <span className="idea-orb idea-orb-1" />
         <span className="idea-orb idea-orb-2" />
         <span className="idea-orb idea-orb-3" />
@@ -355,7 +438,7 @@ export default function IdeaExplainer() {
             TWO WAYS TO TRANSACT
           </div>
           <h2 className="section-title idea-title" id="idea-heading" data-reveal style={delay(80)}>
-            Built for Buyers &amp; Sellers
+            Built for Buyers <span className="idea-title-accent">&amp; Sellers</span>
           </h2>
           <p className="section-subtitle idea-subtitle" data-reveal style={delay(160)}>
             Whether you&apos;re acquiring profitable software or exiting your startup, we provide escrow protection, verified metrics, and smooth handover.
@@ -371,13 +454,22 @@ export default function IdeaExplainer() {
               data-reveal
               style={delay(idx * 120)}
             >
-              <span className="idea-audience-tag">{a.tag}</span>
-              <h3 className="idea-audience-title">{a.title}</h3>
+              <div className="idea-card-header">
+                <div className={`idea-card-icon idea-card-icon-${a.id}`} aria-hidden="true">
+                  {a.id === "buyers" ? <CartIcon /> : <StoreIcon />}
+                </div>
+                <div className="idea-card-header-info">
+                  <span className="idea-audience-tag">{a.tag}</span>
+                  <h3 className="idea-audience-title">{a.title}</h3>
+                </div>
+              </div>
               <ul className="idea-list">
                 {a.points.map((p) => (
                   <li key={p}>
-                    <span className="idea-list-icon idea-icon-good"><CheckIcon /></span>
-                    {p}
+                    <span className="idea-list-icon idea-icon-good">
+                      <CheckIcon />
+                    </span>
+                    <span className="idea-list-text">{p}</span>
                   </li>
                 ))}
               </ul>

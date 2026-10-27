@@ -59,7 +59,9 @@ export default function BlogArticles({ onArticleClick }: BlogArticlesProps) {
           <div className="section-badge" id="articles-badge">
             LATEST INSIGHTS
           </div>
-          <h2 className="section-title">Latest Articles &amp; Resources</h2>
+          <h2 className="section-title testimonials-main-title"> Latest  
+            <span className="section-title-highlight section-title-accent">&nbsp; Articles &amp; Resources</span>
+          </h2>
           <p className="section-subtitle">
             Stay updated with the latest insights, tips and trends in the SaaS industry.
           </p>

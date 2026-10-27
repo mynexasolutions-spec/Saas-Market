@@ -152,7 +152,7 @@ export default function ProductsPageClient() {
   };
 
   return (
-    <PageLayout activeNav="products" noContainer headerClassName="products-reference-header">
+    <PageLayout activeNav="products" noContainer>
       <div className="products-animated-page-wrapper products-reference-page">
         <section className="products-marketplace-hero">
           <Image

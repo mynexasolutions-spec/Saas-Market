@@ -15,7 +15,12 @@ interface SpotlightSearchModalProps {
   onClose: () => void;
 }
 
-type SearchCategory = "all" | "products" | "categories" | "alternatives" | "articles";
+type SearchCategory =
+  | "all"
+  | "products"
+  | "categories"
+  | "alternatives"
+  | "articles";
 
 interface SearchResultItem {
   id: string;
@@ -33,41 +38,95 @@ const STATIC_CATEGORIES = [
   { name: "Project Management", slug: "project-management", count: "18 Tools" },
   { name: "CRM & Sales", slug: "crm", count: "24 Tools" },
   { name: "HR & Payroll", slug: "hr-payroll", count: "12 Tools" },
-  { name: "Marketing & Automation", slug: "marketing-automation", count: "30 Tools" },
+  {
+    name: "Marketing & Automation",
+    slug: "marketing-automation",
+    count: "30 Tools",
+  },
   { name: "DevOps & Cloud", slug: "devops-cloud", count: "15 Tools" },
   { name: "Data & BI", slug: "data-bi", count: "14 Tools" },
-  { name: "Cybersecurity & Identity", slug: "cybersecurity-identity", count: "11 Tools" },
-  { name: "Finance & Accounting", slug: "finance-accounting", count: "16 Tools" },
+  {
+    name: "Cybersecurity & Identity",
+    slug: "cybersecurity-identity",
+    count: "11 Tools",
+  },
+  {
+    name: "Finance & Accounting",
+    slug: "finance-accounting",
+    count: "16 Tools",
+  },
 ];
 
 const STATIC_ALTERNATIVES = [
-  { name: "Slack Alternatives", slug: "slack", desc: "Top team chat & asynchronous messaging platforms" },
-  { name: "Asana Alternatives", slug: "asana", desc: "Modern collaborative agile task planners" },
-  { name: "HubSpot Alternatives", slug: "hubspot", desc: "Cost-effective inbound CRM & email automation suites" },
-  { name: "Jira Alternatives", slug: "jira", desc: "Fast velocity sprint tracking for modern engineering teams" },
-  { name: "Salesforce Alternatives", slug: "salesforce", desc: "Mid-market revenue intelligence and deal pipelines" },
+  {
+    name: "Slack Alternatives",
+    slug: "slack",
+    desc: "Top team chat & asynchronous messaging platforms",
+  },
+  {
+    name: "Asana Alternatives",
+    slug: "asana",
+    desc: "Modern collaborative agile task planners",
+  },
+  {
+    name: "HubSpot Alternatives",
+    slug: "hubspot",
+    desc: "Cost-effective inbound CRM & email automation suites",
+  },
+  {
+    name: "Jira Alternatives",
+    slug: "jira",
+    desc: "Fast velocity sprint tracking for modern engineering teams",
+  },
+  {
+    name: "Salesforce Alternatives",
+    slug: "salesforce",
+    desc: "Mid-market revenue intelligence and deal pipelines",
+  },
 ];
 
 const STATIC_ARTICLES = [
-  { title: "Top 10 SaaS Tools Driving Enterprise Velocity in 2026", slug: "top-10-saas-tools-2026", category: "Market Trends" },
-  { title: "How to Choose the Right SaaS Tool: A 5-Step Evaluation Framework", slug: "how-to-choose-right-saas-tool", category: "Buyer Guide" },
-  { title: "SaaS Trends 2026: Autonomous AI Agents & Consumption Pricing", slug: "saas-trends-2026", category: "Industry Insights" },
-  { title: "SaaS Spend Audit: Eliminating Shadow IT and Seat Bloat", slug: "saas-spend-audit-guide", category: "Procurement" },
+  {
+    title: "Top 10 SaaS Tools Driving Enterprise Velocity in 2026",
+    slug: "top-10-saas-tools-2026",
+    category: "Market Trends",
+  },
+  {
+    title: "How to Choose the Right SaaS Tool: A 5-Step Evaluation Framework",
+    slug: "how-to-choose-right-saas-tool",
+    category: "Buyer Guide",
+  },
+  {
+    title: "SaaS Trends 2026: Autonomous AI Agents & Consumption Pricing",
+    slug: "saas-trends-2026",
+    category: "Industry Insights",
+  },
+  {
+    title: "SaaS Spend Audit: Eliminating Shadow IT and Seat Bloat",
+    slug: "saas-spend-audit-guide",
+    category: "Procurement",
+  },
 ];
 
-export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearchModalProps) {
+export default function SpotlightSearchModal({
+  isOpen,
+  onClose,
+}: SpotlightSearchModalProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<SearchCategory>("all");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [marketplaceProducts, setMarketplaceProducts] = useState<ProductItem[]>(ALL_PRODUCTS);
+  const [marketplaceProducts, setMarketplaceProducts] =
+    useState<ProductItem[]>(ALL_PRODUCTS);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let frameId: number | null = null;
     const refreshProducts = () => {
-      frameId = window.requestAnimationFrame(() => setMarketplaceProducts(getAllMarketplaceProducts()));
+      frameId = window.requestAnimationFrame(() =>
+        setMarketplaceProducts(getAllMarketplaceProducts()),
+      );
     };
     const handleStorage = (event: StorageEvent) => {
       if (event.key === VENDOR_PRODUCTS_STORAGE_KEY) refreshProducts();
@@ -117,16 +176,18 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
 
     // 1. Products
     if (activeFilter === "all" || activeFilter === "products") {
-      const matchedProducts = marketplaceProducts.filter((prod) => {
-        if (!q) return true;
-        return (
-          prod.name.toLowerCase().includes(q) ||
-          prod.category.toLowerCase().includes(q) ||
-          (prod.tagline && prod.tagline.toLowerCase().includes(q)) ||
-          prod.description.toLowerCase().includes(q) ||
-          (prod.tags && prod.tags.some((t) => t.toLowerCase().includes(q)))
-        );
-      }).slice(0, q ? 10 : 5);
+      const matchedProducts = marketplaceProducts
+        .filter((prod) => {
+          if (!q) return true;
+          return (
+            prod.name.toLowerCase().includes(q) ||
+            prod.category.toLowerCase().includes(q) ||
+            (prod.tagline && prod.tagline.toLowerCase().includes(q)) ||
+            prod.description.toLowerCase().includes(q) ||
+            (prod.tags && prod.tags.some((t) => t.toLowerCase().includes(q)))
+          );
+        })
+        .slice(0, q ? 10 : 5);
 
       matchedProducts.forEach((prod) => {
         results.push({
@@ -166,7 +227,10 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
     if (activeFilter === "all" || activeFilter === "alternatives") {
       const matchedAlts = STATIC_ALTERNATIVES.filter((alt) => {
         if (!q) return true;
-        return alt.name.toLowerCase().includes(q) || alt.desc.toLowerCase().includes(q);
+        return (
+          alt.name.toLowerCase().includes(q) ||
+          alt.desc.toLowerCase().includes(q)
+        );
       }).slice(0, q ? 5 : 3);
 
       matchedAlts.forEach((alt) => {
@@ -185,7 +249,10 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
     if (activeFilter === "all" || activeFilter === "articles") {
       const matchedArticles = STATIC_ARTICLES.filter((art) => {
         if (!q) return true;
-        return art.title.toLowerCase().includes(q) || art.category.toLowerCase().includes(q);
+        return (
+          art.title.toLowerCase().includes(q) ||
+          art.category.toLowerCase().includes(q)
+        );
       }).slice(0, q ? 4 : 3);
 
       matchedArticles.forEach((art) => {
@@ -207,10 +274,14 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev < filteredResults.length - 1 ? prev + 1 : 0));
+      setSelectedIndex((prev) =>
+        prev < filteredResults.length - 1 ? prev + 1 : 0,
+      );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : filteredResults.length - 1));
+      setSelectedIndex((prev) =>
+        prev > 0 ? prev - 1 : filteredResults.length - 1,
+      );
     } else if (e.key === "Enter") {
       e.preventDefault();
       const current = filteredResults[selectedIndex];
@@ -252,7 +323,8 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
           background: "#FFFFFF",
           borderRadius: "18px",
           border: "1px solid #E2E8F0",
-          boxShadow: "0 25px 60px -15px rgba(15, 23, 42, 0.3), 0 0 0 1px rgba(15, 23, 42, 0.05)",
+          boxShadow:
+            "0 25px 60px -15px rgba(15, 23, 42, 0.3), 0 0 0 1px rgba(15, 23, 42, 0.05)",
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
@@ -284,7 +356,7 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input
+          <input 
             ref={inputRef}
             type="text"
             value={query}
@@ -294,6 +366,7 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
             }}
             onKeyDown={handleInputKeyDown}
             placeholder="Search software tools, categories, alternatives, articles..."
+            className="search-he"
             style={{
               flex: 1,
               border: "none",
@@ -420,16 +493,31 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
                   marginBottom: "0.85rem",
                 }}
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </div>
-              <p style={{ fontWeight: 600, color: "#1E293B", fontSize: "0.95rem", marginBottom: "0.25rem" }}>
+              <p
+                style={{
+                  fontWeight: 600,
+                  color: "#1E293B",
+                  fontSize: "0.95rem",
+                  marginBottom: "0.25rem",
+                }}
+              >
                 No matches found for &ldquo;{query}&rdquo;
               </p>
               <p style={{ fontSize: "0.82rem", color: "#64748B" }}>
-                Try searching for &quot;CRM&quot;, &quot;GrowthFlow&quot;, &quot;Slack&quot;, or &quot;Project Management&quot;.
+                Try searching for &quot;CRM&quot;, &quot;GrowthFlow&quot;,
+                &quot;Slack&quot;, or &quot;Project Management&quot;.
               </p>
             </div>
           ) : (
@@ -449,7 +537,9 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
                     borderRadius: "12px",
                     textDecoration: "none",
                     background: isSelected ? "#F4F3FF" : "transparent",
-                    border: isSelected ? "1px solid #DDD6FE" : "1px solid transparent",
+                    border: isSelected
+                      ? "1px solid #DDD6FE"
+                      : "1px solid transparent",
                     transition: "all 0.1s ease",
                     marginBottom: "3px",
                   }}
@@ -487,7 +577,14 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
                         flexShrink: 0,
                       }}
                     >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                      >
                         <rect x="3" y="3" width="7" height="7" rx="1.5" />
                         <rect x="14" y="3" width="7" height="7" rx="1.5" />
                         <rect x="14" y="14" width="7" height="7" rx="1.5" />
@@ -508,7 +605,14 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
                         flexShrink: 0,
                       }}
                     >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                      >
                         <polyline points="17 1 21 5 17 9" />
                         <path d="M3 11V9a4 4 0 0 1 4-4h14" />
                         <polyline points="7 23 3 19 7 15" />
@@ -529,7 +633,14 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
                         flexShrink: 0,
                       }}
                     >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                      >
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                       </svg>
@@ -538,7 +649,13 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
 
                   {/* Text content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                      }}
+                    >
                       <span
                         style={{
                           fontWeight: 700,
@@ -627,14 +744,57 @@ export default function SpotlightSearchModal({ isOpen, onClose }: SpotlightSearc
         >
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <span>
-              <kbd style={{ background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "4px", padding: "1px 4px", fontWeight: 700 }}>↑</kbd>{" "}
-              <kbd style={{ background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "4px", padding: "1px 4px", fontWeight: 700 }}>↓</kbd> Navigate
+              <kbd
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid #CBD5E1",
+                  borderRadius: "4px",
+                  padding: "1px 4px",
+                  fontWeight: 700,
+                }}
+              >
+                ↑
+              </kbd>{" "}
+              <kbd
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid #CBD5E1",
+                  borderRadius: "4px",
+                  padding: "1px 4px",
+                  fontWeight: 700,
+                }}
+              >
+                ↓
+              </kbd>{" "}
+              Navigate
             </span>
             <span>
-              <kbd style={{ background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "4px", padding: "1px 4px", fontWeight: 700 }}>Enter</kbd> Select
+              <kbd
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid #CBD5E1",
+                  borderRadius: "4px",
+                  padding: "1px 4px",
+                  fontWeight: 700,
+                }}
+              >
+                Enter
+              </kbd>{" "}
+              Select
             </span>
             <span>
-              <kbd style={{ background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "4px", padding: "1px 4px", fontWeight: 700 }}>ESC</kbd> Close
+              <kbd
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid #CBD5E1",
+                  borderRadius: "4px",
+                  padding: "1px 4px",
+                  fontWeight: 700,
+                }}
+              >
+                ESC
+              </kbd>{" "}
+              Close
             </span>
           </div>
           <span style={{ fontWeight: 600, color: "#5E4BEE" }}>

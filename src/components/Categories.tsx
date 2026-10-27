@@ -160,13 +160,74 @@ export const CATEGORIES_DATA = [
 export default function Categories({ onSelectCategory, activeCategory }: CategoriesProps) {
   return (
     <section className="categories-section" id="categories">
-      <div className="container">
+      {/* 3D Atmospheric Background */}
+      <div className="categories-bg" aria-hidden="true">
+        {/* Layered fluid 3D wave ribbons */}
+        <svg
+          className="categories-bg-waves"
+          viewBox="0 0 1440 850"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <linearGradient id="catWaveLeft1" x1="0%" y1="0%" x2="80%" y2="80%">
+              <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.22" />
+              <stop offset="45%" stopColor="#c4b5fd" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="#ede9fe" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="catWaveLeft2" x1="0%" y1="10%" x2="90%" y2="90%">
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.16" />
+              <stop offset="50%" stopColor="#a78bfa" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="catWaveRight" x1="100%" y1="20%" x2="30%" y2="80%">
+              <stop offset="0%" stopColor="#c4b5fd" stopOpacity="0.22" />
+              <stop offset="60%" stopColor="#e0e7ff" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+
+          {/* Left sweeping fluid waves */}
+          <path
+            d="M-50 -20 C 120 40, 240 240, 160 480 C 100 660, -20 740, -50 820 L -100 820 L -100 -20 Z"
+            fill="url(#catWaveLeft1)"
+          />
+          <path
+            d="M-50 40 C 180 120, 320 280, 240 560 C 180 720, 40 820, -50 880 L -100 880 L -100 40 Z"
+            fill="url(#catWaveLeft2)"
+          />
+          {/* Right edge sweeping wave */}
+          <path
+            d="M1490 60 C 1320 180, 1260 360, 1340 560 C 1410 720, 1470 780, 1500 840 L 1520 840 L 1520 60 Z"
+            fill="url(#catWaveRight)"
+          />
+        </svg>
+
+        {/* Dot matrix grids matching the reference image */}
+        <div className="categories-dots categories-dots-tl" />
+        <div className="categories-dots categories-dots-tr" />
+        <div className="categories-dots categories-dots-bl" />
+
+        {/* 3D Glossy floating purple spheres */}
+        <div className="categories-sphere categories-sphere-1" />
+        <div className="categories-sphere categories-sphere-2" />
+        <div className="categories-sphere categories-sphere-3" />
+
+        {/* Atmospheric ambient glow orbs */}
+        <span className="categories-orb categories-orb-1" />
+        <span className="categories-orb categories-orb-2" />
+      </div>
+
+      <div className="container categories-inner">
         {/* Centered Section Header */}
         <div className="categories-header-center">
           <div className="section-badge" id="categories-badge">
             EXPLORE
           </div>
-          <h2 className="section-title">Browse by Category</h2>
+          <h2 className="section-title">
+            Browse by <span className="section-title-accent">Category</span>
+          </h2>
           <p className="section-subtitle">
             Explore SaaS products across different categories and find the perfect tools for your business.
           </p>
@@ -174,8 +235,11 @@ export default function Categories({ onSelectCategory, activeCategory }: Categor
 
         {/* Top Action Bar */}
         <div className="categories-top-action-bar">
-          <Link href="/categories" className="view-all-link" id="view-all-categories-link">
+          <Link href="/categories" className="categories-view-all-btn" id="view-all-categories-link">
             <span>View All Categories</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </Link>
         </div>
 
@@ -187,9 +251,8 @@ export default function Categories({ onSelectCategory, activeCategory }: Categor
               <div
                 key={cat.id}
                 id={cat.id}
-                className="category-card"
+                className={`category-card ${isSelected ? "is-selected" : ""}`}
                 onClick={() => onSelectCategory(cat.name)}
-                style={isSelected ? { borderColor: "var(--primary)", backgroundColor: "var(--primary-light)" } : {}}
               >
                 <div className="category-card-left">
                   <div
@@ -203,6 +266,28 @@ export default function Categories({ onSelectCategory, activeCategory }: Categor
                     <span className="category-count">{cat.count}</span>
                   </div>
                 </div>
+
+                <div className="category-arrow" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </div>
+
+                {/* Subtle corner wave accent matching reference image */}
+                <svg
+                  className="category-card-corner-wave"
+                  viewBox="0 0 70 50"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M70 18 C 50 18, 26 30, 0 50 L 70 50 Z"
+                    fill={cat.color}
+                    fillOpacity="0.14"
+                  />
+                </svg>
               </div>
             );
           })}

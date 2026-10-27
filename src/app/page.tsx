@@ -132,6 +132,10 @@ export default function Home() {
           onViewProduct={(product) => router.push(`/products/${product.id}`)}
           searchFilter={searchQuery}
           categoryFilter={activeCategory}
+          onResetFilters={() => {
+            setSearchQuery("");
+            setActiveCategory("");
+          }}
         />
 
         {/* Why Choose SaaS MRKT (Lavender box with 6 cards) */}

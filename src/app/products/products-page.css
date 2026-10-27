@@ -1,52 +1,4 @@
-/* Product directory visual treatment. Every page rule is scoped to this route. */
-.products-reference-header .container {
-  max-width: 1460px;
-  padding-inline: 1.5rem;
-}
-
-.products-reference-header .navbar {
-  height: 50px;
-}
-
-.products-reference-header .brand-logo {
-  gap: 0.4rem;
-  font-size: 0.9rem;
-}
-
-.products-reference-header .brand-icon {
-  width: 29px;
-  height: 29px;
-}
-
-.products-reference-header .nav-links {
-  gap: clamp(1rem, 2vw, 1.85rem);
-}
-
-.products-reference-header .nav-link {
-  padding-block: 0.95rem;
-  font-size: 0.82rem;
-  font-weight: 650;
-}
-
-.products-reference-header .nav-link--active::after {
-  bottom: 0.35rem;
-}
-
-.products-reference-header .nav-actions {
-  gap: 0.65rem;
-}
-
-.products-reference-header .nav-spotlight-btn {
-  min-height: 34px;
-  padding: 0.36rem 0.65rem !important;
-  border-radius: 999px !important;
-  font-size: 0.73rem !important;
-}
-
-.products-reference-header .login-link,
-.products-reference-header .btn-primary {
-  font-size: 0.78rem;
-}
+/* Product directory visual treatment. */
 
 .products-reference-page {
   position: relative;
@@ -798,9 +750,6 @@
 }
 
 @media (max-width: 992px) {
-  .products-reference-header .navbar {
-    height: 56px;
-  }
 
   .products-reference-page .products-layout {
     display: block;
@@ -836,8 +785,7 @@
 }
 
 @media (max-width: 760px) {
-  .products-reference-page .container,
-  .products-reference-header .container {
+  .products-reference-page .container {
     padding-inline: 1rem;
   }
 
@@ -909,24 +857,6 @@
     flex: 0 0 auto;
   }
 
-  .products-reference-header .nav-spotlight-btn {
-    width: 34px;
-    min-width: 34px;
-    height: 34px;
-    justify-content: center;
-    padding: 0 !important;
-  }
-
-  .products-reference-header .nav-spotlight-label,
-  .products-reference-header .nav-spotlight-btn kbd {
-    display: none !important;
-  }
-
-  .products-reference-header .nav-actions {
-    min-width: 0;
-    margin-left: auto;
-    flex: 0 0 auto;
-  }
 }
 
 @media (max-width: 620px) {
