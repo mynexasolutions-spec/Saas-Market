@@ -18,6 +18,7 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import ProductModal from "@/components/ProductModal";
 import AuthModal from "@/components/AuthModal";
+import FloatingChatButton from "@/components/FloatingChatButton";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
@@ -151,9 +152,7 @@ export default function Home() {
         <Testimonials />
 
         {/* Latest Articles & Resources (Blog) */}
-        <BlogArticles
-          onArticleClick={(title) => showToast(`Opening article: "${title}"`)}
-        />
+        <BlogArticles />
 
         {/* Newsletter CTA */}
         <Newsletter onSubscribe={handleSubscribe} />
@@ -161,6 +160,9 @@ export default function Home() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Real-Time Community Chat Widget on Home Page */}
+      <FloatingChatButton />
 
       {/* Product Detail Modal */}
       <ProductModal

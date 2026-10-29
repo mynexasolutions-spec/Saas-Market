@@ -24,6 +24,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
   const [otpStep, setOtpStep] = useState<OtpStep>("send");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [otp, setOtp] = useState<string[]>(() => Array(6).fill(""));
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +38,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
     setFormError("");
     setNotice("");
     setPassword("");
+    setShowPassword(false);
     setOtp(Array(6).fill(""));
     setOtpStep("send");
     setResendCountdown(0);
@@ -266,16 +268,44 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
             {isSignup && (
               <label className={styles.fieldGroup}>
                 <span className={styles.fieldLabel}>Full name or organization</span>
-                <input className={`${styles.field} ${styles.nameField}`} type="text" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Enter your name" />
+                <div className={styles.inputWrapper}>
+                  <span className={styles.inputIcon} aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+                  </span>
+                  <input className={styles.field} type="text" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Enter your name" />
+                </div>
               </label>
             )}
             <label className={styles.fieldGroup}>
               <span className={styles.fieldLabel}>{selectedRole === "vendor" ? "Vendor email address" : "Work email address"}</span>
-              <input className={`${styles.field} ${styles.emailField}`} type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" required />
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIcon} aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
+                </span>
+                <input className={styles.field} type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" required />
+              </div>
             </label>
             <label className={styles.fieldGroup}>
               <span className={styles.fieldLabel}>Password</span>
-              <input className={`${styles.field} ${styles.passwordField}`} type="password" autoComplete={isSignup ? "new-password" : "current-password"} minLength={isSignup ? 8 : undefined} value={password} onChange={(event) => setPassword(event.target.value)} placeholder={isSignup ? "At least 8 characters" : "Enter your password"} required />
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIcon} aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
+                </span>
+                <input className={styles.field} type={showPassword ? "text" : "password"} autoComplete={isSignup ? "new-password" : "current-password"} minLength={isSignup ? 8 : undefined} value={password} onChange={(event) => setPassword(event.target.value)} placeholder={isSignup ? "At least 8 characters" : "Enter your password"} required style={{ paddingRight: "38px" }} />
+                <button
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
+                  ) : (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                  )}
+                </button>
+              </div>
             </label>
             <button type="submit" className={styles.primaryButton} disabled={isSubmitting}>
               {isSubmitting ? submittingLabel : submitLabel}
@@ -290,12 +320,22 @@ export default function AuthModal({ isOpen, initialMode, onClose, onSuccess }: A
             {isSignup && (
               <label className={styles.fieldGroup}>
                 <span className={styles.fieldLabel}>Full name or organization</span>
-                <input className={`${styles.field} ${styles.nameField}`} type="text" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Enter your name" />
+                <div className={styles.inputWrapper}>
+                  <span className={styles.inputIcon} aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+                  </span>
+                  <input className={styles.field} type="text" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Enter your name" />
+                </div>
               </label>
             )}
             <label className={styles.fieldGroup}>
               <span className={styles.fieldLabel}>{selectedRole === "vendor" ? "Vendor email address" : "Work email address"}</span>
-              <input className={`${styles.field} ${styles.emailField}`} type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" required />
+              <div className={styles.inputWrapper}>
+                <span className={styles.inputIcon} aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
+                </span>
+                <input className={styles.field} type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" required />
+              </div>
             </label>
             <button type="submit" className={styles.primaryButton} disabled={isSendingOtp || !email.trim()}>
               {isSendingOtp ? "Sending secure code..." : `Send code to ${accountLabel.toLowerCase()} email`}

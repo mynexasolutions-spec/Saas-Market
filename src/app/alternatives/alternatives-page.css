@@ -1,0 +1,376 @@
+/* ==========================================================================
+   SaaS Alternatives Directory - Companion Component Styles
+   Reuses exact /buyers typography, font-sizes & color system
+   ========================================================================== */
+
+/* Search & Filter Bar */
+.alt-search-container {
+  max-width: 580px;
+  margin: 0 auto 1.25rem;
+  position: relative;
+}
+
+.alt-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.alt-search-icon {
+  position: absolute;
+  left: 0.95rem;
+  color: #94a3b8;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.alt-search-input {
+  width: 100%;
+  padding: 0.75rem 2.6rem 0.75rem 2.5rem;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: #0f172a;
+  outline: none;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.alt-search-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.alt-search-clear {
+  position: absolute;
+  right: 0.75rem;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.alt-search-clear:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Category Filter Tabs */
+.alt-filter-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.alt-filter-pill {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.alt-filter-pill:hover {
+  border-color: #cbd5e1;
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.alt-filter-pill.active {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  color: #6d28d9;
+  box-shadow: 0 2px 6px rgba(109, 40, 217, 0.08);
+}
+
+/* Results Count Bar */
+.alt-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.alt-results-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.alt-results-count {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+}
+
+/* Directory Cards Grid */
+.alt-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
+}
+
+.alt-tool-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.35rem 1.4rem;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.alt-tool-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+}
+
+/* Card Top Meta */
+.alt-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.alt-card-cat-badge {
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.alt-card-legacy-tag {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* Tool Brand Identity */
+.alt-tool-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.45rem;
+}
+
+.alt-tool-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+}
+
+.alt-tool-avatar.avatar-slack {
+  background: #4a154b;
+}
+
+.alt-tool-avatar.avatar-asana {
+  background: #f06a6a;
+}
+
+.alt-tool-avatar.avatar-hubspot {
+  background: #ff7a59;
+}
+
+.alt-tool-avatar.avatar-salesforce {
+  background: #00a1e0;
+}
+
+.alt-tool-avatar.avatar-quickbooks {
+  background: #2ca01c;
+}
+
+.alt-tool-avatar.avatar-jira {
+  background: #0052cc;
+}
+
+.alt-tool-name {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.alt-tool-tagline {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0 0 0.85rem 0;
+  flex-grow: 1;
+}
+
+/* Complaints Chips */
+.alt-complaints-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.alt-complaint-chip {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  padding: 0.18rem 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* Replacements Box */
+.alt-replacements-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.alt-replacements-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.45rem;
+}
+
+.alt-replacements-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.alt-match-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.alt-match-star {
+  color: #f59e0b;
+  font-size: 0.78rem;
+}
+
+.alt-match-price {
+  color: #059669;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* Card Button using .buyers-btn-primary */
+.alt-tool-card .buyers-btn-primary {
+  width: 100%;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* Empty State */
+.alt-empty-box {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: #ffffff;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+}
+
+.alt-empty-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+}
+
+.alt-empty-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+.alt-empty-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #4f46e5;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .alt-cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .alt-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .alt-tool-card {
+    padding: 1.15rem 1rem;
+  }
+}

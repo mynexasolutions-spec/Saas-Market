@@ -185,8 +185,10 @@
 .buyers-hero-trust-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.15rem;
   flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .buyers-trust-badge {
@@ -1048,7 +1050,7 @@
 /* Floating Verified Tools Pill */
 .buyers-cta-badge-verified {
   position: absolute;
-  bottom: 10px;
+  bottom: 30px;
   right: 70px;
   background: #ffffff;
   border-radius: 9999px;

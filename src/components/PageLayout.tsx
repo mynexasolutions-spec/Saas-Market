@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
+import FloatingChatButton from "@/components/FloatingChatButton";
 import { useAuth } from "@/context/AuthContext";
 
 interface PageLayoutProps {
@@ -41,6 +42,9 @@ export default function PageLayout({
       </main>
 
       <Footer />
+
+      {/* Real-Time Community Chat Widget */}
+      <FloatingChatButton />
 
       <AuthModal
         isOpen={isAuthOpen}

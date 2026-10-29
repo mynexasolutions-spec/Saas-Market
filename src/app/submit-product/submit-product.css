@@ -1,0 +1,1075 @@
+/* ==========================================================================
+   Submit Product Page - High-Fidelity Vendor Onboarding System
+   Exact Font Sizes from /buyers (1:1 Typography Scale)
+   Modern, Responsive & Compact ("Kam Space Me")
+   ========================================================================== */
+
+.submit-page-wrapper {
+  background:
+    radial-gradient(
+      circle 900px at 85% 12%,
+      rgba(224, 231, 255, 0.55) 0%,
+      rgba(245, 243, 255, 0.3) 35%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle 700px at 15% 45%,
+      rgba(240, 249, 255, 0.4) 0%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, #f8faff 0%, #ffffff 40%, #f8fafc 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: clip;
+  padding: 0.75rem 0 2rem;
+}
+
+.submit-container {
+  max-width: var(--max-width, 1400px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   1. Breadcrumbs (Exact /buyers font-size: 0.84rem)
+   ========================================================================== */
+
+.submit-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  padding-top: 0.25rem;
+}
+
+.submit-breadcrumb a {
+  color: #64748b;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 0.15s ease;
+}
+
+.submit-breadcrumb a:hover {
+  color: #4f46e5;
+}
+
+.submit-breadcrumb-sep {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.submit-breadcrumb-current {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   2. Compact Hero Section
+   ========================================================================== */
+
+.submit-hero {
+  text-align: center;
+  padding: 0.25rem 0 1rem;
+  position: relative;
+}
+
+.submit-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+  border-radius: 9999px;
+  padding: 0.28rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.55rem;
+  box-shadow: 0 2px 6px rgba(109, 40, 217, 0.08);
+}
+
+.submit-hero-title {
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  margin: 0 0 0.45rem 0;
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.submit-title-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.submit-hero-desc {
+  font-size: 1.05rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 1rem auto 2rem;
+  max-width: 640px;
+}
+
+/* 3 Hero Trust Badges (Exact /buyers: 0.95rem num, 0.73rem label) */
+.submit-hero-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.submit-badge-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.4rem 0.85rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s ease;
+}
+
+.submit-badge-item:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+}
+
+.submit-badge-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.submit-badge-icon.icon-green {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.submit-badge-icon.icon-purple {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.submit-badge-icon.icon-blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.submit-badge-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.submit-badge-num {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.submit-badge-label {
+  font-size: 0.73rem;
+  color: #64748b;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   3. Modern Compact Stepper
+   ========================================================================== */
+
+.submit-stepper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+  max-width: 580px;
+  margin: 0 auto 1.5rem;
+}
+
+.submit-stepper::before {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: 16.66%;
+  right: 16.66%;
+  height: 2px;
+  background: #e2e8f0;
+  z-index: 0;
+}
+
+.submit-step-node {
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: #94a3b8;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-family: inherit;
+}
+
+.submit-step-circle {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  background: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.submit-step-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.submit-step-node.is-current .submit-step-circle {
+  border-color: #4f46e5;
+  background: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+.submit-step-node.is-current .submit-step-label {
+  color: #4f46e5;
+  font-weight: 800;
+}
+
+.submit-step-node.is-complete .submit-step-circle {
+  border-color: #10b981;
+  background: #10b981;
+  color: #ffffff;
+}
+
+.submit-step-node.is-complete .submit-step-label {
+  color: #0f172a;
+}
+
+/* ==========================================================================
+   4. Main 2-Column Grid (Form + Live Sticky Preview)
+   ========================================================================== */
+
+.submit-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+  gap: 1.5rem;
+  align-items: start;
+  margin-top: 40px;
+}
+
+/* Form Card */
+.submit-form-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.6rem 1.6rem;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+}
+
+.submit-form-header {
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 0.85rem;
+}
+
+.submit-form-eyebrow {
+  display: inline-block;
+  color: #6d28d9;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.submit-form-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.3rem 0;
+}
+
+.submit-form-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Form Fields */
+.submit-fields-stack {
+  display: grid;
+  gap: 1.05rem;
+}
+
+.submit-fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.submit-field {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.submit-field-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.submit-req {
+  color: #e11d48;
+  margin-left: 0.2rem;
+}
+
+.submit-field-opt {
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.submit-input,
+.submit-select,
+.submit-textarea {
+  width: 100%;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  background: #ffffff;
+  color: #0f172a;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.35;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.submit-input,
+.submit-select {
+  height: 42px;
+  padding: 0 0.85rem;
+}
+
+.submit-textarea {
+  resize: vertical;
+  padding: 0.75rem 0.85rem;
+}
+
+.submit-input:focus,
+.submit-select:focus,
+.submit-textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.submit-input.has-error,
+.submit-select.has-error,
+.submit-textarea.has-error {
+  border-color: #e11d48;
+  background: #fffafb;
+}
+
+.submit-help-text {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.submit-error-text {
+  font-size: 0.75rem;
+  color: #be123c;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.submit-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #fecdd3;
+  border-radius: 6px;
+  background: #fff1f2;
+  color: #9f1239;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+}
+
+/* Brand Colors Field */
+.submit-color-section {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.submit-color-label {
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.submit-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.submit-swatch-btn {
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #cbd5e1;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 0;
+}
+
+.submit-swatch-btn:hover {
+  transform: scale(1.1);
+}
+
+.submit-swatch-btn.is-active {
+  box-shadow: 0 0 0 2.5px #4f46e5;
+  transform: scale(1.12);
+}
+
+/* Upload Grid */
+.submit-upload-grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 0.85rem;
+}
+
+.submit-upload-box {
+  display: grid;
+  position: relative;
+  min-height: 150px;
+  padding: 0.85rem;
+  overflow: hidden;
+  place-items: center;
+  align-content: center;
+  gap: 0.25rem;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #64748b;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-upload-box:hover {
+  border-color: #6366f1;
+  background: #f5f3ff;
+}
+
+.submit-upload-box.has-error {
+  border-color: #e11d48;
+}
+
+.submit-upload-box input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.submit-upload-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ede9fe;
+  color: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+
+.submit-upload-title {
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.submit-upload-sub {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.submit-logo-preview {
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  object-fit: cover;
+}
+
+.submit-image-preview {
+  object-fit: cover;
+}
+
+.submit-replace-pill {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.8);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  z-index: 2;
+}
+
+/* Benefits / Features List */
+.submit-features-section {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.submit-features-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.submit-features-count {
+  color: #94a3b8;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.submit-feature-row {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.submit-feature-check {
+  color: #10b981;
+  font-weight: 900;
+  font-size: 0.85rem;
+}
+
+.submit-feature-del {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 6px;
+  background: #fff1f2;
+  color: #be123c;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.submit-add-feature-btn {
+  padding: 0.35rem 0;
+  border: 0;
+  background: transparent;
+  color: #4f46e5;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+}
+
+.submit-add-feature-btn:hover {
+  text-decoration: underline;
+}
+
+/* Step 3: Review Panel */
+.submit-review-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  background: #f8fafc;
+  align-items: center;
+}
+
+.submit-review-item {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.submit-review-label {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.submit-review-val {
+  color: #0f172a;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.submit-review-sub {
+  color: #64748b;
+  font-size: 0.74rem;
+}
+
+.submit-review-edit {
+  border: 0;
+  background: transparent;
+  color: #4f46e5;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.submit-payout-note {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  padding: 0.85rem 1rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.submit-consent-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  color: #475569;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.submit-consent-row.has-error {
+  border-color: #e11d48;
+  background: #fffafb;
+}
+
+.submit-consent-row input {
+  margin-top: 0.2rem;
+  accent-color: #4f46e5;
+}
+
+/* Form Action Buttons */
+.submit-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.4rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ==========================================================================
+   5. Live Marketplace Preview Card (Right Column)
+   ========================================================================== */
+
+.submit-preview-col {
+  position: sticky;
+  top: 88px;
+}
+
+.submit-preview-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.65rem;
+  color: #475569;
+  font-size: 0.73rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.submit-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  display: inline-block;
+  animation: submitPulse 2s infinite ease-in-out;
+}
+
+@keyframes submitPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
+}
+
+.submit-preview-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  transition: all 0.2s ease;
+}
+
+.submit-preview-img-box {
+  position: relative;
+  aspect-ratio: 16 / 9.5;
+  background: linear-gradient(135deg, #ede9fe 0%, #e0f2fe 100%);
+  overflow: hidden;
+}
+
+.submit-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 1.5rem;
+  color: #64748b;
+  text-align: center;
+  gap: 0.35rem;
+}
+
+.submit-preview-placeholder-icon {
+  font-size: 2rem;
+  color: #7c3aed;
+}
+
+.submit-preview-body {
+  padding: 1.15rem;
+}
+
+.submit-preview-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 0.65rem;
+}
+
+.submit-preview-logo-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 900;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-preview-name-group h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.submit-preview-cat {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.submit-review-pill {
+  padding: 0.22rem 0.55rem;
+  border-radius: 9999px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.submit-preview-tagline {
+  color: #64748b;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  margin: 0 0 0.75rem 0;
+  min-height: 2.5em;
+}
+
+.submit-preview-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.76rem;
+  color: #475569;
+}
+
+.submit-preview-features-list span {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.submit-preview-features-list span svg {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.submit-preview-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.85rem;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+}
+
+.submit-preview-footer-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.submit-preview-footer-left small {
+  color: #94a3b8;
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.submit-preview-footer-left strong {
+  font-size: 1.05rem;
+  font-weight: 850;
+  color: #0f172a;
+}
+
+.submit-preview-view-btn {
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  background: #4f46e5;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.submit-preview-tip {
+  margin: 0.75rem 0 0;
+  color: #64748b;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   6. Success Screen ("Kam Space Me")
+   ========================================================================== */
+
+.submit-success-card {
+  max-width: 620px;
+  margin: 1.5rem auto;
+  padding: 2rem 1.8rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  text-align: center;
+}
+
+.submit-success-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: #ecfdf5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.submit-success-title {
+  font-size: clamp(1.6rem, 3.2vw, 2.15rem);
+  font-weight: 850;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.5rem 0;
+}
+
+.submit-success-desc {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0 0 1rem 0;
+}
+
+.submit-tracking-box {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.25rem;
+}
+
+.submit-tracking-label {
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.submit-tracking-code {
+  color: #4f46e5;
+  font-family: monospace;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.submit-next-steps-box {
+  padding: 1rem 1.15rem;
+  border-radius: 6px;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  color: #4c1d95;
+  text-align: left;
+  margin-bottom: 1.25rem;
+  font-size: 0.86rem;
+}
+
+.submit-next-steps-box ol {
+  margin: 0.45rem 0 0;
+  padding-left: 1.1rem;
+  line-height: 1.6;
+}
+
+.submit-success-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   7. Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 980px) {
+  .submit-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .submit-preview-col {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .submit-fields-row {
+    grid-template-columns: 1fr;
+  }
+
+  .submit-upload-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .submit-review-card {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .submit-review-card button {
+    text-align: left;
+  }
+
+  .submit-actions {
+    flex-direction: column-reverse;
+    gap: 0.65rem;
+  }
+
+  .submit-actions button {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .submit-hero-badges {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.45rem;
+  }
+
+  .submit-badge-item {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: flex-start;
+  }
+
+  .submit-stepper {
+    max-width: 100%;
+  }
+
+  .submit-step-label {
+    max-width: 70px;
+    text-align: center;
+    line-height: 1.2;
+    font-size: 0.72rem;
+  }
+
+  .submit-form-card {
+    padding: 1.15rem 1rem;
+  }
+}
+

@@ -1,5 +1,7 @@
 "use client";
 
+import "./vendor-page.css";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
@@ -671,32 +673,20 @@ export default function VendorPage() {
             </div>
 
             {/* 3 Metrics Cards */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-                gap: "1.25rem",
-                marginTop: "1.75rem",
-              }}
-            >
+            <div className="vendor-kpi-grid-row">
               <div
-                className="vendor-kpi-box"
-                style={{
-                  cursor: "pointer",
-                  border: activeTab === "listings" ? "2px solid #4F46E5" : "1px solid #E2E8F0",
-                  background: activeTab === "listings" ? "#EEF2FF" : "#F8FAFC",
-                }}
+                className={`vendor-kpi-box${activeTab === "listings" ? " active-tab-kpi" : ""}`}
                 onClick={() => setActiveTab("listings")}
               >
-                <div className="vendor-kpi-icon-wrap" style={{ background: "#E0E7FF", color: "#4F46E5", width: "48px", height: "48px", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="vendor-kpi-icon-wrap" style={{ background: "#EEF2FF", color: "#4F46E5" }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <polygon points="12 2 2 7 12 12 22 7 12 2" />
                     <polyline points="2 17 12 22 22 17" />
                     <polyline points="2 12 12 17 22 12" />
                   </svg>
                 </div>
                 <div className="vendor-kpi-meta">
-                  <span className="vendor-kpi-label">My SaaS Product Catalog</span>
+                  <span className="vendor-kpi-label">SaaS Catalog</span>
                   <div className="vendor-kpi-val-row">
                     <span className="vendor-kpi-val">{visibleVendorProducts.length} Listings</span>
                     <span className="vendor-kpi-trend positive">
@@ -707,16 +697,11 @@ export default function VendorPage() {
               </div>
 
               <div
-                className="vendor-kpi-box"
-                style={{
-                  cursor: "pointer",
-                  border: activeTab === "purchase-requests" ? "2px solid #3B82F6" : "1px solid #E2E8F0",
-                  background: activeTab === "purchase-requests" ? "#F5F3FF" : "#F8FAFC",
-                }}
+                className={`vendor-kpi-box${activeTab === "purchase-requests" ? " active-tab-kpi" : ""}`}
                 onClick={() => setActiveTab("purchase-requests")}
               >
-                <div className="vendor-kpi-icon-wrap leads">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="vendor-kpi-icon-wrap leads" style={{ background: "#EEF2FF", color: "#6366F1" }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -724,25 +709,20 @@ export default function VendorPage() {
                   </svg>
                 </div>
                 <div className="vendor-kpi-meta">
-                  <span className="vendor-kpi-label">Buyers Wanting to Purchase Software</span>
+                  <span className="vendor-kpi-label">Purchase Requests</span>
                   <div className="vendor-kpi-val-row">
                     <span className="vendor-kpi-val">{inquiries.length} Buyers</span>
-                    <span className="vendor-kpi-trend positive">Active Purchase Contacts</span>
+                    <span className="vendor-kpi-trend positive">Active Contacts</span>
                   </div>
                 </div>
               </div>
 
               <div
-                className="vendor-kpi-box"
-                style={{
-                  cursor: "pointer",
-                  border: activeTab === "documents" ? "2px solid #059669" : "1px solid #E2E8F0",
-                  background: activeTab === "documents" ? "#ECFDF5" : "#F8FAFC",
-                }}
+                className={`vendor-kpi-box${activeTab === "documents" ? " active-tab-kpi" : ""}`}
                 onClick={() => setActiveTab("documents")}
               >
-                <div className="vendor-kpi-icon-wrap mrr">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="vendor-kpi-icon-wrap mrr" style={{ background: "#ECFDF5", color: "#059669" }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                     <line x1="16" y1="13" x2="8" y2="13" />
@@ -751,9 +731,9 @@ export default function VendorPage() {
                   </svg>
                 </div>
                 <div className="vendor-kpi-meta">
-                  <span className="vendor-kpi-label">Official Company Documents</span>
+                  <span className="vendor-kpi-label">Company Documents</span>
                   <div className="vendor-kpi-val-row">
-                    <span className="vendor-kpi-val">{documents.length} Documents</span>
+                    <span className="vendor-kpi-val">{documents.length} Docs</span>
                     <span className="vendor-kpi-trend positive">
                       {documents.filter((d) => d.status === "Verified").length} Verified ✓
                     </span>
@@ -823,16 +803,16 @@ export default function VendorPage() {
             <div className="vendor-tab-content">
               {/* Search & Action Bar */}
               <div className="vendor-filter-row">
-                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", flexWrap: "wrap", flex: 1 }}>
                   {/* Search */}
-                  <div style={{ position: "relative", minWidth: "260px" }}>
+                  <div className="vendor-search-box">
                     <svg
-                      width="16"
-                      height="16"
+                      width="15"
+                      height="15"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#94A3B8"
-                      strokeWidth="2.5"
+                      strokeWidth="2.4"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)" }}
@@ -842,32 +822,18 @@ export default function VendorPage() {
                     </svg>
                     <input
                       type="text"
+                      className="vendor-search-input"
                       placeholder="Search listings by title, tagline or category..."
                       value={listingSearch}
                       onChange={(e) => setListingSearch(e.target.value)}
-                      style={{
-                        padding: "0.6rem 1rem 0.6rem 2.4rem",
-                        borderRadius: "10px",
-                        border: "1px solid #CBD5E1",
-                        fontSize: "0.88rem",
-                        width: "100%",
-                        outline: "none",
-                      }}
                     />
                   </div>
 
                   {/* Category Filter */}
                   <select
+                    className="vendor-cat-select"
                     value={listingCategoryFilter}
                     onChange={(e) => setListingCategoryFilter(e.target.value)}
-                    style={{
-                      padding: "0.6rem 1rem",
-                      borderRadius: "10px",
-                      border: "1px solid #CBD5E1",
-                      fontSize: "0.88rem",
-                      background: "#FFFFFF",
-                      outline: "none",
-                    }}
                   >
                     <option value="all">All Categories</option>
                     <option value="Project Management">Project Management</option>
@@ -881,26 +847,13 @@ export default function VendorPage() {
                   </select>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
                   <button
                     type="button"
+                    className="btn-primary vendor-add-btn"
                     onClick={openCreateListing}
-                    style={{
-                      background: "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)",
-                      color: "#ffffff",
-                      border: "none",
-                      padding: "0.65rem 1.25rem",
-                      borderRadius: "10px",
-                      fontWeight: 700,
-                      fontSize: "0.88rem",
-                      cursor: "pointer",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
-                    }}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="12" y1="5" x2="12" y2="19" />
                       <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
@@ -909,15 +862,16 @@ export default function VendorPage() {
 
                   <Link
                     href="/submit-product"
+                    className="btn-secondary"
                     style={{
-                      background: "#F1F5F9",
-                      color: "#334155",
-                      border: "1px solid #E2E8F0",
-                      padding: "0.65rem 1rem",
-                      borderRadius: "10px",
-                      fontWeight: 600,
-                      fontSize: "0.88rem",
+                      padding: "0.55rem 0.95rem",
+                      borderRadius: "8px",
+                      fontWeight: 650,
+                      fontSize: "0.82rem",
                       textDecoration: "none",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     Full Onboarding Form
@@ -926,36 +880,29 @@ export default function VendorPage() {
               </div>
 
               {/* Product Listings Grid/Cards */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div className="vendor-listings-stack">
                 {filteredVendorListings.length === 0 ? (
                   <div
                     style={{
                       background: "#FFFFFF",
                       border: "1px dashed #CBD5E1",
-                      borderRadius: "16px",
-                      padding: "3.5rem 2rem",
+                      borderRadius: "14px",
+                      padding: "3rem 1.5rem",
                       textAlign: "center",
                       color: "#64748B",
                     }}
                   >
-                    <p style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0F172A", marginBottom: "0.5rem" }}>
+                    <p style={{ fontSize: "1.05rem", fontWeight: 750, color: "#0F172A", marginBottom: "0.35rem" }}>
                       No SaaS listings found
                     </p>
-                    <p style={{ fontSize: "0.9rem", marginBottom: "1.5rem" }}>
+                    <p style={{ fontSize: "0.85rem", marginBottom: "1.25rem" }}>
                       You haven&apos;t added any software matching your filters yet.
                     </p>
                     <button
                       type="button"
+                      className="btn-primary"
                       onClick={openCreateListing}
-                      style={{
-                        background: "#4F46E5",
-                        color: "#ffffff",
-                        padding: "0.75rem 1.5rem",
-                        borderRadius: "10px",
-                        fontWeight: 700,
-                        border: "none",
-                        cursor: "pointer",
-                      }}
+                      style={{ padding: "0.65rem 1.25rem", borderRadius: "8px", fontWeight: 700 }}
                     >
                       + Create Your First SaaS Listing
                     </button>
@@ -964,95 +911,48 @@ export default function VendorPage() {
                   filteredVendorListings.map((prod) => (
                     <div
                       key={prod.id}
-                      style={{
-                        background: "#FFFFFF",
-                        border: "1px solid #E2E8F0",
-                        borderRadius: "16px",
-                        padding: "1.5rem",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: "1.5rem",
-                        flexWrap: "wrap",
-                        boxShadow: "0 2px 8px rgba(15, 23, 42, 0.04)",
-                        transition: "all 0.2s ease",
-                      }}
+                      className="vendor-listing-card"
                     >
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: "1.25rem", flex: 1, minWidth: "300px" }}>
+                      <div className="vendor-listing-card-main">
                         {/* Brand Icon */}
                         <div
+                          className="vendor-listing-brand-icon"
                           style={{
-                            width: "52px",
-                            height: "52px",
-                            borderRadius: "14px",
                             background: prod.brandColor || "#6366F1",
-                            color: "#ffffff",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "1.25rem",
-                            fontWeight: 800,
-                            flexShrink: 0,
-                            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
                           }}
                         >
                           {prod.brandLetter || prod.name.slice(0, 2).toUpperCase()}
                         </div>
 
                         {/* Title & Details */}
-                        <div style={{ flex: 1 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap", marginBottom: "0.35rem" }}>
-                            <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0F172A" }}>
+                        <div className="vendor-listing-card-info">
+                          <div className="vendor-listing-title-row">
+                            <h3 className="vendor-listing-title">
                               {prod.name}
                             </h3>
-                            <span
-                              style={{
-                                background: "#F1F5F9",
-                                color: "#475569",
-                                padding: "0.2rem 0.65rem",
-                                borderRadius: "6px",
-                                fontSize: "0.75rem",
-                                fontWeight: 700,
-                              }}
-                            >
+                            <span className="vendor-listing-cat-badge">
                               {normalizeMarketplaceCategory(prod.category)}
                             </span>
                             <span
-                              style={{
-                                background: prod.status === "Live & Active" ? "#ECFDF5" : "#FEF3C7",
-                                color: prod.status === "Live & Active" ? "#059669" : "#D97706",
-                                padding: "0.2rem 0.65rem",
-                                borderRadius: "6px",
-                                fontSize: "0.75rem",
-                                fontWeight: 700,
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "0.35rem",
-                              }}
+                              className={`vendor-listing-status-badge ${
+                                prod.status === "Live & Active" ? "live" : prod.status === "Under Review" ? "review" : "paused"
+                              }`}
                             >
-                              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: prod.status === "Live & Active" ? "#10B981" : "#F59E0B" }} />
+                              <span className={`vendor-status-dot ${
+                                prod.status === "Live & Active" ? "live" : prod.status === "Under Review" ? "review" : "paused"
+                              }`} />
                               {prod.status}
                             </span>
                           </div>
 
-                          <p style={{ margin: "0 0 0.65rem", color: "#64748B", fontSize: "0.88rem", lineHeight: 1.45 }}>
+                          <p className="vendor-listing-tagline">
                             {prod.tagline}
                           </p>
 
                           {/* Features Pills */}
-                          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                          <div className="vendor-listing-features-row">
                             {prod.features.slice(0, 3).map((feat, fi) => (
-                              <span
-                                key={fi}
-                                style={{
-                                  background: "#F8FAFC",
-                                  border: "1px solid #E2E8F0",
-                                  color: "#334155",
-                                  fontSize: "0.76rem",
-                                  padding: "0.15rem 0.55rem",
-                                  borderRadius: "6px",
-                                }}
-                              >
+                              <span key={fi} className="vendor-feature-chip">
                                 ✓ {feat}
                               </span>
                             ))}
@@ -1060,48 +960,39 @@ export default function VendorPage() {
                         </div>
                       </div>
 
-                      {/* Pricing & Telemetry */}
-                      <div style={{ display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
-                        <div style={{ textAlign: "right", minWidth: "110px" }}>
-                          <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0F172A" }}>
+                      {/* Pricing & Telemetry & Actions */}
+                      <div className="vendor-listing-card-side">
+                        <div className="vendor-listing-price-box">
+                          <div className="vendor-listing-price-val">
                             {prod.pricingModel === "Free" ? "Free" : (
                               <>
                                 ${prod.price}
-                                <span style={{ fontSize: "0.82rem", fontWeight: 500, color: "#64748B" }}>
-                                  /{prod.period === "once" ? "one-time" : prod.period}
+                                <span className="vendor-listing-price-sub">
+                                  /{prod.period === "once" ? "once" : prod.period}
                                 </span>
                               </>
                             )}
                           </div>
-                          <div style={{ fontSize: "0.78rem", color: "#64748B", textTransform: "uppercase", fontWeight: 600 }}>
+                          <div className="vendor-listing-price-model">
                             {prod.pricingModel}
                           </div>
                         </div>
 
-                        <div style={{ borderLeft: "1px solid #E2E8F0", paddingLeft: "1.25rem", textAlign: "left" }}>
-                          <div style={{ fontSize: "0.85rem", color: "#334155", fontWeight: 700 }}>
+                        <div className="vendor-listing-telemetry-box">
+                          <div className="vendor-listing-inquiry-stat">
                             {inquiryCountForListing(prod)} Inquiries
                           </div>
-                          <div style={{ fontSize: "0.78rem", color: "#64748B" }}>
-                            {(prod.viewsCount || 0).toLocaleString()} Buyer Views
+                          <div className="vendor-listing-views-stat">
+                            {(prod.viewsCount || 0).toLocaleString()} Views
                           </div>
                         </div>
 
                         {/* Actions */}
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <div className="vendor-listing-actions-group">
                           <button
                             type="button"
+                            className="vendor-btn-action edit"
                             onClick={() => openEditListing(prod)}
-                            style={{
-                              background: "#EEF2FF",
-                              border: "1px solid #C7D2FE",
-                              color: "#4F46E5",
-                              padding: "0.5rem 0.75rem",
-                              borderRadius: "8px",
-                              fontSize: "0.82rem",
-                              fontWeight: 700,
-                              cursor: "pointer",
-                            }}
                           >
                             Edit
                           </button>
@@ -1115,55 +1006,26 @@ export default function VendorPage() {
                               }
                             }}
                             title={prod.status === "Live & Active" ? "Open the public product page" : "Public page is unavailable while the listing is not live"}
-                            style={{
-                              background: "#F8FAFC",
-                              border: "1px solid #CBD5E1",
-                              color: prod.status === "Live & Active" ? "#334155" : "#94A3B8",
-                              padding: "0.5rem 0.85rem",
-                              borderRadius: "8px",
-                              fontSize: "0.82rem",
-                              fontWeight: 700,
-                              textDecoration: "none",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "0.35rem",
-                            }}
+                            className="vendor-btn-action live-page"
                           >
-                            <span>Live Page</span>
+                            <span>Live</span>
                             <span>↗</span>
                           </Link>
 
                           <button
                             type="button"
+                            className="vendor-btn-action toggle-status"
                             onClick={() => handleToggleListingStatus(prod.id)}
                             disabled={prod.status === "Under Review"}
-                            style={{
-                              background: "#FFFFFF",
-                              border: "1px solid #CBD5E1",
-                              color: prod.status === "Under Review" ? "#94A3B8" : prod.status === "Live & Active" ? "#D97706" : "#059669",
-                              padding: "0.5rem 0.75rem",
-                              borderRadius: "8px",
-                              fontSize: "0.82rem",
-                              fontWeight: 700,
-                              cursor: prod.status === "Under Review" ? "not-allowed" : "pointer",
-                            }}
+                            title={prod.status === "Live & Active" ? "Pause this listing" : "Activate this listing"}
                           >
-                            {prod.status === "Under Review" ? "Pending Review" : prod.status === "Live & Active" ? "Pause" : "Activate"}
+                            {prod.status === "Under Review" ? "Pending" : prod.status === "Live & Active" ? "Pause" : "Activate"}
                           </button>
 
                           <button
                             type="button"
+                            className="vendor-btn-action delete"
                             onClick={() => handleDeleteListing(prod.id, prod.name)}
-                            style={{
-                              background: "#FEE2E2",
-                              border: "none",
-                              color: "#DC2626",
-                              padding: "0.5rem 0.65rem",
-                              borderRadius: "8px",
-                              fontSize: "0.82rem",
-                              fontWeight: 700,
-                              cursor: "pointer",
-                            }}
                             title="Delete listing"
                           >
                             ✕
@@ -1186,20 +1048,13 @@ export default function VendorPage() {
               <div className="vendor-filter-row">
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", flex: 1 }}>
                   {/* Search input */}
-                  <div style={{ position: "relative", minWidth: "260px" }}>
+                  <div className="vendor-search-box">
                     <input
                       type="text"
+                      className="vendor-search-input"
                       placeholder="Search buyer name, software..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      style={{
-                        padding: "0.55rem 0.85rem 0.55rem 2.2rem",
-                        borderRadius: "10px",
-                        border: "1px solid #CBD5E1",
-                        fontSize: "0.85rem",
-                        width: "100%",
-                        outline: "none",
-                      }}
                     />
                     <svg
                       width="15"
@@ -1207,8 +1062,8 @@ export default function VendorPage() {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#94A3B8"
-                      strokeWidth="2.5"
-                      style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)" }}
+                      strokeWidth="2.4"
+                      style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)" }}
                     >
                       <circle cx="11" cy="11" r="8" />
                       <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -1566,9 +1421,13 @@ export default function VendorPage() {
               <button
                 type="button"
                 className="modal-close-btn"
+                aria-label="Close modal"
                 onClick={() => setSelectedInquiry(null)}
               >
-                ✕
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
 
@@ -1736,9 +1595,13 @@ export default function VendorPage() {
               <button
                 type="button"
                 className="modal-close-btn"
+                aria-label="Close modal"
                 onClick={closeDocumentModal}
               >
-                ✕
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
 

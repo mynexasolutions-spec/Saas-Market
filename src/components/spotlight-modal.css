@@ -1,0 +1,1006 @@
+/* ==========================================================================
+   Spotlight Search Modal - Ultra Modern, Compact & Category-Driven Design
+   Raycast / Linear Inspired Architecture • Compact Footprint ("Kam Space Me")
+   Full Category-Wise Filtering & Desktop + Mobile Responsiveness
+   ========================================================================== */
+
+/* 1. Backdrop Overlay */
+.spotlight-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 99999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6vh;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  animation: spotlightFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+@keyframes spotlightFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 2. Dialog Container - Modern Compact Geometry */
+.spotlight-dialog {
+  width: 100%;
+  max-width: 680px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow:
+    0 24px 70px -12px rgba(15, 23, 42, 0.28),
+    0 0 0 1px rgba(99, 102, 241, 0.08),
+    0 8px 24px -4px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 82vh;
+  animation: spotlightDialogIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  position: relative;
+}
+
+@keyframes spotlightDialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 3. Search Header & Input Bar (Clean & Compact) */
+.spotlight-header {
+  display: flex;
+  align-items: center;
+  padding: 0.68rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 0.75rem;
+  background: #ffffff;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.spotlight-search-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #f5f3ff;
+  color: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.spotlight-input {
+  flex: 1;
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 550;
+  color: #0f172a;
+  font-family: inherit;
+  min-width: 0;
+  padding: 0;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.spotlight-input:focus,
+.spotlight-input:focus-visible,
+.spotlight-input:active,
+.spotlight-input:hover,
+.spotlight-dialog .spotlight-input:focus,
+.spotlight-dialog .spotlight-input:focus-visible,
+:where(.spotlight-dialog input):focus-visible {
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+.spotlight-input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.spotlight-clear-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 750;
+  flex-shrink: 0;
+  transition: all 0.12s ease;
+  padding: 0;
+}
+
+.spotlight-clear-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  transform: scale(1.05);
+}
+
+.spotlight-esc-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.69rem;
+  font-weight: 750;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  border: 1px solid #cbd5e1;
+  line-height: 1.2;
+}
+
+.spotlight-mobile-close-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  color: #475569;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: all 0.12s ease;
+}
+
+.spotlight-mobile-close-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* 4. Primary Filter Tabs Bar (Compact Pills) */
+.spotlight-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.34rem 0.95rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fafafc;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+.spotlight-tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.spotlight-tab-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.77rem;
+  font-weight: 600;
+  padding: 0.24rem 0.62rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  flex-shrink: 0;
+  line-height: 1.25;
+}
+
+.spotlight-tab-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.spotlight-tab-btn.is-active {
+  background: #5e4bee;
+  color: #ffffff;
+  font-weight: 650;
+  box-shadow: 0 2px 8px rgba(94, 75, 238, 0.25);
+}
+
+.spotlight-tab-count {
+  font-size: 0.68rem;
+  font-weight: 750;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 0.05rem 0.4rem;
+  border-radius: 9999px;
+  line-height: 1.2;
+}
+
+.spotlight-tab-btn:not(.is-active) .spotlight-tab-count {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* 5. Modern Dropdowns Controls Bar (Category & Popular) */
+.spotlight-controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.95rem;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 40;
+}
+
+.spotlight-dropdown-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.spotlight-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  padding: 0.35rem 0.65rem;
+  font-family: inherit;
+  font-size: 0.77rem;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  min-height: 34px;
+}
+
+.spotlight-dropdown-trigger:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.spotlight-dropdown-trigger.is-open {
+  border-color: #6366f1;
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.14);
+}
+
+.spotlight-dropdown-trigger.has-selection {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  color: #4338ca;
+  font-weight: 650;
+}
+
+.spotlight-dropdown-icon {
+  font-size: 0.88rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.spotlight-dropdown-text {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.spotlight-dropdown-prefix {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+.spotlight-dropdown-trigger.has-selection .spotlight-dropdown-prefix {
+  color: #6366f1;
+}
+
+.spotlight-dropdown-val {
+  font-weight: 650;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotlight-dropdown-trigger.has-selection .spotlight-dropdown-val {
+  color: #4338ca;
+}
+
+.spotlight-dropdown-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 9px;
+  line-height: 1;
+  margin-right: 2px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  flex-shrink: 0;
+}
+
+.spotlight-dropdown-clear-btn:hover {
+  background: #c7d2fe;
+  color: #312e81;
+}
+
+.spotlight-dropdown-chevron {
+  color: #94a3b8;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.spotlight-dropdown-chevron.rotated {
+  transform: rotate(180deg);
+  color: #6366f1;
+}
+
+/* Dropdown Menu Floating Popover */
+.spotlight-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  min-width: 250px;
+  max-width: 320px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.2), 0 2px 10px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  overflow: hidden;
+  animation: spotlightDropdownIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spotlight-dropdown-wrapper:last-child .spotlight-dropdown-menu {
+  left: auto;
+  right: 0;
+}
+
+@keyframes spotlightDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.spotlight-dropdown-menu-header {
+  padding: 0.45rem 0.75rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.65rem;
+  font-weight: 750;
+  color: #64748b;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spotlight-dropdown-reset-link {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.spotlight-dropdown-reset-link:hover {
+  text-decoration: underline;
+}
+
+.spotlight-dropdown-menu-list {
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 0.3rem;
+  scrollbar-width: thin;
+}
+
+.spotlight-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.38rem 0.55rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.spotlight-dropdown-item:hover {
+  background: #f1f5f9;
+}
+
+.spotlight-dropdown-item.is-active {
+  background: #eef2ff;
+}
+
+.spotlight-item-emoji {
+  font-size: 0.92rem;
+  flex-shrink: 0;
+}
+
+.spotlight-item-info-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.spotlight-item-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotlight-dropdown-item.is-active .spotlight-item-label {
+  color: #4338ca;
+  font-weight: 700;
+}
+
+.spotlight-item-count-badge {
+  font-size: 0.65rem;
+  font-weight: 650;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.1rem 0.4rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.spotlight-dropdown-item.is-active .spotlight-item-count-badge {
+  background: #c7d2fe;
+  color: #3730a3;
+}
+
+.spotlight-item-check {
+  color: #6366f1;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+/* Popular Dropdown Special Items */
+.spotlight-popular-item {
+  padding: 0.45rem 0.55rem;
+}
+
+.spotlight-popular-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.spotlight-popular-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.spotlight-popular-desc {
+  font-size: 0.68rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.spotlight-popular-arrow {
+  color: #94a3b8;
+  flex-shrink: 0;
+  transition: transform 0.12s ease;
+}
+
+.spotlight-popular-item:hover .spotlight-popular-arrow {
+  color: #6366f1;
+  transform: translateX(2px);
+}
+
+/* 7. Results List Container - Sleek & Fast Scanning */
+.spotlight-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.35rem 0.65rem;
+  max-height: 380px;
+  box-sizing: border-box;
+}
+
+.spotlight-results::-webkit-scrollbar {
+  width: 5px;
+}
+
+.spotlight-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.spotlight-results::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+/* Section Header (Raycast-Style Category Divider) */
+.spotlight-section-heading {
+  font-size: 0.66rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #94a3b8;
+  padding: 0.42rem 0.55rem 0.2rem 0.55rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.spotlight-section-heading-line {
+  flex: 1;
+  height: 1px;
+  background: #f1f5f9;
+}
+
+/* 8. Search Result Item - Dense & Modern */
+.spotlight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.42rem 0.65rem;
+  border-radius: 9px;
+  text-decoration: none;
+  background: #ffffff;
+  border: 1px solid transparent;
+  transition: all 0.12s ease;
+  margin-bottom: 2px;
+  box-sizing: border-box;
+  cursor: pointer;
+  min-height: 42px;
+}
+
+.spotlight-item:hover,
+.spotlight-item.is-selected {
+  background: #f8faff;
+  border-color: #c7d2fe;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.06);
+  transform: translateX(2px);
+}
+
+.spotlight-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+}
+
+.spotlight-icon-category {
+  background-color: #eef2ff;
+  color: #4f46e5;
+}
+
+.spotlight-icon-alternative {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.spotlight-icon-article {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.spotlight-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.spotlight-item-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: nowrap;
+}
+
+.spotlight-item-title {
+  font-weight: 650;
+  font-size: 0.88rem;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.spotlight-item.is-selected .spotlight-item-title {
+  color: #4338ca;
+}
+
+.spotlight-item-badge {
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: #64748b;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 0.1rem 0.42rem;
+  border-radius: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  transition: all 0.12s ease;
+}
+
+.spotlight-item-badge:hover {
+  background-color: #ede9fe;
+  color: #5b21b6;
+  border-color: #c4b5fd;
+  cursor: pointer;
+}
+
+.spotlight-item.is-selected .spotlight-item-badge {
+  color: #4f46e5;
+  background-color: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.spotlight-item-desc {
+  font-size: 0.74rem;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 1px;
+  line-height: 1.35;
+}
+
+.spotlight-item-price {
+  font-size: 0.74rem;
+  font-weight: 750;
+  color: #059669;
+  flex-shrink: 0;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.spotlight-item-arrow {
+  color: #cbd5e1;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  transition: transform 0.12s ease, color 0.12s ease;
+}
+
+.spotlight-item:hover .spotlight-item-arrow,
+.spotlight-item.is-selected .spotlight-item-arrow {
+  color: #4f46e5;
+  transform: translateX(2px);
+}
+
+/* 9. Empty State (Clean & Compact) */
+.spotlight-empty {
+  text-align: center;
+  padding: 2rem 1.2rem;
+}
+
+.spotlight-empty-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.spotlight-empty-title {
+  font-weight: 750;
+  color: #0f172a;
+  font-size: 0.98rem;
+  margin: 0 0 0.35rem 0;
+}
+
+.spotlight-empty-desc {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0 0 1rem 0;
+  line-height: 1.45;
+}
+
+.spotlight-empty-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.spotlight-reset-chip {
+  background: #5e4bee !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  font-weight: 700 !important;
+}
+
+.spotlight-reset-chip:hover {
+  background: #4f46e5 !important;
+  color: #ffffff !important;
+}
+
+/* 10. Footer Shortcuts Bar (Compact & Sleek) */
+.spotlight-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.95rem;
+  border-top: 1px solid #f1f5f9;
+  background-color: #fafafc;
+  font-size: 0.72rem;
+  color: #64748b;
+  box-sizing: border-box;
+}
+
+.spotlight-shortcuts-list {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.spotlight-shortcut-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.spotlight-kbd {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-weight: 750;
+  font-family: inherit;
+  font-size: 0.68rem;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.spotlight-results-count {
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: #64748b;
+}
+
+.spotlight-filter-pill-tag {
+  color: #5e4bee;
+  font-weight: 750;
+  margin-left: 3px;
+}
+
+.spotlight-brand-tag {
+  font-weight: 750;
+  color: #4f46e5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  letter-spacing: -0.01em;
+  font-size: 0.72rem;
+}
+
+/* ==========================================================================
+   11. Mobile & Tablet Responsiveness (Max-Width: 640px)
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .spotlight-backdrop {
+    padding-top: 0.4rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    align-items: flex-start;
+  }
+
+  .spotlight-dialog {
+    max-width: 100%;
+    border-radius: 14px;
+    max-height: 90vh;
+  }
+
+  .spotlight-header {
+    padding: 0.6rem 0.75rem;
+    gap: 0.55rem;
+  }
+
+  .spotlight-search-icon-box {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+
+  .spotlight-input {
+    font-size: 16px; /* Prevents auto-zoom in iOS Safari */
+  }
+
+  /* Hide Desktop ESC badge and Show Mobile Close button */
+  .spotlight-esc-badge {
+    display: none;
+  }
+
+  .spotlight-mobile-close-btn {
+    display: inline-flex;
+  }
+
+  .spotlight-tabs-bar {
+    padding: 0.3rem 0.65rem;
+    gap: 0.25rem;
+  }
+
+  .spotlight-tab-btn {
+    font-size: 0.74rem;
+    padding: 0.22rem 0.55rem;
+  }
+
+  .spotlight-controls-bar {
+    padding: 0.35rem 0.65rem;
+    gap: 0.35rem;
+  }
+
+  .spotlight-dropdown-trigger {
+    padding: 0.32rem 0.5rem;
+    font-size: 0.73rem;
+    min-height: 32px;
+  }
+
+  .spotlight-dropdown-icon {
+    font-size: 0.8rem;
+  }
+
+  .spotlight-dropdown-prefix {
+    display: none; /* Hide 'Category:' / 'Popular:' prefix on mobile to save space */
+  }
+
+  .spotlight-dropdown-menu {
+    position: fixed;
+    top: auto;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    min-width: unset;
+    max-width: unset;
+    max-height: 52vh;
+    box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.3);
+    border-radius: 16px;
+    z-index: 10000;
+  }
+
+  .spotlight-dropdown-wrapper:last-child .spotlight-dropdown-menu {
+    left: 12px;
+    right: 12px;
+  }
+
+  .spotlight-dropdown-menu-list {
+    max-height: 42vh;
+  }
+
+  .spotlight-results {
+    padding: 0.3rem 0.45rem;
+    max-height: 56vh;
+  }
+
+  .spotlight-item {
+    padding: 0.38rem 0.5rem;
+    gap: 0.55rem;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    min-height: 38px;
+  }
+
+  .spotlight-item-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.76rem;
+    border-radius: 7px;
+  }
+
+  .spotlight-item-title {
+    font-size: 0.84rem;
+  }
+
+  .spotlight-item-badge {
+    font-size: 0.64rem;
+    padding: 0.08rem 0.35rem;
+  }
+
+  .spotlight-item-desc {
+    font-size: 0.71rem;
+  }
+
+  .spotlight-item-price {
+    font-size: 0.71rem;
+    padding: 0.12rem 0.42rem;
+  }
+
+  .spotlight-footer {
+    padding: 0.38rem 0.75rem;
+  }
+
+  /* Hide Desktop Keyboard shortcuts on mobile */
+  .spotlight-shortcuts-list {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .spotlight-item-price {
+    display: none; /* Prioritize title and category badge on ultra narrow screens */
+  }
+
+  .spotlight-dropdown-val {
+    font-size: 0.72rem;
+  }
+}

@@ -98,10 +98,10 @@ export default function CategoryDetailClient({
       )}
 
       <div className="cat-detail-wrapper">
-        {/* 1. Compact Hero Section */}
+        {/* 1. Compact Hero Section (Exact /alternatives & /buyers scale) */}
         <section className="cat-detail-hero">
           <div className="cat-detail-container">
-            {/* Breadcrumbs */}
+            {/* Breadcrumbs (Exact /alternatives: 0.84rem) */}
             <nav aria-label="Breadcrumb" className="cat-breadcrumbs">
               <Link href="/" className="cat-breadcrumb-link">
                 Home
@@ -117,7 +117,7 @@ export default function CategoryDetailClient({
             <div className="cat-hero-content">
               <div className="cat-badge-pill">
                 <span className="cat-badge-dot" />
-                2026 Verified Benchmark
+                2026 VERIFIED BENCHMARK
               </div>
 
               <h1 className="cat-headline">{category.headline}</h1>
@@ -125,35 +125,56 @@ export default function CategoryDetailClient({
               <p className="cat-subheadline">{category.subheadline}</p>
             </div>
 
-            {/* Quick Metrics Bar */}
-            <div className="cat-metrics-grid">
-              <div className="cat-metric-item">
-                <span className="cat-metric-label">Category Avg. Score</span>
-                <div className="cat-metric-value">
-                  <span style={{ color: "#F59E0B" }}>★</span>
-                  <span>{category.stats.avgRating}</span>
-                  <span className="cat-metric-sub">/ 5.0</span>
+            {/* Quick Metrics Badges (Exact /alternatives .buyers-hero-trust-row: 0.95rem num, 0.73rem label) */}
+            <div className="buyers-hero-trust-row">
+              <div className="buyers-trust-badge">
+                <div className="buyers-trust-icon-box icon-amber">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                </div>
+                <div className="buyers-trust-text">
+                  <span className="buyers-trust-num">{category.stats.avgRating} / 5.0</span>
+                  <span className="buyers-trust-label">Category Avg. Score</span>
                 </div>
               </div>
 
-              <div className="cat-metric-item">
-                <span className="cat-metric-label">Verified User Reviews</span>
-                <div className="cat-metric-value">
-                  <span>{category.stats.verifiedReviews}</span>
+              <div className="buyers-trust-badge">
+                <div className="buyers-trust-icon-box icon-blue">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                </div>
+                <div className="buyers-trust-text">
+                  <span className="buyers-trust-num">{category.stats.verifiedReviews}</span>
+                  <span className="buyers-trust-label">Verified User Reviews</span>
                 </div>
               </div>
 
-              <div className="cat-metric-item">
-                <span className="cat-metric-label">Starting Price</span>
-                <div className="cat-metric-value cat-metric-value-primary">
-                  <span>{category.stats.startingPrice}</span>
+              <div className="buyers-trust-badge">
+                <div className="buyers-trust-icon-box icon-purple">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                </div>
+                <div className="buyers-trust-text">
+                  <span className="buyers-trust-num">{category.stats.startingPrice}</span>
+                  <span className="buyers-trust-label">Starting Price</span>
                 </div>
               </div>
 
-              <div className="cat-metric-item">
-                <span className="cat-metric-label">Free Trial Guarantee</span>
-                <div className="cat-metric-value cat-metric-value-emerald">
-                  <span>{category.stats.freeTrialPct}</span>
+              <div className="buyers-trust-badge">
+                <div className="buyers-trust-icon-box icon-green">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                </div>
+                <div className="buyers-trust-text">
+                  <span className="buyers-trust-num">{category.stats.freeTrialPct}</span>
+                  <span className="buyers-trust-label">Free Trial Guarantee</span>
                 </div>
               </div>
             </div>
@@ -163,22 +184,28 @@ export default function CategoryDetailClient({
         {/* 2. Main Content Area */}
         <section className="cat-detail-main">
           <div className="cat-detail-container">
-            {/* Controls Bar: Search & Sort */}
+            {/* Controls Bar: Search & Sort (Exact /alternatives directory style) */}
             <div className="cat-controls-bar">
               <div className="cat-controls-left">
                 <span className="cat-results-title">
                   Showing {filteredProducts.length} Ranked {category.name} Solutions
                 </span>
-                <span className="cat-editorial-badge">Zero-bias editorial review</span>
+                <span className="cat-editorial-badge">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  Zero-bias editorial review
+                </span>
               </div>
 
               <div className="cat-controls-right">
-                {/* Search Box */}
+                {/* Search Box (Exact /alternatives: 0.92rem font) */}
                 <div className="cat-search-box">
                   <svg
                     className="cat-search-icon"
-                    width="15"
-                    height="15"
+                    width="16"
+                    height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -289,7 +316,7 @@ export default function CategoryDetailClient({
                           )}
                         </div>
 
-                        {/* Ratings & Trial Meta */}
+                        {/* Ratings & Trial Meta (Exact /alternatives: 0.84rem) */}
                         <div className="cat-card-meta-row">
                           <span className="cat-card-score">
                             ★ {prod.rating.toFixed(1)}
@@ -343,7 +370,7 @@ export default function CategoryDetailClient({
                         )}
                       </div>
 
-                      {/* Right: Pricing & CTAs */}
+                      {/* Right: Pricing & CTAs (Exact /alternatives & /buyers scale) */}
                       <div className="cat-card-right">
                         <button
                           type="button"
@@ -473,7 +500,7 @@ export default function CategoryDetailClient({
                 <div className="cat-articles-header">
                   <div>
                     <span className="cat-articles-pill">
-                      Expert Insights & Tutorials
+                      Expert Insights &amp; Tutorials
                     </span>
                     <h2 className="cat-articles-title">
                       Deep-Dive Articles for {category.name}
@@ -538,6 +565,34 @@ export default function CategoryDetailClient({
                 })}
               </div>
             </div>
+
+            {/* 7. Cosmic High-Conversion CTA Banner (Exact /alternatives & /buyers)
+            <section className="buyers-cta-banner">
+              <div className="buyers-cta-content">
+                <div className="buyers-cta-left">
+                  <div className="buyers-cta-pill">LOOKING FOR THE RIGHT SOFTWARE?</div>
+                  <h2 className="buyers-cta-title">
+                    Find the best verified software in{" "}
+                    <span className="buyers-cta-title-highlight">{category.name}</span>
+                  </h2>
+                  <p className="buyers-cta-desc">
+                    Save weeks of opaque vendor demos. Compare verified pricing, user benchmarks, and secure your license with guaranteed escrow protection.
+                  </p>
+                  <div className="buyers-cta-actions">
+                    <Link href="/products" className="buyers-btn-primary">
+                      Browse Verified Products
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </Link>
+                    <Link href="/tools/saas-spend-calculator" className="buyers-btn-secondary">
+                      Calculate SaaS Spend
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </section> */}
           </div>
         </section>
       </div>
@@ -573,12 +628,12 @@ export default function CategoryDetailClient({
             >
               <div
                 style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "12px",
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "8px",
                   backgroundColor: selectedProduct.brandColor,
                   color: "#ffffff",
-                  fontSize: "1.35rem",
+                  fontSize: "1.25rem",
                   fontWeight: 850,
                   display: "flex",
                   alignItems: "center",
@@ -591,19 +646,20 @@ export default function CategoryDetailClient({
               <div>
                 <h3
                   style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 850,
+                    fontSize: "1.18rem",
+                    fontWeight: 800,
                     color: "#0F172A",
                     margin: 0,
+                    letterSpacing: "-0.015em",
                   }}
                 >
                   {selectedProduct.name}
                 </h3>
                 <div
                   style={{
-                    fontSize: "0.8rem",
+                    fontSize: "0.84rem",
                     color: "#4F46E5",
-                    fontWeight: 650,
+                    fontWeight: 700,
                   }}
                 >
                   {category.name}
@@ -613,7 +669,7 @@ export default function CategoryDetailClient({
 
             <p
               style={{
-                color: "#475569",
+                color: "#64748B",
                 lineHeight: 1.5,
                 fontSize: "0.88rem",
                 marginBottom: "1.15rem",
@@ -625,8 +681,8 @@ export default function CategoryDetailClient({
             <div style={{ marginBottom: "1.15rem" }}>
               <h4
                 style={{
-                  fontSize: "0.9rem",
-                  fontWeight: 750,
+                  fontSize: "0.95rem",
+                  fontWeight: 800,
                   color: "#0F172A",
                   marginBottom: "0.5rem",
                 }}
@@ -638,7 +694,7 @@ export default function CategoryDetailClient({
                   paddingLeft: "1.15rem",
                   margin: 0,
                   color: "#334155",
-                  fontSize: "0.825rem",
+                  fontSize: "0.82rem",
                   lineHeight: 1.6,
                 }}
               >
@@ -655,15 +711,15 @@ export default function CategoryDetailClient({
                 alignItems: "center",
                 padding: "0.85rem 1rem",
                 background: "#F8FAFC",
-                border: "1px solid #E2E8F0",
-                borderRadius: "10px",
+                border: "1.5px solid #E2E8F0",
+                borderRadius: "6px",
                 marginBottom: "1.25rem",
               }}
             >
               <div>
                 <div
                   style={{
-                    fontSize: "0.7rem",
+                    fontSize: "0.75rem",
                     color: "#64748B",
                     textTransform: "uppercase",
                     fontWeight: 650,
@@ -673,13 +729,13 @@ export default function CategoryDetailClient({
                 </div>
                 <div
                   style={{
-                    fontSize: "1.25rem",
+                    fontSize: "1.55rem",
                     fontWeight: 850,
                     color: "#0F172A",
                   }}
                 >
                   ${selectedProduct.price}{" "}
-                  <span style={{ fontSize: "0.8rem", color: "#64748B" }}>
+                  <span style={{ fontSize: "0.75rem", color: "#64748B" }}>
                     /{selectedProduct.period}
                   </span>
                 </div>
@@ -687,7 +743,7 @@ export default function CategoryDetailClient({
               <div style={{ textAlign: "right" }}>
                 <div
                   style={{
-                    fontSize: "0.7rem",
+                    fontSize: "0.75rem",
                     color: "#64748B",
                     textTransform: "uppercase",
                     fontWeight: 650,
@@ -697,7 +753,7 @@ export default function CategoryDetailClient({
                 </div>
                 <div
                   style={{
-                    fontSize: "1rem",
+                    fontSize: "0.95rem",
                     fontWeight: 750,
                     color: "#059669",
                   }}
@@ -717,7 +773,7 @@ export default function CategoryDetailClient({
                     `Redirecting to ${selectedProduct.name} free trial...`,
                   );
                 }}
-                style={{ flex: 1, padding: "0.7rem" }}
+                style={{ flex: 1 }}
               >
                 Start Free Trial
               </button>
@@ -725,7 +781,7 @@ export default function CategoryDetailClient({
                 type="button"
                 className="cat-card-btn-secondary"
                 onClick={() => setSelectedProduct(null)}
-                style={{ width: "auto", padding: "0.7rem 1.15rem" }}
+                style={{ width: "auto" }}
               >
                 Close
               </button>

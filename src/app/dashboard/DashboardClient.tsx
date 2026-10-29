@@ -12,6 +12,7 @@ import {
   BuyerOrder,
   getBuyerOrders,
 } from "@/utils/buyerOrders";
+import "./dashboard-page.css";
 
 interface SavedInquiry {
   id: string;
@@ -78,6 +79,7 @@ function downloadDossierPdf(dossier: DossierSummary): void {
     `Compliance Audit: ${dossier.soc2}`,
     "Generated from the Buyer Executive Dashboard.",
   ];
+
   const stream = lines
     .map((line, index) => `BT /F1 ${index < 2 ? 18 : 12} Tf 72 ${750 - index * 42} Td (${escapePdfText(line)}) Tj ET`)
     .join("\n");
@@ -357,48 +359,26 @@ export default function DashboardClient() {
   if (!user) {
     return (
       <PageLayout activeNav="dashboard" noContainer>
-        <div className="container" style={{ paddingTop: "5rem", paddingBottom: "7rem", textAlign: "center" }}>
-          <div
-            style={{
-              maxWidth: "520px",
-              margin: "0 auto",
-              background: "#FFFFFF",
-              padding: "3rem 2.25rem",
-              borderRadius: "24px",
-              border: "1px solid #E2E8F0",
-              boxShadow: "0 20px 40px -15px rgba(15, 23, 42, 0.08)",
-            }}
-          >
-            <div
-              style={{
-                width: "68px",
-                height: "68px",
-                borderRadius: "50%",
-                background: "#EEF2FF",
-                color: "#5E4BEE",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem",
-              }}
-            >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+        <div className="container" style={{ paddingTop: "4.5rem", paddingBottom: "6.5rem" }}>
+          <div className="dashboard-guest-card">
+            <div className="dashboard-guest-icon-box">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
             </div>
-            <h2 style={{ fontSize: "1.65rem", fontWeight: 800, color: "#0F172A", marginBottom: "0.6rem" }}>
+            <h2 className="dashboard-guest-title">
               Buyer Dashboard Sign In Required
             </h2>
-            <p style={{ color: "#64748B", fontSize: "0.95rem", lineHeight: 1.6, marginBottom: "2rem" }}>
+            <p className="dashboard-guest-desc">
               Sign in to manage your saved SaaS wishlist, active vendor quotes, unlocked confidential dossiers, and corporate software stack.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               <button
                 type="button"
                 className="btn-primary"
                 onClick={() => loginAsRole("buyer")}
-                style={{ width: "100%", justifyContent: "center", padding: "0.85rem 1.5rem" }}
+                style={{ width: "100%", justifyContent: "center", padding: "0.75rem 1.25rem", fontSize: "0.9rem" }}
               >
                 1-Click Sign In as Buyer (Alex Morgan)
               </button>
@@ -406,11 +386,11 @@ export default function DashboardClient() {
                 type="button"
                 className="btn-secondary"
                 onClick={() => openAuth("signup", "buyer")}
-                style={{ width: "100%", justifyContent: "center" }}
+                style={{ width: "100%", justifyContent: "center", padding: "0.75rem 1.25rem", fontSize: "0.88rem" }}
               >
                 Create New Free Buyer Account
               </button>
-              <Link href="/products" style={{ color: "#64748B", fontSize: "0.85rem", textDecoration: "none", marginTop: "0.5rem" }}>
+              <Link href="/products" style={{ color: "#64748B", fontSize: "0.84rem", textDecoration: "none", marginTop: "0.5rem" }}>
                 ← Browse Marketplace Products
               </Link>
             </div>
@@ -429,110 +409,46 @@ export default function DashboardClient() {
     <PageLayout activeNav="dashboard" noContainer>
       {/* Toast Notice */}
       {toastNotice && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "28px",
-            right: "28px",
-            background: "#0F172A",
-            color: "#FFFFFF",
-            padding: "0.85rem 1.4rem",
-            borderRadius: "12px",
-            fontSize: "0.9rem",
-            fontWeight: 600,
-            zIndex: 99999,
-            boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-          }}
-        >
-          <span>✓</span>
+        <div className="dashboard-toast">
+          <span style={{ color: "#34D399" }}>✓</span>
           <span>{toastNotice}</span>
         </div>
       )}
 
-      <div style={{ background: "#FAFAFD", minHeight: "90vh", paddingBottom: "6rem" }}>
-        <div className="container" style={{ paddingTop: "2.5rem" }}>
+      <div className="dashboard-page-wrapper">
+        <div className="container">
           {/* Header Card */}
-          <div
-            style={{
-              background: "#FFFFFF",
-              borderRadius: "20px",
-              border: "1px solid #E2E8F0",
-              padding: "2rem 2.25rem",
-              boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.04)",
-              marginBottom: "2rem",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "1.5rem",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-                <div
-                  style={{
-                    width: "60px",
-                    height: "60px",
-                    borderRadius: "16px",
-                    background: "linear-gradient(135deg, #5E4BEE 0%, #4F46E5 100%)",
-                    color: "#FFFFFF",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontWeight: 800,
-                    fontSize: "1.4rem",
-                    boxShadow: "0 8px 16px -4px rgba(94, 75, 238, 0.4)",
-                  }}
-                >
+          <div className="dashboard-header-card">
+            <div className="dashboard-header-top">
+              <div className="dashboard-user-profile">
+                <div className="dashboard-avatar">
                   {buyerName.slice(0, 2).toUpperCase()}
                 </div>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
-                    <h1 style={{ fontSize: "1.65rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
-                      {buyerName}
-                    </h1>
-                    <span
-                      style={{
-                        background: "#EEF2FF",
-                        color: "#4F46E5",
-                        fontSize: "0.72rem",
-                        fontWeight: 700,
-                        padding: "0.2rem 0.6rem",
-                        borderRadius: "999px",
-                      }}
-                    >
+                <div className="dashboard-user-meta">
+                  <div className="dashboard-user-title-row">
+                    <h1 className="dashboard-user-name">{buyerName}</h1>
+                    <span className="dashboard-role-badge">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+                      </svg>
                       Enterprise Procurement Officer
                     </span>
                   </div>
-                  <p style={{ color: "#64748B", fontSize: "0.9rem", marginTop: "0.25rem", margin: 0 }}>
-                    {buyerRole} at <strong style={{ color: "#334155" }}>{buyerCompany}</strong> • {buyerEmail}
+                  <p className="dashboard-user-subtitle">
+                    {buyerRole} at <strong>{buyerCompany}</strong> • {buyerEmail}
                   </p>
                 </div>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-                <Link
-                  href="/tools/saas-spend-calculator"
-                  className="btn-secondary"
-                  style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.45rem", fontSize: "0.85rem" }}
-                >
+              <div className="dashboard-header-actions">
+                <Link href="/tools/saas-spend-calculator" className="dashboard-action-btn-secondary">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <rect x="4" y="2" width="16" height="20" rx="2" />
                     <line x1="8" y1="6" x2="16" y2="6" />
                   </svg>
                   Spend Calculator
                 </Link>
-                <Link
-                  href="/products"
-                  className="btn-primary"
-                  style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.45rem", fontSize: "0.85rem" }}
-                >
+                <Link href="/products" className="dashboard-action-btn-primary">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -543,230 +459,163 @@ export default function DashboardClient() {
             </div>
 
             {/* Metric KPI Banner */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
-                gap: "1.25rem",
-                marginTop: "1.75rem",
-                paddingTop: "1.75rem",
-                borderTop: "1px solid #F1F5F9",
-              }}
-            >
-              <div style={{ background: "#F8FAFC", padding: "1.1rem 1.25rem", borderRadius: "14px", border: "1px solid #E2E8F0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748B", fontWeight: 600 }}>Saved Tools in Wishlist</span>
-                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#5E4BEE", marginTop: "0.2rem" }}>
+            <div className="dashboard-kpi-grid">
+              <div className="dashboard-kpi-card">
+                <div className="dashboard-kpi-label">
+                  <span>Saved Wishlist</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2.2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </div>
+                <div className="dashboard-kpi-value" style={{ color: "#4F46E5" }}>
                   {savedProducts.length}
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#64748B" }}>Ready for procurement & comparison</span>
+                <span className="dashboard-kpi-sub">Ready for comparison</span>
               </div>
 
-              <div style={{ background: "#F8FAFC", padding: "1.1rem 1.25rem", borderRadius: "14px", border: "1px solid #E2E8F0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748B", fontWeight: 600 }}>Completed Purchases</span>
-                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#7C3AED", marginTop: "0.2rem" }}>
+              <div className="dashboard-kpi-card">
+                <div className="dashboard-kpi-label">
+                  <span>Completed Purchases</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="2.2">
+                    <path d="M6 2h12l2 5H4l2-5Z" />
+                    <path d="M4 7v13h16V7" />
+                  </svg>
+                </div>
+                <div className="dashboard-kpi-value" style={{ color: "#7C3AED" }}>
                   {orders.length}
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#64748B" }}>Active licenses and order records</span>
+                <span className="dashboard-kpi-sub">Active software licenses</span>
               </div>
 
-              <div style={{ background: "#F8FAFC", padding: "1.1rem 1.25rem", borderRadius: "14px", border: "1px solid #E2E8F0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748B", fontWeight: 600 }}>Active Purchase Quotes</span>
-                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#059669", marginTop: "0.2rem" }}>
+              <div className="dashboard-kpi-card">
+                <div className="dashboard-kpi-label">
+                  <span>Vendor Quotes</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                </div>
+                <div className="dashboard-kpi-value" style={{ color: "#059669" }}>
                   {inquiries.length}
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#64748B" }}>Direct WhatsApp & vendor channels open</span>
+                <span className="dashboard-kpi-sub">Active WhatsApp channels</span>
               </div>
 
-              <div style={{ background: "#F8FAFC", padding: "1.1rem 1.25rem", borderRadius: "14px", border: "1px solid #E2E8F0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748B", fontWeight: 600 }}>Unlocked Due Diligence</span>
-                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#3B82F6", marginTop: "0.2rem" }}>
+              <div className="dashboard-kpi-card">
+                <div className="dashboard-kpi-label">
+                  <span>Unlocked Dossiers</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </div>
+                <div className="dashboard-kpi-value" style={{ color: "#2563EB" }}>
                   3 Dossiers
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#64748B" }}>Financial & SOC-2 specs unlocked</span>
+                <span className="dashboard-kpi-sub">Audited MRR &amp; SOC-2</span>
               </div>
 
-              <div style={{ background: "#F8FAFC", padding: "1.1rem 1.25rem", borderRadius: "14px", border: "1px solid #E2E8F0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748B", fontWeight: 600 }}>Tracked Stack Spend</span>
-                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0F172A", marginTop: "0.2rem" }}>
-                  ${totalAnnualSpend.toLocaleString()} <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#64748B" }}>/ yr</span>
+              <div className="dashboard-kpi-card">
+                <div className="dashboard-kpi-label">
+                  <span>Tracked Spend</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2.2">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#DC2626", fontWeight: 600 }}>~${estimatedWasteSpend.toLocaleString()} potential audit savings</span>
+                <div className="dashboard-kpi-value" style={{ color: "#0F172A" }}>
+                  ${totalAnnualSpend.toLocaleString()} <span style={{ fontSize: "0.8rem", fontWeight: 650, color: "#64748B" }}>/ yr</span>
+                </div>
+                <span className="dashboard-kpi-danger-sub">~${estimatedWasteSpend.toLocaleString()} waste audit savings</span>
               </div>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              background: "#E2E8F0",
-              padding: "0.35rem",
-              borderRadius: "14px",
-              marginBottom: "2rem",
-              width: "fit-content",
-              maxWidth: "100%",
-              flexWrap: "wrap",
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setActiveTab("wishlist")}
-              style={{
-                border: "none",
-                background: activeTab === "wishlist" ? "#FFFFFF" : "transparent",
-                color: activeTab === "wishlist" ? "#5E4BEE" : "#475569",
-                fontWeight: 700,
-                fontSize: "0.88rem",
-                padding: "0.6rem 1.25rem",
-                borderRadius: "10px",
-                cursor: "pointer",
-                boxShadow: activeTab === "wishlist" ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.45rem",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill={activeTab === "wishlist" ? "#5E4BEE" : "none"} stroke="currentColor" strokeWidth="2.2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-              Saved Wishlist ({savedProducts.length})
-            </button>
+          <div className="dashboard-nav-tabs-wrapper">
+            <div className="dashboard-nav-tabs">
+              <button
+                type="button"
+                onClick={() => setActiveTab("wishlist")}
+                className={`dashboard-tab-btn ${activeTab === "wishlist" ? "is-active" : ""}`}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill={activeTab === "wishlist" ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span>Saved Wishlist</span>
+                <span className="dashboard-tab-badge">{savedProducts.length}</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("orders")}
-              style={{
-                border: "none",
-                background: activeTab === "orders" ? "#FFFFFF" : "transparent",
-                color: activeTab === "orders" ? "#5E4BEE" : "#475569",
-                fontWeight: 700,
-                fontSize: "0.88rem",
-                padding: "0.6rem 1.25rem",
-                borderRadius: "10px",
-                cursor: "pointer",
-                boxShadow: activeTab === "orders" ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.45rem",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <path d="M6 2h12l2 5H4l2-5Z" />
-                <path d="M4 7v13h16V7" />
-                <path d="M9 11h6" />
-              </svg>
-              Orders &amp; Purchases ({orders.length})
-            </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("orders")}
+                className={`dashboard-tab-btn ${activeTab === "orders" ? "is-active" : ""}`}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M6 2h12l2 5H4l2-5Z" />
+                  <path d="M4 7v13h16V7" />
+                  <path d="M9 11h6" />
+                </svg>
+                <span>Orders &amp; Purchases</span>
+                <span className="dashboard-tab-badge">{orders.length}</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("inquiries")}
-              style={{
-                border: "none",
-                background: activeTab === "inquiries" ? "#FFFFFF" : "transparent",
-                color: activeTab === "inquiries" ? "#5E4BEE" : "#475569",
-                fontWeight: 700,
-                fontSize: "0.88rem",
-                padding: "0.6rem 1.25rem",
-                borderRadius: "10px",
-                cursor: "pointer",
-                boxShadow: activeTab === "inquiries" ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.45rem",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              Vendor Quotes & Inquiries ({inquiries.length})
-            </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("inquiries")}
+                className={`dashboard-tab-btn ${activeTab === "inquiries" ? "is-active" : ""}`}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <span>Vendor Quotes</span>
+                <span className="dashboard-tab-badge">{inquiries.length}</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("dossiers")}
-              style={{
-                border: "none",
-                background: activeTab === "dossiers" ? "#FFFFFF" : "transparent",
-                color: activeTab === "dossiers" ? "#5E4BEE" : "#475569",
-                fontWeight: 700,
-                fontSize: "0.88rem",
-                padding: "0.6rem 1.25rem",
-                borderRadius: "10px",
-                cursor: "pointer",
-                boxShadow: activeTab === "dossiers" ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.45rem",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-              Unlocked Dossiers (3)
-            </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("dossiers")}
+                className={`dashboard-tab-btn ${activeTab === "dossiers" ? "is-active" : ""}`}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <span>Unlocked Dossiers</span>
+                <span className="dashboard-tab-badge">3</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("stack")}
-              style={{
-                border: "none",
-                background: activeTab === "stack" ? "#FFFFFF" : "transparent",
-                color: activeTab === "stack" ? "#5E4BEE" : "#475569",
-                fontWeight: 700,
-                fontSize: "0.88rem",
-                padding: "0.6rem 1.25rem",
-                borderRadius: "10px",
-                cursor: "pointer",
-                boxShadow: activeTab === "stack" ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.45rem",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                <polyline points="2 17 12 22 22 17" />
-                <polyline points="2 12 12 17 22 12" />
-              </svg>
-              My Tech Stack ({stackItems.length})
-            </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("stack")}
+                className={`dashboard-tab-btn ${activeTab === "stack" ? "is-active" : ""}`}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                  <polyline points="2 17 12 22 22 17" />
+                  <polyline points="2 12 12 17 22 12" />
+                </svg>
+                <span>My Tech Stack</span>
+                <span className="dashboard-tab-badge">{stackItems.length}</span>
+              </button>
+            </div>
           </div>
 
           {/* TAB 1: WISHLIST */}
           {activeTab === "wishlist" && (
             <div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: "1.25rem",
-                  flexWrap: "wrap",
-                  gap: "1rem",
-                }}
-              >
+              <div className="dashboard-section-header">
                 <div>
-                  <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
+                  <h2 className="dashboard-section-title">
                     Saved Software for Evaluation
                   </h2>
-                  <p style={{ color: "#64748B", fontSize: "0.85rem", marginTop: "0.2rem" }}>
+                  <p className="dashboard-section-desc">
                     Bookmark tools across the marketplace to track pricing, review architecture, and compare side-by-side.
                   </p>
                 </div>
                 {savedProducts.length > 1 && (
                   <Link
                     href={`/compare?tool1=${savedProducts[0]?.slug || savedProducts[0]?.id}&tool2=${savedProducts[1]?.slug || savedProducts[1]?.id}`}
-                    className="btn-secondary"
-                    style={{ textDecoration: "none", fontSize: "0.85rem" }}
+                    className="dashboard-action-btn-secondary"
                   >
                     Compare Top 2 Saved Tools →
                   </Link>
@@ -774,83 +623,40 @@ export default function DashboardClient() {
               </div>
 
               {savedProducts.length === 0 ? (
-                <div
-                  style={{
-                    background: "#FFFFFF",
-                    borderRadius: "18px",
-                    padding: "4rem 2rem",
-                    textAlign: "center",
-                    border: "1px dashed #CBD5E1",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "50%",
-                      background: "#F1F5F9",
-                      color: "#94A3B8",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: "1rem",
-                    }}
-                  >
+                <div className="dashboard-empty-card">
+                  <div className="dashboard-empty-icon-wrap">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
                   </div>
-                  <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0F172A", marginBottom: "0.4rem" }}>
+                  <h3 className="dashboard-empty-title">
                     Your Wishlist is Empty
                   </h3>
-                  <p style={{ color: "#64748B", fontSize: "0.9rem", maxWidth: "420px", margin: "0 auto 1.5rem auto" }}>
+                  <p className="dashboard-empty-desc">
                     Click the heart icon on any SaaS product card or details page to save it directly to your buyer dashboard.
                   </p>
-                  <Link href="/products" className="btn-primary" style={{ textDecoration: "none", display: "inline-flex" }}>
+                  <Link href="/products" className="dashboard-action-btn-primary">
                     Explore Marketplace Tools
                   </Link>
                 </div>
               ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem" }}>
+                <div className="dashboard-wishlist-grid">
                   {savedProducts.map((prod) => (
-                    <div
-                      key={prod.id}
-                      style={{
-                        background: "#FFFFFF",
-                        borderRadius: "18px",
-                        border: "1px solid #E2E8F0",
-                        padding: "1.5rem",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
-                        display: "flex",
-                        flexDirection: "column",
-                        position: "relative",
-                        transition: "transform 0.15s ease, box-shadow 0.15s ease",
-                      }}
-                    >
+                    <div key={prod.id} className="dashboard-wishlist-card">
                       {/* Top Row: Icon + Badge + Remove */}
-                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1rem" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                      <div className="dashboard-card-top-row">
+                        <div className="dashboard-card-brand-box">
                           <div
-                            style={{
-                              width: "48px",
-                              height: "48px",
-                              borderRadius: "12px",
-                              backgroundColor: prod.brandColor || "#5E4BEE",
-                              color: "#FFFFFF",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontWeight: 800,
-                              fontSize: "1.1rem",
-                            }}
+                            className="dashboard-brand-avatar"
+                            style={{ backgroundColor: prod.brandColor || "#4F46E5" }}
                           >
                             {prod.brandLetter || prod.name.slice(0, 2).toUpperCase()}
                           </div>
                           <div>
-                            <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
+                            <h3 className="dashboard-card-tool-name">
                               {prod.name}
                             </h3>
-                            <span style={{ fontSize: "0.75rem", color: "#64748B", fontWeight: 600 }}>
+                            <span className="dashboard-card-tool-cat">
                               {prod.category}
                             </span>
                           </div>
@@ -859,18 +665,7 @@ export default function DashboardClient() {
                         <button
                           type="button"
                           onClick={() => handleRemoveWishlist(prod.id, prod.name)}
-                          style={{
-                            background: "#FEE2E2",
-                            border: "none",
-                            borderRadius: "8px",
-                            width: "32px",
-                            height: "32px",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "#DC2626",
-                            cursor: "pointer",
-                          }}
+                          className="dashboard-icon-remove-btn"
                           title="Remove from Wishlist"
                         >
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -881,37 +676,27 @@ export default function DashboardClient() {
                       </div>
 
                       {/* Tagline */}
-                      <p style={{ color: "#475569", fontSize: "0.88rem", lineHeight: 1.5, flex: 1, marginBottom: "1.25rem" }}>
+                      <p className="dashboard-card-desc">
                         {prod.tagline || prod.description}
                       </p>
 
                       {/* Pricing & Rating */}
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "0.75rem 0",
-                          borderTop: "1px solid #F1F5F9",
-                          borderBottom: "1px solid #F1F5F9",
-                          marginBottom: "1.25rem",
-                        }}
-                      >
+                      <div className="dashboard-card-metrics-row">
                         <div>
-                          <span style={{ fontSize: "0.72rem", color: "#64748B", textTransform: "uppercase", fontWeight: 700 }}>
+                          <span className="dashboard-card-metric-label">
                             License Price
                           </span>
-                          <div style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0F172A" }}>
+                          <div className="dashboard-card-metric-value">
                             ${prod.price}{" "}
-                            <span style={{ fontSize: "0.75rem", color: "#64748B", fontWeight: 600 }}>/{prod.period}</span>
+                            <span className="dashboard-card-metric-period">/{prod.period}</span>
                           </div>
                         </div>
 
                         <div style={{ textAlign: "right" }}>
-                          <span style={{ fontSize: "0.72rem", color: "#64748B", textTransform: "uppercase", fontWeight: 700 }}>
+                          <span className="dashboard-card-metric-label">
                             Buyer Rating
                           </span>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.95rem", fontWeight: 800, color: "#0F172A" }}>
+                          <div className="dashboard-card-rating-wrap">
                             <span style={{ color: "#F59E0B" }}>★</span>
                             <span>{prod.rating}</span>
                             <span style={{ fontSize: "0.75rem", color: "#64748B", fontWeight: 500 }}>({prod.reviewCount})</span>
@@ -920,28 +705,16 @@ export default function DashboardClient() {
                       </div>
 
                       {/* Action Links */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+                      <div className="dashboard-card-actions">
                         <Link
                           href={`/products/${prod.id}/details`}
-                          className="btn-primary"
-                          style={{
-                            textDecoration: "none",
-                            fontSize: "0.82rem",
-                            padding: "0.6rem 0.75rem",
-                            justifyContent: "center",
-                          }}
+                          className="dashboard-btn-card-primary"
                         >
                           Due Diligence
                         </Link>
                         <Link
                           href={`/products/${prod.id}`}
-                          className="btn-secondary"
-                          style={{
-                            textDecoration: "none",
-                            fontSize: "0.82rem",
-                            padding: "0.6rem 0.75rem",
-                            justifyContent: "center",
-                          }}
+                          className="dashboard-btn-card-secondary"
                         >
                           Overview
                         </Link>
@@ -956,72 +729,80 @@ export default function DashboardClient() {
           {/* TAB 2: ORDERS & PURCHASES */}
           {activeTab === "orders" && (
             <div id="orders">
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
-                  Orders &amp; Software Purchases
-                </h2>
-                <p style={{ color: "#64748B", fontSize: "0.85rem", marginTop: "0.2rem" }}>
-                  Review completed marketplace orders, active license keys, and seller details.
-                </p>
+              <div className="dashboard-section-header">
+                <div>
+                  <h2 className="dashboard-section-title">
+                    Orders &amp; Software Purchases
+                  </h2>
+                  <p className="dashboard-section-desc">
+                    Review completed marketplace orders, active license keys, and seller details.
+                  </p>
+                </div>
               </div>
 
               {orders.length === 0 ? (
-                <div style={{ background: "#FFFFFF", borderRadius: "18px", padding: "4rem 2rem", textAlign: "center", border: "1px dashed #CBD5E1" }}>
-                  <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0F172A", marginBottom: "0.4rem" }}>
+                <div className="dashboard-empty-card">
+                  <div className="dashboard-empty-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M6 2h12l2 5H4l2-5Z" />
+                      <path d="M4 7v13h16V7" />
+                    </svg>
+                  </div>
+                  <h3 className="dashboard-empty-title">
                     No Completed Orders Yet
                   </h3>
-                  <p style={{ color: "#64748B", fontSize: "0.9rem", maxWidth: "440px", margin: "0 auto 1.5rem" }}>
+                  <p className="dashboard-empty-desc">
                     Purchases completed through a product checkout will appear here with their order and license details.
                   </p>
-                  <Link href="/products" className="btn-primary" style={{ textDecoration: "none", display: "inline-flex" }}>
+                  <Link href="/products" className="dashboard-action-btn-primary">
                     Browse Marketplace Products
                   </Link>
                 </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div className="dashboard-orders-list">
                   {orders.map((order) => (
-                    <article key={order.id} style={{ background: "#FFFFFF", borderRadius: "18px", border: "1px solid #E2E8F0", padding: "1.5rem 1.75rem", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
-                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
+                    <article key={order.id} className="dashboard-order-card">
+                      <div className="dashboard-order-header">
                         <div>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", flexWrap: "wrap" }}>
-                            <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>{order.productName}</h3>
-                            <span style={{ background: "#ECFDF5", color: "#047857", fontSize: "0.75rem", fontWeight: 700, padding: "0.2rem 0.65rem", borderRadius: "999px" }}>
+                          <div className="dashboard-order-title-group">
+                            <h3 className="dashboard-order-product-name">{order.productName}</h3>
+                            <span className="dashboard-order-status-badge">
                               {order.status}
                             </span>
                           </div>
-                          <span style={{ color: "#64748B", fontSize: "0.8rem" }}>{order.category}</span>
+                          <span style={{ color: "#64748B", fontSize: "0.8rem", marginTop: "0.2rem", display: "inline-block" }}>{order.category}</span>
                         </div>
                         <div style={{ textAlign: "right" }}>
-                          <strong style={{ display: "block", color: "#0F172A", fontSize: "0.9rem" }}>{order.id}</strong>
-                          <span style={{ color: "#64748B", fontSize: "0.78rem" }}>
+                          <strong style={{ display: "block", color: "#0F172A", fontSize: "0.88rem" }}>{order.id}</strong>
+                          <span style={{ color: "#64748B", fontSize: "0.76rem" }}>
                             {new Date(order.purchasedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
                           </span>
                         </div>
                       </div>
 
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "0.75rem", padding: "1rem", background: "#F8FAFC", borderRadius: "12px", marginBottom: "1rem" }}>
+                      <div className="dashboard-order-grid-meta">
                         <div>
                           <span style={{ display: "block", color: "#64748B", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>Amount Paid</span>
-                          <strong style={{ color: "#059669" }}>${order.price.toLocaleString()} / {order.period}</strong>
+                          <strong style={{ color: "#059669", fontSize: "0.95rem" }}>${order.price.toLocaleString()} / {order.period}</strong>
                         </div>
                         <div>
                           <span style={{ display: "block", color: "#64748B", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>Payment</span>
-                          <strong style={{ color: "#0F172A" }}>
+                          <strong style={{ color: "#0F172A", fontSize: "0.88rem" }}>
                             {order.paymentMethod === "card" ? "Credit / Debit Card" : order.paymentMethod === "paypal" ? "PayPal" : "Digital Wallet"}
                           </strong>
                         </div>
                         <div>
                           <span style={{ display: "block", color: "#64748B", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>Seller</span>
-                          <strong style={{ color: "#0F172A" }}>{order.sellerName}</strong>
+                          <strong style={{ color: "#0F172A", fontSize: "0.88rem" }}>{order.sellerName}</strong>
                         </div>
                       </div>
 
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
-                        <div>
-                          <span style={{ color: "#64748B", fontSize: "0.75rem", fontWeight: 700 }}>LICENSE KEY</span>
-                          <code style={{ display: "block", color: "#4F46E5", fontSize: "0.85rem", marginTop: "0.2rem" }}>{order.licenseKey}</code>
+                      <div className="dashboard-order-footer">
+                        <div className="dashboard-license-box">
+                          <span style={{ color: "#64748B", fontSize: "0.74rem", fontWeight: 700, display: "block" }}>LICENSE KEY</span>
+                          <code>{order.licenseKey}</code>
                         </div>
-                        <Link href={`/products/${order.productId}`} className="btn-secondary" style={{ textDecoration: "none", fontSize: "0.82rem", padding: "0.5rem 0.9rem" }}>
+                        <Link href={`/products/${order.productId}`} className="dashboard-action-btn-secondary" style={{ fontSize: "0.82rem", padding: "0.45rem 0.9rem" }}>
                           View Product
                         </Link>
                       </div>
@@ -1035,119 +816,74 @@ export default function DashboardClient() {
           {/* TAB 3: INQUIRIES & ACTIVE QUOTES */}
           {activeTab === "inquiries" && (
             <div>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
-                  Active Software Quotes & Vendor Conversations
-                </h2>
-                <p style={{ color: "#64748B", fontSize: "0.85rem", marginTop: "0.2rem" }}>
-                  All custom quotes, enterprise discounts, and direct seller WhatsApp discussions initiated through SaaS MRKT.
-                </p>
+              <div className="dashboard-section-header">
+                <div>
+                  <h2 className="dashboard-section-title">
+                    Active Software Quotes & Vendor Conversations
+                  </h2>
+                  <p className="dashboard-section-desc">
+                    All custom quotes, enterprise discounts, and direct seller WhatsApp discussions initiated through SaaS MRKT.
+                  </p>
+                </div>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {inquiries.map((inq) => (
-                  <div
-                    key={inq.id}
-                    style={{
-                      background: "#FFFFFF",
-                      borderRadius: "18px",
-                      border: "1px solid #E2E8F0",
-                      padding: "1.5rem 1.75rem",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        flexWrap: "wrap",
-                        gap: "1rem",
-                        marginBottom: "0.75rem",
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
-                          {inq.productName}
-                        </h3>
-                        <span
-                          style={{
-                            background:
-                              inq.status === "Quote Received"
-                                ? "#ECFDF5"
-                                : inq.status === "Negotiation"
-                                ? "#EFF6FF"
-                                : "#FFFBEB",
-                            color:
-                              inq.status === "Quote Received"
-                                ? "#059669"
-                                : inq.status === "Negotiation"
-                                ? "#2563EB"
-                                : "#D97706",
-                            fontSize: "0.75rem",
-                            fontWeight: 700,
-                            padding: "0.2rem 0.65rem",
-                            borderRadius: "999px",
-                          }}
-                        >
-                          {inq.status}
-                        </span>
-                      </div>
-                      <span style={{ fontSize: "0.8rem", color: "#64748B" }}>Initiated: {inq.sentDate}</span>
-                    </div>
+              <div>
+                {inquiries.map((inq) => {
+                  const badgeClass =
+                    inq.status === "Quote Received"
+                      ? "received"
+                      : inq.status === "Negotiation"
+                      ? "negotiation"
+                      : "pending";
 
-                    <p style={{ color: "#475569", fontSize: "0.9rem", lineHeight: 1.5, marginBottom: "1rem" }}>
-                      &ldquo;{inq.note}&rdquo;
-                    </p>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        flexWrap: "wrap",
-                        gap: "1rem",
-                        paddingTop: "0.85rem",
-                        borderTop: "1px solid #F1F5F9",
-                        fontSize: "0.85rem",
-                      }}
-                    >
-                      <div>
-                        <span style={{ color: "#64748B" }}>Vendor Rep: </span>
-                        <strong style={{ color: "#1E293B" }}>{inq.vendorName}</strong> ({inq.vendorEmail})
+                  return (
+                    <div key={inq.id} className="dashboard-inquiry-card">
+                      <div className="dashboard-inquiry-header">
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                          <h3 style={{ fontSize: "1.12rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
+                            {inq.productName}
+                          </h3>
+                          <span className={`dashboard-quote-badge ${badgeClass}`}>
+                            {inq.status}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: "0.78rem", color: "#64748B" }}>Initiated: {inq.sentDate}</span>
                       </div>
 
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <a
-                          href={`https://wa.me/${inq.vendorWhatsapp}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            background: "#25D366",
-                            color: "#FFFFFF",
-                            fontSize: "0.82rem",
-                            fontWeight: 700,
-                            padding: "0.45rem 0.85rem",
-                            borderRadius: "8px",
-                            textDecoration: "none",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "0.4rem",
-                          }}
-                        >
-                          WhatsApp Rep
-                        </a>
-                        <Link
-                          href={inq.productUrl}
-                          className="btn-secondary"
-                          style={{ textDecoration: "none", fontSize: "0.82rem", padding: "0.45rem 0.85rem" }}
-                        >
-                          View Live Listing
-                        </Link>
+                      <div className="dashboard-inquiry-note">
+                        &ldquo;{inq.note}&rdquo;
+                      </div>
+
+                      <div className="dashboard-inquiry-footer">
+                        <div>
+                          <span style={{ color: "#64748B" }}>Vendor Rep: </span>
+                          <strong style={{ color: "#1E293B" }}>{inq.vendorName}</strong> ({inq.vendorEmail})
+                        </div>
+
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", flexWrap: "wrap" }}>
+                          <a
+                            href={`https://wa.me/${inq.vendorWhatsapp}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="dashboard-whatsapp-btn"
+                          >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
+                              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                            </svg>
+                            WhatsApp Rep
+                          </a>
+                          <Link
+                            href={inq.productUrl}
+                            className="dashboard-action-btn-secondary"
+                            style={{ fontSize: "0.8rem", padding: "0.45rem 0.85rem" }}
+                          >
+                            View Live Listing
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -1155,16 +891,18 @@ export default function DashboardClient() {
           {/* TAB 4: UNLOCKED DOSSIERS */}
           {activeTab === "dossiers" && (
             <div>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
-                  Unlocked Due Diligence Dossiers
-                </h2>
-                <p style={{ color: "#64748B", fontSize: "0.85rem", marginTop: "0.2rem" }}>
-                  Confidential architectural schematics, audited ARR financial metrics, and legal vendor agreements unlocked by your buyer credentials.
-                </p>
+              <div className="dashboard-section-header">
+                <div>
+                  <h2 className="dashboard-section-title">
+                    Unlocked Due Diligence Dossiers
+                  </h2>
+                  <p className="dashboard-section-desc">
+                    Confidential architectural schematics, audited ARR financial metrics, and legal vendor agreements unlocked by your buyer credentials.
+                  </p>
+                </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.5rem" }}>
+              <div className="dashboard-dossier-grid">
                 {[
                   {
                     id: "prod-growthflow",
@@ -1194,73 +932,61 @@ export default function DashboardClient() {
                     color: "#3B82F6",
                   },
                 ].map((dos) => (
-                  <div
-                    key={dos.id}
-                    style={{
-                      background: "#FFFFFF",
-                      borderRadius: "18px",
-                      border: "1px solid #E2E8F0",
-                      padding: "1.5rem",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
+                  <div key={dos.id} className="dashboard-dossier-card">
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
                       <div
                         style={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "10px",
+                          width: "42px",
+                          height: "42px",
+                          borderRadius: "12px",
                           backgroundColor: dos.color,
                           color: "#FFFFFF",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           fontWeight: 800,
+                          fontSize: "1rem",
+                          boxShadow: "0 3px 8px rgba(0, 0, 0, 0.1)",
                         }}
                       >
                         {dos.name.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
+                        <h3 style={{ fontSize: "1.08rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
                           {dos.name}
                         </h3>
-                        <span style={{ fontSize: "0.75rem", color: "#64748B" }}>{dos.category}</span>
+                        <span style={{ fontSize: "0.74rem", color: "#64748B", fontWeight: 600 }}>{dos.category}</span>
                       </div>
                     </div>
 
-                    <div style={{ background: "#F8FAFC", borderRadius: "12px", padding: "0.85rem", marginBottom: "1.25rem", fontSize: "0.82rem" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.4rem" }}>
+                    <div className="dashboard-dossier-metrics">
+                      <div className="dashboard-dossier-metric-item">
                         <span style={{ color: "#64748B" }}>Audited MRR:</span>
                         <strong style={{ color: "#059669" }}>{dos.mrr}</strong>
                       </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.4rem" }}>
+                      <div className="dashboard-dossier-metric-item">
                         <span style={{ color: "#64748B" }}>Infrastructure SLA:</span>
                         <strong style={{ color: "#0F172A" }}>{dos.sla}</strong>
                       </div>
-                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <div className="dashboard-dossier-metric-item">
                         <span style={{ color: "#64748B" }}>Compliance Audit:</span>
                         <strong style={{ color: "#4F46E5" }}>{dos.soc2}</strong>
                       </div>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.55rem" }}>
                       <Link
                         href={`/products/${dos.id}/details`}
-                        className="btn-primary"
-                        style={{
-                          textDecoration: "none",
-                          fontSize: "0.82rem",
-                          padding: "0.55rem",
-                          justifyContent: "center",
-                        }}
+                        className="dashboard-btn-card-primary"
+                        style={{ padding: "0.55rem", fontSize: "0.8rem" }}
                       >
                         Open Full Dossier
                       </Link>
                       <button
                         type="button"
                         onClick={() => handleExportDossier(dos)}
-                        className="btn-secondary"
-                        style={{ fontSize: "0.82rem", padding: "0.55rem", justifyContent: "center" }}
+                        className="dashboard-btn-card-secondary"
+                        style={{ padding: "0.55rem", fontSize: "0.8rem", cursor: "pointer" }}
                       >
                         Export PDF
                       </button>
@@ -1274,92 +1000,80 @@ export default function DashboardClient() {
           {/* TAB 5: MY TECH STACK & SPEND */}
           {activeTab === "stack" && (
             <div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: "1.25rem",
-                  flexWrap: "wrap",
-                  gap: "1rem",
-                }}
-              >
+              <div className="dashboard-section-header">
                 <div>
-                  <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
+                  <h2 className="dashboard-section-title">
                     Company Software Stack &amp; Seat Auditor
                   </h2>
-                  <p style={{ color: "#64748B", fontSize: "0.85rem", marginTop: "0.2rem" }}>
+                  <p className="dashboard-section-desc">
                     Monitor active seats, billing cycles, and unallocated seat bloat across your enterprise organization.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsAddStackModalOpen(true)}
-                  className="btn-primary"
-                  style={{ fontSize: "0.85rem" }}
+                  className="dashboard-action-btn-primary"
+                  style={{ cursor: "pointer" }}
                 >
-                  + Add Software to Stack
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Add Software to Stack
                 </button>
               </div>
 
-              {/* Stack Table */}
-              <div
-                style={{
-                  background: "#FFFFFF",
-                  borderRadius: "18px",
-                  border: "1px solid #E2E8F0",
-                  overflow: "hidden",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
-                }}
-              >
-                <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.88rem" }}>
+              {/* Stack Table Card */}
+              <div className="dashboard-stack-card">
+                {/* Desktop View Table */}
+                <div className="dashboard-stack-table-wrapper">
+                  <table className="dashboard-stack-table">
                     <thead>
-                      <tr style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0", color: "#64748B" }}>
-                        <th style={{ padding: "0.85rem 1.25rem", fontWeight: 700 }}>Software Name</th>
-                        <th style={{ padding: "0.85rem 1.25rem", fontWeight: 700 }}>Category</th>
-                        <th style={{ padding: "0.85rem 1.25rem", fontWeight: 700 }}>Active Seats</th>
-                        <th style={{ padding: "0.85rem 1.25rem", fontWeight: 700 }}>Seat Cost</th>
-                        <th style={{ padding: "0.85rem 1.25rem", fontWeight: 700 }}>Total / Month</th>
-                        <th style={{ padding: "0.85rem 1.25rem", fontWeight: 700 }}>Billing</th>
-                        <th style={{ padding: "0.85rem 1.25rem", fontWeight: 700, textAlign: "right" }}>Action</th>
+                      <tr>
+                        <th>Software Name</th>
+                        <th>Category</th>
+                        <th>Active Seats</th>
+                        <th>Seat Cost</th>
+                        <th>Total / Month</th>
+                        <th>Billing</th>
+                        <th style={{ textAlign: "right" }}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {stackItems.map((item) => {
                         const monthlyTotal = item.seats * item.monthlyCostPerSeat;
                         return (
-                          <tr key={item.id} style={{ borderBottom: "1px solid #F1F5F9" }}>
-                            <td style={{ padding: "1rem 1.25rem", fontWeight: 700, color: "#0F172A" }}>
+                          <tr key={item.id}>
+                            <td style={{ fontWeight: 750, color: "#0F172A" }}>
                               {item.name}
                             </td>
-                            <td style={{ padding: "1rem 1.25rem", color: "#64748B" }}>
+                            <td style={{ color: "#64748B" }}>
                               {item.category}
                             </td>
-                            <td style={{ padding: "1rem 1.25rem", fontWeight: 600, color: "#1E293B" }}>
+                            <td style={{ fontWeight: 650, color: "#1E293B" }}>
                               {item.seats} seats
                             </td>
-                            <td style={{ padding: "1rem 1.25rem", color: "#64748B" }}>
+                            <td style={{ color: "#64748B" }}>
                               ${item.monthlyCostPerSeat} / seat
                             </td>
-                            <td style={{ padding: "1rem 1.25rem", fontWeight: 800, color: "#059669" }}>
+                            <td style={{ fontWeight: 800, color: "#059669" }}>
                               ${monthlyTotal.toLocaleString()}
                             </td>
-                            <td style={{ padding: "1rem 1.25rem" }}>
+                            <td>
                               <span
                                 style={{
                                   background: item.billing === "Annual" ? "#EEF2FF" : "#F1F5F9",
                                   color: item.billing === "Annual" ? "#4F46E5" : "#64748B",
                                   padding: "0.2rem 0.55rem",
                                   borderRadius: "6px",
-                                  fontSize: "0.75rem",
-                                  fontWeight: 700,
+                                  fontSize: "0.74rem",
+                                  fontWeight: 750,
                                 }}
                               >
                                 {item.billing}
                               </span>
                             </td>
-                            <td style={{ padding: "1rem 1.25rem", textAlign: "right" }}>
+                            <td style={{ textAlign: "right" }}>
                               <button
                                 type="button"
                                 onClick={() => handleDeleteStackItem(item.id, item.name)}
@@ -1367,9 +1081,11 @@ export default function DashboardClient() {
                                   background: "none",
                                   border: "none",
                                   color: "#DC2626",
-                                  fontWeight: 600,
+                                  fontWeight: 650,
                                   cursor: "pointer",
                                   fontSize: "0.82rem",
+                                  padding: "0.2rem 0.4rem",
+                                  borderRadius: "6px",
                                 }}
                               >
                                 Remove
@@ -1382,32 +1098,88 @@ export default function DashboardClient() {
                   </table>
                 </div>
 
+                {/* Mobile Cards Alternative for screens <= 768px */}
+                <div className="dashboard-stack-mobile-cards">
+                  {stackItems.map((item) => {
+                    const monthlyTotal = item.seats * item.monthlyCostPerSeat;
+                    return (
+                      <div key={item.id} className="dashboard-stack-mobile-card">
+                        <div className="dashboard-stack-mobile-card-top">
+                          <div>
+                            <strong style={{ fontSize: "0.98rem", color: "#0F172A", display: "block" }}>{item.name}</strong>
+                            <span style={{ fontSize: "0.75rem", color: "#64748B" }}>{item.category}</span>
+                          </div>
+                          <span
+                            style={{
+                              background: item.billing === "Annual" ? "#EEF2FF" : "#F1F5F9",
+                              color: item.billing === "Annual" ? "#4F46E5" : "#64748B",
+                              padding: "0.15rem 0.5rem",
+                              borderRadius: "6px",
+                              fontSize: "0.72rem",
+                              fontWeight: 750,
+                            }}
+                          >
+                            {item.billing}
+                          </span>
+                        </div>
+
+                        <div className="dashboard-stack-mobile-meta-grid">
+                          <div>
+                            <span style={{ color: "#64748B", display: "block", fontSize: "0.7rem", textTransform: "uppercase" }}>Seats</span>
+                            <strong>{item.seats} seats</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: "#64748B", display: "block", fontSize: "0.7rem", textTransform: "uppercase" }}>Per Seat</span>
+                            <strong>${item.monthlyCostPerSeat}/mo</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: "#64748B", display: "block", fontSize: "0.7rem", textTransform: "uppercase" }}>Monthly Spend</span>
+                            <strong style={{ color: "#059669" }}>${monthlyTotal.toLocaleString()}</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: "#64748B", display: "block", fontSize: "0.7rem", textTransform: "uppercase" }}>Annualized</span>
+                            <strong style={{ color: "#4F46E5" }}>${(monthlyTotal * 12).toLocaleString()}</strong>
+                          </div>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteStackItem(item.id, item.name)}
+                            style={{
+                              background: "#fee2e2",
+                              border: "none",
+                              color: "#dc2626",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              fontSize: "0.78rem",
+                              padding: "0.35rem 0.75rem",
+                              borderRadius: "6px",
+                            }}
+                          >
+                            Remove Software
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
                 {/* Table Footer Totals */}
-                <div
-                  style={{
-                    background: "#FAFAFD",
-                    padding: "1rem 1.25rem",
-                    borderTop: "1px solid #E2E8F0",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    gap: "1rem",
-                  }}
-                >
-                  <span style={{ color: "#64748B", fontSize: "0.85rem" }}>
+                <div className="dashboard-stack-footer">
+                  <span style={{ color: "#64748B", fontSize: "0.84rem" }}>
                     Total active software in corporate stack: <strong>{stackItems.length} tools</strong>
                   </span>
-                  <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" }}>
                     <div>
-                      <span style={{ fontSize: "0.75rem", color: "#64748B" }}>Total Monthly: </span>
-                      <strong style={{ fontSize: "1.1rem", color: "#0F172A" }}>
+                      <span style={{ fontSize: "0.74rem", color: "#64748B" }}>Total Monthly: </span>
+                      <strong style={{ fontSize: "1.05rem", color: "#0F172A" }}>
                         ${totalMonthlySpend.toLocaleString()} / mo
                       </strong>
                     </div>
                     <div>
-                      <span style={{ fontSize: "0.75rem", color: "#64748B" }}>Annualized Run-Rate: </span>
-                      <strong style={{ fontSize: "1.1rem", color: "#5E4BEE" }}>
+                      <span style={{ fontSize: "0.74rem", color: "#64748B" }}>Annualized Run-Rate: </span>
+                      <strong style={{ fontSize: "1.05rem", color: "#4F46E5" }}>
                         ${totalAnnualSpend.toLocaleString()} / yr
                       </strong>
                     </div>
@@ -1422,46 +1194,30 @@ export default function DashboardClient() {
       {/* Modal: Add to Tech Stack */}
       {isAddStackModalOpen && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(15, 23, 42, 0.6)",
-            backdropFilter: "blur(4px)",
-            zIndex: 99999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "1rem",
-          }}
+          className="dashboard-modal-backdrop"
           onClick={() => setIsAddStackModalOpen(false)}
         >
           <div
-            style={{
-              background: "#FFFFFF",
-              borderRadius: "20px",
-              maxWidth: "480px",
-              width: "100%",
-              padding: "2rem",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-            }}
+            className="dashboard-modal-dialog"
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-              <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
+            <div className="dashboard-modal-header">
+              <h3 className="dashboard-modal-title">
                 Add Software to Stack
               </h3>
               <button
                 type="button"
+                className="dashboard-modal-close-btn"
                 onClick={() => setIsAddStackModalOpen(false)}
-                style={{ background: "none", border: "none", fontSize: "1.2rem", cursor: "pointer", color: "#64748B" }}
+                aria-label="Close dialog"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleAddStackItem} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.3rem" }}>
+            <form onSubmit={handleAddStackItem}>
+              <div className="dashboard-form-group">
+                <label className="dashboard-form-label">
                   Software Name *
                 </label>
                 <input
@@ -1470,31 +1226,18 @@ export default function DashboardClient() {
                   placeholder="e.g. Linear, Notion, AWS"
                   value={newStackName}
                   onChange={(e) => setNewStackName(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem 1rem",
-                    borderRadius: "10px",
-                    border: "1px solid #CBD5E1",
-                    fontSize: "0.92rem",
-                  }}
+                  className="dashboard-form-input"
                 />
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.3rem" }}>
+              <div className="dashboard-form-group">
+                <label className="dashboard-form-label">
                   Category
                 </label>
                 <select
                   value={newStackCategory}
                   onChange={(e) => setNewStackCategory(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem 1rem",
-                    borderRadius: "10px",
-                    border: "1px solid #CBD5E1",
-                    fontSize: "0.92rem",
-                    background: "#FFFFFF",
-                  }}
+                  className="dashboard-form-select"
                 >
                   <option value="Productivity">Productivity &amp; Docs</option>
                   <option value="CRM & Sales">CRM &amp; Sales</option>
@@ -1505,9 +1248,9 @@ export default function DashboardClient() {
                 </select>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.3rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.85rem" }}>
+                <div className="dashboard-form-group">
+                  <label className="dashboard-form-label">
                     Active Seats
                   </label>
                   <input
@@ -1516,18 +1259,12 @@ export default function DashboardClient() {
                     required
                     value={newStackSeats}
                     onChange={(e) => setNewStackSeats(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "10px",
-                      border: "1px solid #CBD5E1",
-                      fontSize: "0.92rem",
-                    }}
+                    className="dashboard-form-input"
                   />
                 </div>
 
-                <div>
-                  <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.3rem" }}>
+                <div className="dashboard-form-group">
+                  <label className="dashboard-form-label">
                     Cost / Seat ($/mo)
                   </label>
                   <input
@@ -1537,30 +1274,24 @@ export default function DashboardClient() {
                     required
                     value={newStackCost}
                     onChange={(e) => setNewStackCost(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "10px",
-                      border: "1px solid #CBD5E1",
-                      fontSize: "0.92rem",
-                    }}
+                    className="dashboard-form-input"
                   />
                 </div>
               </div>
 
-              <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.75rem" }}>
+              <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem" }}>
                 <button
                   type="button"
                   onClick={() => setIsAddStackModalOpen(false)}
-                  className="btn-secondary"
-                  style={{ flex: 1, justifyContent: "center" }}
+                  className="dashboard-action-btn-secondary"
+                  style={{ flex: 1, justifyContent: "center", cursor: "pointer" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary"
-                  style={{ flex: 1, justifyContent: "center" }}
+                  className="dashboard-action-btn-primary"
+                  style={{ flex: 1, justifyContent: "center", cursor: "pointer" }}
                 >
                   Save Tool
                 </button>

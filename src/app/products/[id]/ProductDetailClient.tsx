@@ -10,6 +10,7 @@ import { ProductItem, getSimilarProducts } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
 import { isWishlisted, toggleWishlist, WISHLIST_EVENT_NAME } from "@/utils/wishlist";
 import { createContactInquiry, upsertVendorInquiry } from "@/utils/vendorInquiries";
+import "./product-detail.css";
 
 interface ProductDetailClientProps {
   product: ProductItem;
@@ -233,35 +234,37 @@ export default function ProductDetailClient({ product: initialProduct }: Product
             {/* Left Column: Product Info */}
             <div className="detail-hero-left">
               <div className="detail-trust-badge"><span aria-hidden="true">✓</span> Verified marketplace listing</div>
-              {/* Product Logo / Icon */}
-              <div
-                className="detail-hero-logo"
-                style={{
-                  background:
-                    product.logo
-                      ? "transparent"
-                      : `linear-gradient(135deg, ${product.brandColor} 0%, #4338CA 100%)`,
-                }}
-              >
-                {product.logo ? (
-                  <Image
-                    src={product.logo}
-                    alt={`${product.name} logo`}
-                    width={72}
-                    height={72}
-                    className="detail-logo-img"
-                    unoptimized={product.logo.startsWith("data:")}
-                  />
-                ) : (
-                  <span className="detail-logo-fallback">{product.brandLetter}</span>
-                )}
+              {/* Product Logo & Brand Group */}
+              <div className="detail-brand-header">
+                <div
+                  className="detail-hero-logo"
+                  style={{
+                    background:
+                      product.logo
+                        ? "transparent"
+                        : `linear-gradient(135deg, ${product.brandColor} 0%, #4338CA 100%)`,
+                  }}
+                >
+                  {product.logo ? (
+                    <Image
+                      src={product.logo}
+                      alt={`${product.name} logo`}
+                      width={62}
+                      height={62}
+                      className="detail-logo-img"
+                      unoptimized={product.logo.startsWith("data:")}
+                    />
+                  ) : (
+                    <span className="detail-logo-fallback">{product.brandLetter}</span>
+                  )}
+                </div>
+                <div className="detail-title-wrap">
+                  <h1 className="detail-hero-title">{product.name}</h1>
+                  <p className="detail-hero-tagline">
+                    {product.tagline || product.description}
+                  </p>
+                </div>
               </div>
-
-              {/* Title & Tagline */}
-              <h1 className="detail-hero-title">{product.name}</h1>
-              <p className="detail-hero-tagline">
-                {product.tagline || product.description}
-              </p>
 
               {/* Basic Idea of the Project */}
               <p className="detail-hero-idea">{aboutText}</p>
@@ -333,20 +336,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                 <button
                   type="button"
                   onClick={handleToggleWishlist}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.45rem",
-                    padding: "0.75rem 1.15rem",
-                    borderRadius: "12px",
-                    border: isSaved ? "1px solid #5E4BEE" : "1px solid #CBD5E1",
-                    background: isSaved ? "#EEF2FF" : "#FFFFFF",
-                    color: isSaved ? "#5E4BEE" : "#475569",
-                    fontWeight: 700,
-                    fontSize: "0.88rem",
-                    cursor: "pointer",
-                    transition: "all 0.15s ease",
-                  }}
+                  className={`detail-btn-wishlist ${isSaved ? "is-saved" : ""}`}
                   title={isSaved ? "Saved in your Buyer Wishlist" : "Save to Buyer Wishlist"}
                 >
                   <svg
@@ -464,7 +454,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
             </div>
-            <div>
+            <div className="detail-stat-text">
               <span className="detail-stat-label">Listed on</span>
               <strong className="detail-stat-value">{listedDate}</strong>
             </div>
@@ -477,7 +467,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                 <line x1="2" y1="10" x2="22" y2="10" />
               </svg>
             </div>
-            <div>
+            <div className="detail-stat-text">
               <span className="detail-stat-label">Pricing Model</span>
               <strong className="detail-stat-value">{pricingModel}</strong>
             </div>
@@ -490,7 +480,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                 <path d="M7 7h.01" />
               </svg>
             </div>
-            <div>
+            <div className="detail-stat-text">
               <span className="detail-stat-label">Category</span>
               <strong className="detail-stat-value">{product.category}</strong>
             </div>
@@ -504,7 +494,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                 <circle cx="12" cy="12" r="2" />
               </svg>
             </div>
-            <div>
+            <div className="detail-stat-text">
               <span className="detail-stat-label">Target Audience</span>
               <strong className="detail-stat-value">{targetAudience}</strong>
             </div>
@@ -517,7 +507,7 @@ export default function ProductDetailClient({ product: initialProduct }: Product
                 <circle cx="12" cy="10" r="3" />
               </svg>
             </div>
-            <div>
+            <div className="detail-stat-text">
               <span className="detail-stat-label">HQ Location</span>
               <strong className="detail-stat-value">{hqLocation}</strong>
             </div>
@@ -803,12 +793,22 @@ export default function ProductDetailClient({ product: initialProduct }: Product
             ))}
           </div>
 
-          {/* Explore More Callout (Text only, no card container or button) */}
-          <div className="detail-explore-callout">
-            <h3 className="detail-explore-title">Looking for more software solutions?</h3>
-            <p className="detail-explore-text">
-              Browse our full marketplace of 50+ verified tools across productivity, sales, marketing, and finance to power your team.
-            </p>
+          {/* Cosmic CTA Banner */}
+          <div className="detail-cosmic-cta">
+            <div className="detail-cosmic-content">
+              <h3 className="detail-cosmic-title">Ready to accelerate your workflow with {product.name}?</h3>
+              <p className="detail-cosmic-desc">
+                Join thousands of businesses scaling faster with verified software and 30-day buyer protection on SaaS MRKT.
+              </p>
+              <div className="detail-cosmic-actions">
+                <Link href={`/products/${product.id}/buy`} className="detail-cosmic-btn-primary">
+                  Get Started with {product.name} →
+                </Link>
+                <Link href="/products" className="detail-cosmic-btn-secondary">
+                  Explore All 50+ Products
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </div>

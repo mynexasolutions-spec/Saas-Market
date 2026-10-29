@@ -16,7 +16,7 @@
   --accent-dark: #3f29db;
   --accent-soft: #f1efff;
   position: relative;
-  width: min(100%, 440px);
+  width: min(100%, 460px);
   max-height: calc(100dvh - 20px);
   box-sizing: border-box;
   overflow: hidden;
@@ -24,7 +24,9 @@
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 17px;
   background: rgba(255, 255, 255, 0.985);
-  box-shadow: 0 28px 76px rgba(15, 23, 42, 0.34), inset 0 1px 0 #fff;
+  box-shadow:
+    0 28px 76px rgba(15, 23, 42, 0.34),
+    inset 0 1px 0 #fff;
   color: #12182b;
   animation: cardIn 280ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -52,8 +54,16 @@
   left: -55px;
   border-radius: 42% 58% 56% 44% / 58% 37% 63% 42%;
   background:
-    radial-gradient(circle at 65% 63%, rgba(108, 87, 255, 0.37), transparent 43%),
-    linear-gradient(140deg, rgba(220, 215, 255, 0.85), rgba(126, 102, 255, 0.14));
+    radial-gradient(
+      circle at 65% 63%,
+      rgba(108, 87, 255, 0.37),
+      transparent 43%
+    ),
+    linear-gradient(
+      140deg,
+      rgba(220, 215, 255, 0.85),
+      rgba(126, 102, 255, 0.14)
+    );
   transform: rotate(24deg);
 }
 
@@ -62,12 +72,19 @@
   bottom: -78px;
   border-radius: 56% 44% 40% 60% / 38% 56% 44% 62%;
   background:
-    radial-gradient(circle at 30% 25%, rgba(104, 76, 255, 0.32), transparent 44%),
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(104, 76, 255, 0.32),
+      transparent 44%
+    ),
     linear-gradient(140deg, rgba(235, 230, 255, 0.76), rgba(112, 82, 255, 0.2));
   transform: rotate(-28deg);
 }
 
-.card > * { position: relative; z-index: 1; }
+.card > * {
+  position: relative;
+  z-index: 1;
+}
 
 .closeButton {
   position: absolute;
@@ -84,10 +101,17 @@
   background: rgba(244, 245, 250, 0.92);
   color: #68748c;
   cursor: pointer;
-  transition: transform 170ms ease, color 170ms ease, background 170ms ease;
+  transition:
+    transform 170ms ease,
+    color 170ms ease,
+    background 170ms ease;
 }
 
-.closeButton:hover { color: #202943; background: #e9ebf4; transform: rotate(6deg); }
+.closeButton:hover {
+  color: #202943;
+  background: #e9ebf4;
+  transform: rotate(6deg);
+}
 
 .closeButton:focus-visible,
 .segmentButton:focus-visible,
@@ -115,8 +139,14 @@
   margin-bottom: 4px;
 }
 
-.logo { width: 44px; height: 44px; object-fit: contain; }
-.brandName { display: none; }
+.logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+.brandName {
+  display: none;
+}
 
 .title {
   margin: 0;
@@ -127,7 +157,9 @@
   line-height: 1.08;
 }
 
-.titleAccent { color: #6047ff; }
+.titleAccent {
+  color: #6047ff;
+}
 
 .subtitle {
   margin: 4px 0 0;
@@ -136,7 +168,9 @@
   line-height: 1.35;
 }
 
-.section { margin-bottom: 9px; }
+.section {
+  margin-bottom: 9px;
+}
 
 .sectionLabel {
   display: block;
@@ -173,16 +207,27 @@
   color: #5f6980;
   box-shadow: 0 3px 10px rgba(15, 23, 42, 0.035);
   cursor: pointer;
-  transition: color 170ms ease, background 170ms ease, border-color 170ms ease, box-shadow 170ms ease, transform 170ms ease;
+  transition:
+    color 170ms ease,
+    background 170ms ease,
+    border-color 170ms ease,
+    box-shadow 170ms ease,
+    transform 170ms ease;
 }
 
-.segmentButton:hover { border-color: #cfc8ff; color: #3e2ddb; transform: translateY(-1px); }
+.segmentButton:hover {
+  border-color: #cfc8ff;
+  color: #3e2ddb;
+  transform: translateY(-1px);
+}
 
 .segmentButtonActive {
   border-color: #836fff;
   background: linear-gradient(135deg, #fbfaff, #f1efff);
   color: #25203f;
-  box-shadow: 0 0 0 2px rgba(96, 71, 255, 0.09), 0 5px 12px rgba(61, 40, 195, 0.08);
+  box-shadow:
+    0 0 0 2px rgba(96, 71, 255, 0.09),
+    0 5px 12px rgba(61, 40, 195, 0.08);
 }
 
 .roleButton::after {
@@ -202,7 +247,11 @@
   transform: translateY(-50%);
 }
 
-.roleButton.segmentButtonActive::after { border-color: #6047ff; background: #6047ff; color: #fff; }
+.roleButton.segmentButtonActive::after {
+  border-color: #6047ff;
+  background: #6047ff;
+  color: #fff;
+}
 
 .segmentIcon {
   display: grid;
@@ -215,10 +264,30 @@
   color: #707b91;
 }
 
-.segmentButtonActive .segmentIcon { background: #e5e0ff; color: #6047ff; }
-.segmentCopy { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; text-align: left; }
-.segmentTitle { color: inherit; font-size: 0.85rem; font-weight: 750; line-height: 1.1; }
-.segmentCaption { margin-top: 3px; color: #727c91; font-size: 0.71rem; font-weight: 500; line-height: 1.1; }
+.segmentButtonActive .segmentIcon {
+  background: #e5e0ff;
+  color: #6047ff;
+}
+.segmentCopy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+.segmentTitle {
+  color: inherit;
+  font-size: 0.85rem;
+  font-weight: 750;
+  line-height: 1.1;
+}
+.segmentCaption {
+  margin-top: 3px;
+  color: #727c91;
+  font-size: 0.71rem;
+  font-weight: 500;
+  line-height: 1.1;
+}
 
 .methodButton {
   min-height: 39px;
@@ -228,9 +297,19 @@
   border-radius: 8px;
 }
 
-.methodButton .segmentIcon { width: 22px; height: 22px; flex-basis: 22px; border-radius: 0; background: transparent; }
-.methodButton .segmentCopy { align-items: center; }
-.methodButton .segmentTitle { font-size: 0.81rem; }
+.methodButton .segmentIcon {
+  width: 22px;
+  height: 22px;
+  flex-basis: 22px;
+  border-radius: 0;
+  background: transparent;
+}
+.methodButton .segmentCopy {
+  align-items: center;
+}
+.methodButton .segmentTitle {
+  font-size: 0.81rem;
+}
 
 .roleNote {
   display: flex;
@@ -240,14 +319,23 @@
   padding: 9px 12px;
   border: 1px solid #e7e2ff;
   border-radius: 8px;
-  background: linear-gradient(90deg, rgba(244, 242, 255, 0.95), rgba(238, 235, 255, 0.88));
+  background: linear-gradient(
+    90deg,
+    rgba(244, 242, 255, 0.95),
+    rgba(238, 235, 255, 0.88)
+  );
   color: #6659a9;
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.25;
 }
 
-.roleNoteIcon { display: grid; flex: 0 0 auto; place-items: center; color: #6248f6; }
+.roleNoteIcon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #6248f6;
+}
 
 .message {
   margin: 0 0 10px;
@@ -258,10 +346,26 @@
   line-height: 1.35;
 }
 
-.error { border: 1px solid #fecaca; background: #fff3f3; color: #b42318; }
-.notice { border: 1px solid #a7f3d0; background: #ecfdf5; color: #047857; }
-.form { display: flex; flex-direction: column; gap: 8px; }
-.fieldGroup { display: flex; flex-direction: column; gap: 5px; }
+.error {
+  border: 1px solid #fecaca;
+  background: #fff3f3;
+  color: #b42318;
+}
+.notice {
+  border: 1px solid #a7f3d0;
+  background: #ecfdf5;
+  color: #047857;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
 .fieldLabel {
   color: #242b3c;
@@ -269,44 +373,97 @@
   font-weight: 750;
 }
 
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #768198;
+  pointer-events: none;
+  z-index: 4;
+  transition: color 150ms ease;
+  width: 16px;
+  height: 16px;
+}
+
+.inputWrapper:focus-within .inputIcon {
+  color: #6047ff;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  z-index: 4;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+.passwordToggle:hover {
+  color: #334155;
+  background-color: #f1f5f9;
+}
+
 .field {
   width: 100%;
   min-height: 42px;
   box-sizing: border-box;
-  padding: 0 13px;
+  padding: 0 13px 0 38px;
   border: 1px solid #e0e2eb;
   border-radius: 9px;
-  background: rgba(251, 252, 255, 0.88);
+  background-color: #ffffff;
   color: #1a2134;
   font: inherit;
   font-size: 0.85rem;
   box-shadow: 0 3px 11px rgba(15, 23, 42, 0.025);
-  transition: border-color 170ms ease, box-shadow 170ms ease, background 170ms ease;
+  transition:
+    border-color 170ms ease,
+    box-shadow 170ms ease,
+    background-color 170ms ease;
 }
 
-.field:hover { border-color: #cbcdd9; background: #fff; }
-.field:focus { border-color: #7a66ff; background: #fff; box-shadow: 0 0 0 3px rgba(96, 71, 255, 0.1); outline: none; }
-.field::placeholder { color: #9aa2b4; }
-
-.emailField,
-.passwordField,
-.nameField {
-  padding-left: 40px;
-  background-repeat: no-repeat;
-  background-position: 13px center;
-  background-size: 15px 15px;
+.field:hover {
+  border-color: #cbcdd9;
+  background-color: #ffffff;
 }
 
-.emailField {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23768198' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='m3 7 9 6 9-6'/%3E%3C/svg%3E");
+.field:focus {
+  border-color: #7a66ff;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(96, 71, 255, 0.12);
+  outline: none;
 }
 
-.passwordField {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23768198' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='10' width='16' height='11' rx='2'/%3E%3Cpath d='M8 10V7a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E");
+.field::placeholder {
+  color: #9aa2b4;
 }
 
-.nameField {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23768198' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21a8 8 0 0 1 16 0'/%3E%3C/svg%3E");
+.field:-webkit-autofill,
+.field:-webkit-autofill:hover,
+.field:-webkit-autofill:focus,
+.field:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+  -webkit-text-fill-color: #1a2134 !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 .primaryButton {
@@ -328,7 +485,10 @@
   font-weight: 750;
   box-shadow: 0 11px 23px rgba(74, 55, 224, 0.24);
   cursor: pointer;
-  transition: transform 170ms ease, box-shadow 170ms ease, filter 170ms ease;
+  transition:
+    transform 170ms ease,
+    box-shadow 170ms ease,
+    filter 170ms ease;
 }
 
 .primaryButton::after {
@@ -344,9 +504,23 @@
   transform: rotate(20deg);
 }
 
-.primaryButton:hover:not(:disabled) { box-shadow: 0 14px 27px rgba(74, 55, 224, 0.31); filter: brightness(1.06); transform: translateY(-1px); }
-.primaryButton:disabled { cursor: not-allowed; filter: grayscale(0.1); opacity: 0.62; }
-.helperText { margin: -2px 0 0; color: #8791a7; font-size: 0.73rem; line-height: 1.35; text-align: center; }
+.primaryButton:hover:not(:disabled) {
+  box-shadow: 0 14px 27px rgba(74, 55, 224, 0.31);
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+.primaryButton:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.1);
+  opacity: 0.62;
+}
+.helperText {
+  margin: -2px 0 0;
+  color: #8791a7;
+  font-size: 0.73rem;
+  line-height: 1.35;
+  text-align: center;
+}
 
 .footerPrompt {
   display: flex;
@@ -361,7 +535,13 @@
 }
 
 .footerPrompt::before,
-.footerPrompt::after { width: 45px; height: 1px; margin: 0 9px; background: #d8dbe5; content: ""; }
+.footerPrompt::after {
+  width: 45px;
+  height: 1px;
+  margin: 0 9px;
+  background: #d8dbe5;
+  content: "";
+}
 
 .textButton {
   padding: 2px;
@@ -374,11 +554,34 @@
   white-space: nowrap;
 }
 
-.textButton:hover:not(:disabled) { color: #3623c4; text-decoration: underline; }
-.textButton:disabled { color: #9aa2b5; cursor: not-allowed; }
-.otpIntro { margin: 0; color: #69748a; font-size: 0.78rem; line-height: 1.35; text-align: center; }
-.otpEmail { display: block; margin-top: 2px; color: #252c40; font-size: 0.85rem; font-weight: 750; overflow-wrap: anywhere; }
-.otpGrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.textButton:hover:not(:disabled) {
+  color: #3623c4;
+  text-decoration: underline;
+}
+.textButton:disabled {
+  color: #9aa2b5;
+  cursor: not-allowed;
+}
+.otpIntro {
+  margin: 0;
+  color: #69748a;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: center;
+}
+.otpEmail {
+  display: block;
+  margin-top: 2px;
+  color: #252c40;
+  font-size: 0.85rem;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.otpGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
 
 .otpInput {
   width: 100%;
@@ -395,56 +598,168 @@
   text-align: center;
 }
 
-.otpInput:focus { border-color: #705bff; box-shadow: 0 0 0 3px rgba(96, 71, 255, 0.1); outline: none; }
-.otpActions { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: -2px; }
-.otpActions .textButton { font-size: 0.72rem; }
+.otpInput:focus {
+  border-color: #705bff;
+  box-shadow: 0 0 0 3px rgba(96, 71, 255, 0.1);
+  outline: none;
+}
+.otpActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: -2px;
+}
+.otpActions .textButton {
+  font-size: 0.72rem;
+}
 
-@keyframes backdropIn { from { opacity: 0; } }
-@keyframes cardIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+@keyframes backdropIn {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
 
 @media (max-width: 480px) {
-  .backdrop { padding: 4px; }
-  .card { width: 100%; max-height: calc(100dvh - 8px); padding: 20px 25px 17px; border-radius: 14px; }
+  .backdrop {
+    padding: 4px;
+  }
+  .card {
+    width: 100%;
+    max-height: calc(100dvh - 8px);
+    padding: 15px 16px 10px;
+    border-radius: 14px;
+  }
 }
 
 @media (max-height: 680px) {
-  .card { padding-top: 13px; padding-bottom: 12px; }
-  .closeButton { top: 10px; right: 10px; }
-  .brandHeader { margin-bottom: 9px; }
-  .logoShell { width: 40px; height: 40px; margin-bottom: 1px; }
-  .logo { width: 38px; height: 38px; }
-  .title { font-size: 1.48rem; }
-  .subtitle { margin-top: 2px; font-size: 0.75rem; }
-  .section { margin-bottom: 8px; }
-  .sectionLabel { margin-bottom: 3px; font-size: 0.75rem; }
-  .segmentButton { min-height: 42px; padding-block: 5px; }
-  .segmentIcon { width: 28px; height: 28px; flex-basis: 28px; }
-  .methodButton { min-height: 34px; }
-  .roleNote { margin-bottom: 8px; padding-block: 7px; }
-  .form { gap: 7px; }
-  .fieldGroup { gap: 3px; }
-  .field { min-height: 37px; }
-  .primaryButton { min-height: 39px; }
-  .footerPrompt { margin-top: 2px; }
-  .otpInput { height: 38px; }
+  .card {
+    padding-top: 13px;
+    padding-bottom: 12px;
+  }
+  .closeButton {
+    top: 10px;
+    right: 10px;
+  }
+  .brandHeader {
+    margin-bottom: 9px;
+  }
+  .logoShell {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1px;
+  }
+  .logo {
+    width: 38px;
+    height: 38px;
+  }
+  .title {
+    font-size: 1.48rem;
+  }
+  .subtitle {
+    margin-top: 2px;
+    font-size: 0.75rem;
+  }
+  .section {
+    margin-bottom: 8px;
+  }
+  .sectionLabel {
+    margin-bottom: 3px;
+    font-size: 0.75rem;
+  }
+  .segmentButton {
+    min-height: 42px;
+    padding-block: 5px;
+  }
+  .segmentIcon {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+  .methodButton {
+    min-height: 34px;
+  }
+  .roleNote {
+    margin-bottom: 8px;
+    padding-block: 7px;
+  }
+  .form {
+    gap: 7px;
+  }
+  .fieldGroup {
+    gap: 3px;
+  }
+  .field {
+    min-height: 37px;
+  }
+  .primaryButton {
+    min-height: 39px;
+  }
+  .footerPrompt {
+    margin-top: 2px;
+  }
+  .otpInput {
+    height: 38px;
+  }
 }
 
 @media (max-height: 570px) {
-  .card { padding-inline: 24px; }
-  .logoShell { width: 35px; height: 35px; }
-  .logo { width: 33px; height: 33px; }
-  .title { font-size: 1.38rem; }
-  .subtitle { font-size: 0.71rem; }
-  .segmentButton { min-height: 39px; }
-  .segmentCaption { font-size: 0.67rem; }
-  .roleNote { padding-block: 5px; font-size: 0.69rem; }
-  .fieldLabel { font-size: 0.74rem; }
-  .field { min-height: 34px; }
-  .primaryButton { min-height: 36px; }
-  .footerPrompt { font-size: 0.69rem; }
+  .card {
+    padding-inline: 24px;
+  }
+  .logoShell {
+    width: 35px;
+    height: 35px;
+  }
+  .logo {
+    width: 33px;
+    height: 33px;
+  }
+  .title {
+    font-size: 1.38rem;
+  }
+  .subtitle {
+    font-size: 0.71rem;
+  }
+  .segmentButton {
+    min-height: 39px;
+  }
+  .segmentCaption {
+    font-size: 0.67rem;
+  }
+  .roleNote {
+    padding-block: 5px;
+    font-size: 0.69rem;
+  }
+  .fieldLabel {
+    font-size: 0.74rem;
+  }
+  .field {
+    min-height: 34px;
+  }
+  .primaryButton {
+    min-height: 36px;
+  }
+  .footerPrompt {
+    font-size: 0.69rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .backdrop, .card { animation: none; }
-  .closeButton, .segmentButton, .primaryButton, .field { transition: none; }
+  .backdrop,
+  .card {
+    animation: none;
+  }
+  .closeButton,
+  .segmentButton,
+  .primaryButton,
+  .field {
+    transition: none;
+  }
 }

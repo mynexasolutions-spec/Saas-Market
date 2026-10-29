@@ -1,0 +1,619 @@
+/* ==========================================================================
+   About Page - High-Fidelity Design System
+   Exact Font Sizes from /buyers (1:1 Typography Scale)
+   Modern, Responsive & Compact ("Kam Space Me")
+   ========================================================================== */
+
+.about-page-wrapper {
+  background:
+    radial-gradient(
+      circle 900px at 85% 12%,
+      rgba(224, 231, 255, 0.55) 0%,
+      rgba(245, 243, 255, 0.3) 35%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle 700px at 15% 45%,
+      rgba(240, 249, 255, 0.4) 0%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, #f8faff 0%, #ffffff 40%, #f8fafc 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: clip;
+  padding: 0.75rem 0 2rem;
+}
+
+.about-container {
+  max-width: var(--max-width, 1400px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   1. Breadcrumbs (Exact /buyers font-size: 0.84rem)
+   ========================================================================== */
+
+.about-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 0.85rem;
+  padding-top: 0.25rem;
+}
+
+.about-breadcrumb a {
+  color: #64748b;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 0.15s ease;
+}
+
+.about-breadcrumb a:hover {
+  color: #4f46e5;
+}
+
+.about-breadcrumb-sep {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.about-breadcrumb-current {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   2. Compact Hero Section
+   ========================================================================== */
+
+.about-hero {
+  text-align: center;
+  padding: 0.25rem 0 1.25rem;
+  position: relative;
+}
+
+.about-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+  border-radius: 9999px;
+  padding: 0.28rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.55rem;
+  box-shadow: 0 2px 6px rgba(109, 40, 217, 0.08);
+}
+
+.about-hero-title {
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  margin: 0 0 0.45rem 0;
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.about-title-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.about-hero-desc {
+  font-size: 1.05rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0 auto 1.15rem;
+  max-width: 680px;
+}
+
+/* Hero Action Buttons */
+.about-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-bottom: 1.35rem;
+  flex-wrap: wrap;
+}
+
+/* 4 Trust Metrics Strip (Exact /buyers scale: 0.95rem num, 0.73rem label) */
+.about-hero-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+
+.about-badge-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.4rem 0.85rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s ease;
+}
+
+.about-badge-item:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+}
+
+.about-badge-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-badge-icon.icon-blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.about-badge-icon.icon-purple {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.about-badge-icon.icon-green {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.about-badge-icon.icon-amber {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.about-badge-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.about-badge-num {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.about-badge-label {
+  font-size: 0.73rem;
+  color: #64748b;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   3. Section Headers (Exact /buyers font sizes: 0.72rem badge, clamp title, 0.98rem sub)
+   ========================================================================== */
+.the-team{
+  margin-top: 50px;
+}
+.about-section-head {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.about-section-badge {
+  display: inline-block;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+  border-radius: 9999px;
+  padding: 0.28rem 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.45rem;
+}
+
+.about-section-title {
+  font-size: clamp(1.6rem, 2.8vw, 2.15rem);
+  font-weight: 850;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+  margin: 0 0 0.45rem 0;
+}
+
+.about-section-sub {
+  font-size: 0.98rem;
+  color: #64748b;
+  margin: 0 auto;
+  max-width: 620px;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   4. Mission Box (Frosted Lavender Container)
+   ========================================================================== */
+
+.about-mission-box {
+  background: linear-gradient(
+    180deg,
+    rgba(238, 242, 255, 0.55) 0%,
+    rgba(245, 243, 255, 0.35) 100%
+  );
+  border: 1.5px solid rgba(224, 231, 255, 0.85);
+  border-radius: 6px;
+  padding: 1.75rem 1.6rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.04);
+}
+
+.about-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.15rem;
+}
+
+.about-mission-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.35rem 1.3rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.about-mission-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
+.about-mission-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.about-mission-card-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.015em;
+}
+
+.about-mission-card-desc {
+  font-size: 0.86rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ==========================================================================
+   5. Core Values Grid (What Drives Us Every Single Day) - Ultra Responsive
+   ========================================================================== */
+
+.about-values-section {
+  margin-bottom: 2rem;
+}
+
+.about-values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.15rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 2rem;
+}
+
+.about-value-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.3rem 1.25rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.about-value-card:hover {
+  transform: translateY(-3px);
+  border-color: #c7d2fe;
+  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.09);
+}
+
+.about-value-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #eef2ff;
+  color: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+}
+
+.about-value-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+.about-value-desc {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ==========================================================================
+   6. Streamlined Milestones Grid (Building SaaS MRKT, Year by Year) - Ultra Responsive
+   ========================================================================== */
+
+.about-milestones-section {
+  margin-bottom: 2rem;
+}
+
+.about-milestone-grid,
+.about-timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 2rem;
+}
+
+.about-milestone-card,
+.about-timeline-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  padding: 1.15rem 1rem !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03) !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+}
+
+.about-milestone-card:hover,
+.about-timeline-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06) !important;
+}
+
+.about-milestone-year-pill,
+.about-timeline-year-pill {
+  display: inline-flex;
+  align-items: center;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.18rem 0.55rem;
+  border-radius: 9999px;
+  margin-bottom: 0.5rem;
+  width: fit-content;
+  line-height: 1.2;
+}
+
+.about-milestone-title,
+.about-timeline-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.35rem 0;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.about-milestone-desc,
+.about-timeline-desc {
+  font-size: .95rem;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* ==========================================================================
+   7. Team Grid
+   ========================================================================== */
+
+.about-team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.15rem;
+  margin-bottom: 2rem;
+}
+
+.about-team-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.35rem 1.25rem;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.about-team-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
+.about-team-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-weight: 850;
+  font-size: 1.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.about-team-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.15rem 0;
+}
+
+.about-team-role {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-bottom: 0.55rem;
+}
+
+.about-team-bio {
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ==========================================================================
+   8. Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .about-milestone-grid,
+  .about-timeline-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.85rem !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .about-mission-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .about-values-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  .about-team-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .about-milestone-grid,
+  .about-timeline-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-hero-badges {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.45rem;
+  }
+
+  .about-badge-item {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: flex-start;
+  }
+
+  .about-hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .about-hero-actions a {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .about-values-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  .about-value-card {
+    padding: 1.05rem 1rem !important;
+  }
+
+  .about-milestone-grid,
+  .about-timeline-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
+  }
+
+  .about-milestone-card,
+  .about-timeline-card {
+    padding: 1rem 0.95rem !important;
+  }
+
+  .about-team-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .about-mission-box {
+    padding: 1.25rem 1rem;
+  }
+}
+

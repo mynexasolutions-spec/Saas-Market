@@ -34,6 +34,14 @@ const SORT_OPTIONS = [
   { label: "Newest", value: "newest" },
 ];
 
+const PRICE_PRESETS = [
+  { label: "All", min: "0", max: "200" },
+  { label: "Free", min: "0", max: "0" },
+  { label: "< $25", min: "0", max: "25" },
+  { label: "< $50", min: "0", max: "50" },
+  { label: "$100+", min: "100", max: "200" },
+];
+
 const ITEMS_PER_PAGE = 24;
 
 const CARD_AVATARS = [
@@ -146,6 +154,19 @@ export default function ProductsPageClient() {
     setCurrentPage(1);
   };
 
+    const activeFiltersCount =
+    (selectedCategory ? 1 : 0) +
+    (minPrice !== "0" || maxPrice !== "200" ? 1 : 0) +
+    (minimumRating !== null ? 1 : 0);
+
+  const handleResetFilters = () => {
+    setSelectedCategory("");
+    setMinPrice("0");
+    setMaxPrice("200");
+    setMinimumRating(null);
+    setCurrentPage(1);
+  };
+
   const handleSortChange = (sortOption: string) => {
     setSortBy(sortOption);
     setCurrentPage(1);
@@ -167,7 +188,7 @@ export default function ProductsPageClient() {
           <div className="container">
             <div className="products-marketplace-hero-content">
               <h1>
-                Discover the Best<br />
+                Discover the Best{" "}
                 <span>SaaS Tools</span> for Your Business
               </h1>
               <p>
@@ -217,63 +238,148 @@ export default function ProductsPageClient() {
             <div className="products-layout">
               {/* Sidebar Filters */}
               <aside className="products-sidebar">
+                <div className="products-sidebar-header">
+                  <div className="sidebar-header-left">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="sidebar-header-icon"
+                      aria-hidden="true"
+                    >
+                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                    <span className="sidebar-header-title">Filters</span>
+                    {activeFiltersCount > 0 && (
+                      <span className="sidebar-active-badge">{activeFiltersCount}</span>
+                    )}
+                  </div>
+                  {activeFiltersCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      className="sidebar-reset-btn"
+                      title="Reset all filters"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+
                 <div className="products-filter-card">
                   <h3 className="products-filter-title">Categories</h3>
                   <ul className="products-filter-list">
-                    {CATEGORIES.map((cat) => (
-                      <li key={cat.value}>
-                        <button
-                          id={`cat-filter-${cat.value.toLowerCase().replace(/[^a-z]/g, "-") || "all"}`}
-                          className={`products-filter-item${selectedCategory === cat.value ? " products-filter-item--active" : ""}`}
-                          onClick={() => handleCategorySelect(cat.value)}
-                        >
-                          <span className="products-filter-item-label">
-                            <CategoryIcon />
-                            <span>{cat.label}</span>
-                          </span>
-                          <span className="products-filter-count">
-                            {cat.value
-                              ? productsList.filter((product) => product.category === cat.value).length
-                              : productsList.length}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
+                    {CATEGORIES.map((cat) => {
+                      const isActive = selectedCategory === cat.value;
+                      const count = cat.value
+                        ? productsList.filter((product) => product.category === cat.value).length
+                        : productsList.length;
+                      return (
+                        <li key={cat.value}>
+                          <button
+                            id={`cat-filter-${cat.value.toLowerCase().replace(/[^a-z]/g, "-") || "all"}`}
+                            className={`products-filter-item${isActive ? " products-filter-item--active" : ""}`}
+                            onClick={() => handleCategorySelect(cat.value)}
+                          >
+                            <span className="products-filter-item-label">
+                              <CategoryIcon />
+                              <span>{cat.label}</span>
+                            </span>
+                            <span className="products-filter-count">{count}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
 
                 <div className="products-filter-card">
                   <h3 className="products-filter-title">Price Range</h3>
-                  <div className="products-price-range">
-                    <div className="products-price-row">
-                      <input type="number" aria-label="Minimum price" placeholder="Min $" className="products-price-input" id="price-min" value={minPrice} min={0} onChange={(event) => { setMinPrice(event.target.value); setCurrentPage(1); }} />
-                      <span>–</span>
-                      <input type="number" aria-label="Maximum price" placeholder="Max $" className="products-price-input" id="price-max" value={maxPrice} min={0} onChange={(event) => { setMaxPrice(event.target.value); setCurrentPage(1); }} />
+                  <div className="products-price-filter-box">
+                    <div className="products-price-presets">
+                      {PRICE_PRESETS.map((preset) => {
+                        const active = minPrice === preset.min && maxPrice === preset.max;
+                        return (
+                          <button
+                            key={preset.label}
+                            type="button"
+                            className={`price-preset-chip${active ? " price-preset-chip--active" : ""}`}
+                            onClick={() => {
+                              setMinPrice(preset.min);
+                              setMaxPrice(preset.max);
+                              setCurrentPage(1);
+                            }}
+                          >
+                            {preset.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="products-price-inputs-row">
+                      <div className="price-input-wrapper">
+                        <span className="price-input-prefix">$</span>
+                        <input
+                          type="number"
+                          aria-label="Minimum price"
+                          placeholder="Min"
+                          className="products-price-input"
+                          id="price-min"
+                          value={minPrice}
+                          min={0}
+                          onChange={(event) => { setMinPrice(event.target.value); setCurrentPage(1); }}
+                        />
+                      </div>
+                      <span className="price-inputs-divider">–</span>
+                      <div className="price-input-wrapper">
+                        <span className="price-input-prefix">$</span>
+                        <input
+                          type="number"
+                          aria-label="Maximum price"
+                          placeholder="Max"
+                          className="products-price-input"
+                          id="price-max"
+                          value={maxPrice}
+                          min={0}
+                          onChange={(event) => { setMaxPrice(event.target.value); setCurrentPage(1); }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="products-filter-card">
-                  <h3 className="products-filter-title">Rating</h3>
-                  {[4.5, 4, 3.5].map((r) => (
-                    <label key={r} className="products-rating-label">
-                      <input
-                        type="radio"
-                        name="rating-filter"
-                        id={`rating-filter-${r}`}
-                        checked={minimumRating === r}
-                        onChange={() => { setMinimumRating(r); setCurrentPage(1); }}
-                        onClick={() => {
-                          if (minimumRating === r) {
-                            setMinimumRating(null);
+                  <h3 className="products-filter-title">Minimum Rating</h3>
+                  <div className="products-rating-list">
+                    {[4.5, 4, 3.5].map((r) => {
+                      const isSelected = minimumRating === r;
+                      return (
+                        <button
+                          key={r}
+                          type="button"
+                          className={`products-rating-btn${isSelected ? " products-rating-btn--active" : ""}`}
+                          onClick={() => {
+                            setMinimumRating(isSelected ? null : r);
                             setCurrentPage(1);
-                          }
-                        }}
-                      />
-                      <span style={{ color: "#F59E0B" }}>{"★".repeat(Math.floor(r))}</span>
-                      <span> {r}+ stars</span>
-                    </label>
-                  ))}
+                          }}
+                          aria-pressed={isSelected}
+                        >
+                          <div className="products-rating-btn-left">
+                            <span className="products-rating-stars" aria-hidden="true">
+                              {"★".repeat(Math.floor(r))}
+                              {r % 1 !== 0 ? "½" : ""}
+                            </span>
+                            <span className="products-rating-text">{r}+ stars</span>
+                          </div>
+                          {isSelected && <span className="products-rating-check" aria-hidden="true">✓</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </aside>
 
@@ -478,14 +584,14 @@ export default function ProductsPageClient() {
                               {product.price > 0 && <span className="discovery-price-period">{product.period === "once" ? "one-time" : `/${product.period}`}</span>}
                             </div>
 
-                            <div className="discovery-card-community" aria-label="Reviewed by marketplace customers">
+                            {/* <div className="discovery-card-community" aria-label="Reviewed by marketplace customers">
                               <span className="discovery-card-avatars" aria-hidden="true">
                                 {CARD_AVATARS.map((avatar) => (
                                   <Image key={avatar} src={avatar} alt="" width={18} height={18} />
                                 ))}
                               </span>
                               <span>+{Math.max(100, Math.round(product.reviewCount / 4))}</span>
-                            </div>
+                            </div> */}
 
                             <div className="discovery-rating-inline">
                               <span className="discovery-stars">★</span>
@@ -632,53 +738,112 @@ export default function ProductsPageClient() {
               <div className="products-filter-card">
                 <h3 className="products-filter-title">Categories</h3>
                 <ul className="products-filter-list">
-                  {CATEGORIES.map((cat) => (
-                    <li key={cat.value}>
-                      <button
-                        className={`products-filter-item${selectedCategory === cat.value ? " products-filter-item--active" : ""}`}
-                        onClick={() => {
-                          handleCategorySelect(cat.value);
-                          setMobileFiltersOpen(false);
-                        }}
-                      >
-                        <span>{cat.label}</span>
-                      </button>
-                    </li>
-                  ))}
+                  {CATEGORIES.map((cat) => {
+                    const isActive = selectedCategory === cat.value;
+                    const count = cat.value
+                      ? productsList.filter((product) => product.category === cat.value).length
+                      : productsList.length;
+                    return (
+                      <li key={cat.value}>
+                        <button
+                          className={`products-filter-item${isActive ? " products-filter-item--active" : ""}`}
+                          onClick={() => {
+                            handleCategorySelect(cat.value);
+                            setMobileFiltersOpen(false);
+                          }}
+                        >
+                          <span className="products-filter-item-label">
+                            <CategoryIcon />
+                            <span>{cat.label}</span>
+                          </span>
+                          <span className="products-filter-count">{count}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 
               <div className="products-filter-card">
                 <h3 className="products-filter-title">Price Range</h3>
-                <div className="products-price-range">
-                  <div className="products-price-row">
-                    <input type="number" aria-label="Minimum price" placeholder="Min $" className="products-price-input" value={minPrice} min={0} onChange={(event) => { setMinPrice(event.target.value); setCurrentPage(1); }} />
-                    <span>–</span>
-                    <input type="number" aria-label="Maximum price" placeholder="Max $" className="products-price-input" value={maxPrice} min={0} onChange={(event) => { setMaxPrice(event.target.value); setCurrentPage(1); }} />
+                <div className="products-price-filter-box">
+                  <div className="products-price-presets">
+                    {PRICE_PRESETS.map((preset) => {
+                      const active = minPrice === preset.min && maxPrice === preset.max;
+                      return (
+                        <button
+                          key={preset.label}
+                          type="button"
+                          className={`price-preset-chip${active ? " price-preset-chip--active" : ""}`}
+                          onClick={() => {
+                            setMinPrice(preset.min);
+                            setMaxPrice(preset.max);
+                            setCurrentPage(1);
+                          }}
+                        >
+                          {preset.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="products-price-inputs-row">
+                    <div className="price-input-wrapper">
+                      <span className="price-input-prefix">$</span>
+                      <input
+                        type="number"
+                        aria-label="Minimum price"
+                        placeholder="Min"
+                        className="products-price-input"
+                        value={minPrice}
+                        min={0}
+                        onChange={(event) => { setMinPrice(event.target.value); setCurrentPage(1); }}
+                      />
+                    </div>
+                    <span className="price-inputs-divider">–</span>
+                    <div className="price-input-wrapper">
+                      <span className="price-input-prefix">$</span>
+                      <input
+                        type="number"
+                        aria-label="Maximum price"
+                        placeholder="Max"
+                        className="products-price-input"
+                        value={maxPrice}
+                        min={0}
+                        onChange={(event) => { setMaxPrice(event.target.value); setCurrentPage(1); }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="products-filter-card">
-                <h3 className="products-filter-title">Rating</h3>
-                {[4.5, 4, 3.5].map((r) => (
-                  <label key={r} className="products-rating-label">
-                    <input
-                      type="radio"
-                      name="mobile-rating-filter"
-                      checked={minimumRating === r}
-                      onChange={() => { setMinimumRating(r); setCurrentPage(1); }}
-                      onClick={() => {
-                        if (minimumRating === r) {
-                          setMinimumRating(null);
+                <h3 className="products-filter-title">Minimum Rating</h3>
+                <div className="products-rating-list">
+                  {[4.5, 4, 3.5].map((r) => {
+                    const isSelected = minimumRating === r;
+                    return (
+                      <button
+                        key={r}
+                        type="button"
+                        className={`products-rating-btn${isSelected ? " products-rating-btn--active" : ""}`}
+                        onClick={() => {
+                          setMinimumRating(isSelected ? null : r);
                           setCurrentPage(1);
-                        }
-                      }}
-                    />
-                    <span style={{ color: "#F59E0B" }}>{"★".repeat(Math.floor(r))}</span>
-                    <span> {r}+ stars</span>
-                  </label>
-                ))}
+                        }}
+                        aria-pressed={isSelected}
+                      >
+                        <div className="products-rating-btn-left">
+                          <span className="products-rating-stars" aria-hidden="true">
+                            {"★".repeat(Math.floor(r))}
+                            {r % 1 !== 0 ? "½" : ""}
+                          </span>
+                          <span className="products-rating-text">{r}+ stars</span>
+                        </div>
+                        {isSelected && <span className="products-rating-check" aria-hidden="true">✓</span>}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 

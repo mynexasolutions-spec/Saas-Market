@@ -1,0 +1,823 @@
+/* ==========================================================================
+   Alternative Detail Page - High-Fidelity Design System
+   Exact Font Sizes from /buyers (1:1 Typography Scale)
+   Modern, Responsive & Compact
+   ========================================================================== */
+
+.alt-detail-wrapper {
+  background:
+    radial-gradient(
+      circle 900px at 85% 12%,
+      rgba(224, 231, 255, 0.55) 0%,
+      rgba(245, 243, 255, 0.3) 35%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle 700px at 15% 45%,
+      rgba(240, 249, 255, 0.4) 0%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, #f8faff 0%, #ffffff 40%, #f8fafc 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: clip;
+  padding: 0.75rem 0 2rem;
+}
+
+.alt-detail-container {
+  max-width: var(--max-width, 1400px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   1. Breadcrumbs (Exact /buyers font-size: 0.84rem)
+   ========================================================================== */
+
+.alt-detail-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 0.85rem;
+  padding-top: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.alt-detail-breadcrumb a {
+  color: #64748b;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 0.15s ease;
+}
+
+.alt-detail-breadcrumb a:hover {
+  color: #4f46e5;
+}
+
+.alt-detail-breadcrumb-sep {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.alt-detail-breadcrumb-current {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   2. Hero Section (Exact /buyers font sizes: 0.75rem badge, clamp(2rem...) title, 1.05rem desc)
+   ========================================================================== */
+
+.alt-detail-hero {
+  text-align: center;
+  padding: 0.35rem 0 1.25rem;
+  position: relative;
+}
+
+.alt-detail-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+  border-radius: 9999px;
+  padding: 0.28rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.65rem;
+  box-shadow: 0 2px 6px rgba(109, 40, 217, 0.08);
+}
+
+.alt-detail-title {
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.alt-detail-title-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.alt-detail-desc {
+  font-size: 1.05rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0 auto 1.15rem;
+  max-width: 640px;
+}
+
+/* Metadata Strip below title */
+.alt-detail-meta-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.45rem 1rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  font-size: 0.84rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.alt-detail-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.alt-detail-meta-label {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.alt-detail-meta-val {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.alt-detail-meta-val.price {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+}
+
+.alt-detail-meta-val.savings {
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+}
+
+.alt-detail-meta-sep {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   3. Pain Points Box: "Why Teams Leave {Tool}"
+   ========================================================================== */
+
+.alt-detail-complaints-box {
+  background: #ffffff;
+  border: 1.5px solid #fee2e2;
+  border-radius: 6px;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 16px rgba(225, 29, 72, 0.03);
+}
+
+.alt-detail-complaints-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+}
+
+.alt-detail-complaints-icon {
+  font-size: 1.1rem;
+}
+
+.alt-detail-complaints-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #991b1b;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.alt-detail-complaints-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0 0 0.85rem 0;
+  line-height: 1.5;
+}
+
+.alt-detail-complaints-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.65rem;
+}
+
+.alt-detail-complaint-item {
+  background: #fffafa;
+  border: 1px solid #fecdd3;
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.86rem;
+  color: #881337;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  line-height: 1.45;
+}
+
+.alt-detail-complaint-cross {
+  color: #e11d48;
+  font-weight: 800;
+  font-size: 0.86rem;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   4. Alternatives List Section (Exact /buyers Section & Card font sizes)
+   ========================================================================== */
+
+.alt-detail-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.alt-detail-section-title {
+  font-size: clamp(1.45rem, 2.8vw, 1.85rem);
+  font-weight: 850;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.alt-detail-section-sub {
+  font-size: 0.84rem;
+  color: #64748b;
+  font-weight: 600;
+  margin: 0;
+  background: #f1f5f9;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+}
+
+.alt-detail-cards-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  margin-bottom: 1.75rem;
+}
+
+.alt-detail-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.alt-detail-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* Top Header Row of Card */
+.alt-detail-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.alt-detail-brand-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.alt-detail-logo-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+}
+
+.alt-detail-name-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.alt-detail-card-name {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.alt-detail-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  font-size: 0.84rem;
+}
+
+.alt-detail-rating-stars {
+  color: #f59e0b;
+  font-weight: 800;
+}
+
+.alt-detail-rating-reviews {
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.alt-detail-card-cat {
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+
+/* Rank Badge */
+.alt-detail-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 9999px;
+  padding: 0.22rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.alt-detail-rank-badge.gold {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.alt-detail-rank-badge.blue {
+  background: #ede9fe;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
+}
+
+/* Key Advantage Banner */
+.alt-detail-advantage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+}
+
+.alt-detail-card-desc {
+  font-size: 0.88rem;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0 0 0.85rem 0;
+}
+
+/* Feature Highlights Grid */
+.alt-detail-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem 0.85rem;
+  margin-bottom: 0.85rem;
+  padding: 0.65rem 0.85rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.alt-detail-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.86rem;
+  color: #334155;
+  line-height: 1.4;
+}
+
+.alt-detail-feature-check {
+  color: #059669;
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+/* Pricing & CTA Bottom Row */
+.alt-detail-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.alt-detail-price-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.alt-detail-price-label {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.alt-detail-price-val {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.alt-detail-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.alt-detail-btn-deal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #4f46e5;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  white-space: nowrap;
+}
+
+.alt-detail-btn-deal:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.alt-detail-btn-compare {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.alt-detail-btn-compare:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   5. Other Popular Alternatives Box (Compact Explorer)
+   ========================================================================== */
+
+.alt-detail-others-box {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.alt-detail-others-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.75rem 0;
+}
+
+.alt-detail-others-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.alt-detail-other-pill {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.alt-detail-other-pill:hover {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  color: #6d28d9;
+}
+
+.alt-detail-other-pill.active {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  color: #6d28d9;
+}
+
+/* ==========================================================================
+   6. Cosmic Bottom CTA Banner (Exact /buyers CTA font sizes)
+   ========================================================================== */
+
+.alt-detail-cta-banner {
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(99, 102, 241, 0.18),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(168, 85, 247, 0.18),
+      transparent 45%
+    ),
+    linear-gradient(135deg, #0a0d16 0%, #151833 55%, #0f172a 100%);
+  border-radius: 6px;
+  padding: 2.25rem 2.25rem 2rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 36px -12px rgba(15, 23, 42, 0.4);
+  margin-bottom: 1.25rem;
+}
+
+.alt-detail-cta-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.alt-detail-cta-left {
+  max-width: 620px;
+}
+
+.alt-detail-cta-pill {
+  display: inline-block;
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  color: #c7d2fe;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  margin-bottom: 0.65rem;
+  text-transform: uppercase;
+}
+
+.alt-detail-cta-title {
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 850;
+  color: #ffffff;
+  line-height: 1.35;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.025em;
+}
+
+.alt-detail-cta-title-highlight {
+  color: #818cf8;
+}
+
+.alt-detail-cta-desc {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.alt-detail-cta-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.alt-detail-cta-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #4f46e5;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+  white-space: nowrap;
+}
+
+.alt-detail-cta-btn-primary:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.alt-detail-cta-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.alt-detail-cta-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ==========================================================================
+   7. Responsive Breakpoints - Mobile-First (Exact /buyers scale)
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .alt-detail-cta-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.25rem;
+  }
+
+  .alt-detail-cta-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .alt-detail-wrapper {
+    padding: 0.35rem 0 1.25rem;
+  }
+
+  .alt-detail-container {
+    padding: 0 1rem;
+  }
+
+  .alt-detail-title {
+    font-size: clamp(1.45rem, 5.5vw, 1.95rem);
+    line-height: 1.18;
+    margin-bottom: 0.45rem;
+  }
+
+  .alt-detail-desc {
+    font-size: 0.88rem;
+    line-height: 1.48;
+    margin-bottom: 0.85rem;
+  }
+
+  /* Keep metadata strip horizontal & tight on mobile */
+  .alt-detail-meta-strip {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.4rem 0.65rem;
+    font-size: 0.78rem;
+    gap: 0.4rem;
+  }
+
+  .alt-detail-meta-sep {
+    display: none;
+  }
+
+  .alt-detail-complaints-box {
+    padding: 0.85rem 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .alt-detail-complaints-grid {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+
+  .alt-detail-card {
+    padding: 1rem 1rem;
+  }
+
+  .alt-detail-card-top-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .alt-detail-rank-badge {
+    margin-left: auto;
+  }
+
+  .alt-detail-features-grid {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .alt-detail-card-bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .alt-detail-price-box {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .alt-detail-card-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .alt-detail-btn-deal,
+  .alt-detail-btn-compare {
+    width: 100%;
+    justify-content: center;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.84rem;
+  }
+
+  .alt-detail-others-box {
+    padding: 0.85rem 0.85rem;
+  }
+
+  .alt-detail-cta-banner {
+    padding: 1.65rem 1.25rem;
+  }
+
+  .alt-detail-cta-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.55rem;
+  }
+
+  .alt-detail-cta-btn-primary,
+  .alt-detail-cta-btn-secondary {
+    width: 100%;
+    justify-content: center;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.88rem;
+  }
+}

@@ -1,0 +1,866 @@
+/* ==========================================================================
+   Vendor Portal Styles - Ultra Modern, Clean & Fully Responsive
+   Linear / Stripe Inspired SaaS Vendor Console
+   ========================================================================== */
+
+.vendor-dashboard-wrapper {
+  padding-top: 1.25rem;
+  padding-bottom: 2.5rem;
+  min-height: calc(100vh - 180px);
+  background: #f8fafc;
+}
+
+/* 1. Vendor Header Card */
+.vendor-header-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.vendor-header-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4f46e5 0%, #6366f1 50%, #8b5cf6 100%);
+}
+
+.vendor-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.vendor-title-col {
+  flex: 1;
+  min-width: 260px;
+}
+
+.vendor-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.vendor-partner-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 0.72rem;
+  font-weight: 750;
+  padding: 0.18rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid #a7f3d0;
+  letter-spacing: 0.01em;
+}
+
+.vendor-zero-cut-tag {
+  background: #eef2ff;
+  color: #4f46e5;
+  font-size: 0.72rem;
+  font-weight: 750;
+  padding: 0.18rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid #c7d2fe;
+  letter-spacing: 0.01em;
+}
+
+.vendor-company-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.vendor-company-sub {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.vendor-cta-col {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.vendor-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem !important;
+  font-size: 0.84rem !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.vendor-add-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* 2. KPI Metric Cards */
+.vendor-kpi-grid-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.35rem;
+}
+
+.vendor-kpi-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.vendor-kpi-box:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+}
+
+.vendor-kpi-box.active-tab-kpi {
+  background: #f5f3ff !important;
+  border: 1.5px solid #6366f1 !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.12) !important;
+}
+
+.vendor-kpi-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vendor-kpi-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.vendor-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.vendor-kpi-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.vendor-kpi-val {
+  font-size: 1.28rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.vendor-kpi-trend {
+  font-size: 0.72rem;
+  font-weight: 750;
+  padding: 0.1rem 0.45rem;
+  border-radius: 5px;
+}
+
+.vendor-kpi-trend.positive {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+/* 3. Alert / Toast Banner */
+.vendor-alert-banner {
+  background: #0f172a;
+  color: #ffffff;
+  padding: 0.7rem 1.15rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* 4. Tabs Bar */
+.vendor-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #e2e8f0;
+  padding: 4px;
+  border-radius: 11px;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+.vendor-tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.vendor-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  line-height: 1.25;
+  flex-shrink: 0;
+}
+
+.vendor-tab-btn:hover {
+  color: #0f172a;
+}
+
+.vendor-tab-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 750;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+/* 5. Filter Row */
+.vendor-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.vendor-search-box {
+  position: relative;
+  min-width: 260px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.vendor-search-input {
+  width: 100%;
+  padding: 0.52rem 0.9rem 0.52rem 2.2rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.84rem;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  min-height: 38px;
+}
+
+.vendor-search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.vendor-cat-select {
+  padding: 0.52rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.84rem;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  min-height: 38px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vendor-cat-select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.vendor-filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.vendor-subfilter-btn {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.vendor-subfilter-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.vendor-subfilter-btn.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+/* 6. Product Listings Cards (Tab 1) */
+.vendor-listings-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.vendor-listing-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.vendor-listing-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.07);
+  transform: translateY(-1px);
+}
+
+.vendor-listing-card-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.vendor-listing-brand-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+}
+
+.vendor-listing-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.vendor-listing-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.vendor-listing-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.vendor-listing-cat-badge {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 0.15rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.vendor-listing-status-badge {
+  padding: 0.15rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 750;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.vendor-listing-status-badge.live {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.vendor-listing-status-badge.review {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.vendor-listing-status-badge.paused {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.vendor-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.vendor-status-dot.live {
+  background: #10b981;
+}
+
+.vendor-status-dot.review {
+  background: #f59e0b;
+}
+
+.vendor-status-dot.paused {
+  background: #94a3b8;
+}
+
+.vendor-listing-tagline {
+  margin: 0 0 0.45rem;
+  color: #64748b;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.vendor-listing-features-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.vendor-feature-chip {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.72rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+/* Listing Telemetry & Actions */
+.vendor-listing-card-side {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+.vendor-listing-price-box {
+  text-align: right;
+  min-width: 90px;
+}
+
+.vendor-listing-price-val {
+  font-size: 1.22rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.vendor-listing-price-sub {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.vendor-listing-price-model {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+.vendor-listing-telemetry-box {
+  border-left: 1px solid #e2e8f0;
+  padding-left: 1rem;
+  text-align: left;
+}
+
+.vendor-listing-inquiry-stat {
+  font-size: 0.82rem;
+  color: #0f172a;
+  font-weight: 750;
+}
+
+.vendor-listing-views-stat {
+  font-size: 0.74rem;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+.vendor-listing-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.vendor-btn-action {
+  padding: 0.42rem 0.75rem;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-decoration: none;
+  min-height: 32px;
+  box-sizing: border-box;
+}
+
+.vendor-btn-action.edit {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4f46e5;
+}
+
+.vendor-btn-action.edit:hover {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.vendor-btn-action.live-page {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.vendor-btn-action.live-page:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.vendor-btn-action.toggle-status {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.vendor-btn-action.toggle-status:hover {
+  background: #f8fafc;
+}
+
+.vendor-btn-action.delete {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  justify-content: center;
+}
+
+.vendor-btn-action.delete:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* 7. Tables (Tab 2 & 3) */
+.vendor-table-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  box-sizing: border-box;
+}
+
+.vendor-table-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.15rem;
+  flex-wrap: wrap;
+}
+
+.profile-section-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.2rem;
+}
+
+.profile-section-desc {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.vendor-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vendor-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.82rem;
+  min-width: 650px;
+}
+
+.vendor-data-table th {
+  padding: 0.65rem 0.85rem;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 750;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.vendor-data-table td {
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.vendor-data-table tr:hover {
+  background: #f8faff;
+}
+
+.vendor-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================================================
+   8. Mobile & Tablet Responsiveness
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .vendor-kpi-grid-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .vendor-listing-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .vendor-listing-card-side {
+    justify-content: space-between;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 0.85rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .vendor-dashboard-wrapper {
+    padding-top: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .vendor-header-card {
+    padding: 1.1rem;
+    border-radius: 14px;
+    margin-bottom: 1rem;
+  }
+
+  .vendor-company-title {
+    font-size: 1.35rem;
+  }
+
+  .vendor-company-sub {
+    font-size: 0.78rem;
+  }
+
+  .vendor-cta-col {
+    width: 100%;
+  }
+
+  .vendor-cta-col .vendor-add-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .vendor-kpi-box {
+    padding: 0.85rem 1rem;
+  }
+
+  .vendor-kpi-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+  }
+
+  .vendor-kpi-val {
+    font-size: 1.15rem;
+  }
+
+  .vendor-tabs-bar {
+    padding: 3px;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .vendor-tab-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.76rem;
+  }
+
+  .vendor-filter-row {
+    gap: 0.5rem;
+  }
+
+  .vendor-search-box {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .vendor-cat-select {
+    width: 100%;
+  }
+
+  .vendor-listing-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .vendor-listing-brand-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+
+  .vendor-listing-title {
+    font-size: 0.95rem;
+  }
+
+  .vendor-listing-card-side {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .vendor-listing-price-box {
+    text-align: left;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .vendor-listing-telemetry-box {
+    border-left: none;
+    padding-left: 0;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .vendor-listing-actions-group {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 34px;
+    gap: 0.35rem;
+  }
+
+  .vendor-btn-action {
+    justify-content: center;
+    font-size: 0.74rem;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .vendor-table-card {
+    padding: 0.9rem;
+    border-radius: 12px;
+  }
+
+  .profile-section-title {
+    font-size: 1.02rem;
+  }
+
+  .profile-section-desc {
+    font-size: 0.76rem;
+  }
+}
+

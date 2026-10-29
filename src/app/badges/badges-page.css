@@ -1,0 +1,780 @@
+/* ==========================================================================
+   Vendor Badges Page - High-Fidelity Design System
+   Exact Font Sizes from /buyers (1:1 Typography Scale)
+   Modern, Responsive & Compact
+   ========================================================================== */
+
+.badges-page-wrapper {
+  background:
+    radial-gradient(
+      circle 900px at 85% 12%,
+      rgba(224, 231, 255, 0.55) 0%,
+      rgba(245, 243, 255, 0.3) 35%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle 700px at 15% 45%,
+      rgba(240, 249, 255, 0.4) 0%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, #f8faff 0%, #ffffff 40%, #f8fafc 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: clip;
+  padding: 0.75rem 0 2rem;
+}
+
+.badges-container {
+  max-width: var(--max-width, 1400px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   1. Breadcrumbs (Exact /buyers font-size: 0.84rem)
+   ========================================================================== */
+
+.badges-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 0.85rem;
+  padding-top: 0.25rem;
+}
+
+.badges-breadcrumb a {
+  color: #64748b;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 0.15s ease;
+}
+
+.badges-breadcrumb a:hover {
+  color: #4f46e5;
+}
+
+.badges-breadcrumb-sep {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.badges-breadcrumb-current {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   2. Hero Section (Exact /buyers font sizes: 0.75rem badge, clamp(2rem...) title, 1.05rem desc)
+   ========================================================================== */
+
+.badges-hero {
+  text-align: center;
+  padding: 0.35rem 0 1.25rem;
+  position: relative;
+}
+
+.badges-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #b45309;
+  border-radius: 9999px;
+  padding: 0.28rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.65rem;
+}
+
+.badges-hero-title {
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.badges-title-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.badges-hero-desc {
+  font-size: 1.05rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0 auto 1.15rem;
+  max-width: 640px;
+}
+
+/* 3 Hero Trust Badges (Exact /buyers: 0.95rem num, 0.73rem label) */
+.badges-trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.35rem;
+}
+
+.badges-trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.4rem 0.85rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s ease;
+}
+
+.badges-trust-badge:hover {
+  transform: translateY(-1px);
+  border-color: #cbd5e1;
+}
+
+.badges-trust-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.badges-trust-icon-box.icon-green {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.badges-trust-icon-box.icon-purple {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.badges-trust-icon-box.icon-blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.badges-trust-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.badges-trust-num {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.badges-trust-label {
+  font-size: 0.73rem;
+  color: #64748b;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   3. Main 2-Column Generator Grid
+   ========================================================================== */
+
+.badges-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+  margin-bottom: 1.75rem;
+}
+
+/* Card Styling (Exact /buyers: 1.18rem title, 0.88rem desc) */
+.badges-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.35rem 1.4rem;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+}
+
+.badges-card-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.35rem 0;
+}
+
+.badges-card-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+/* Step 1 Select Dropdown */
+.badges-select-label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+}
+
+.badges-select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  border: 1.5px solid #cbd5e1;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 1.25rem;
+  box-sizing: border-box;
+}
+
+.badges-select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* Step 2 Badge Selection Tiles */
+.badges-tile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.badges-tile {
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.badges-tile:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.badges-tile.active {
+  border-color: #4f46e5;
+  background: #f5f3ff;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
+}
+
+.badges-tile-img {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.badges-tile-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.badges-tile-name {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+}
+
+.badges-tile-desc {
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   4. Right Column: Preview & Embed Code (Sticky)
+   ========================================================================== */
+
+.badges-sticky-col {
+  position: sticky;
+  top: 1rem;
+}
+
+.badges-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.badges-mode-toggle {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.badges-mode-btn {
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.badges-mode-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+/* Simulator Canvas */
+.badges-canvas {
+  border-radius: 6px;
+  padding: 1.85rem 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  transition: background 0.2s ease;
+}
+
+.badges-canvas.light {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+}
+
+.badges-canvas.dark {
+  background: #0f172a;
+  border: 1.5px solid #1e293b;
+}
+
+.badges-canvas-img-wrap {
+  margin-bottom: 0.75rem;
+  display: inline-block;
+}
+
+.badges-canvas-target {
+  font-size: 0.8rem;
+}
+
+.badges-canvas.light .badges-canvas-target {
+  color: #64748b;
+}
+
+.badges-canvas.dark .badges-canvas-target {
+  color: #94a3b8;
+}
+
+.badges-canvas-target code {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+/* Code Tabs & Embed Box */
+.badges-code-section {
+  margin-bottom: 1rem;
+}
+
+.badges-code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+}
+
+.badges-format-tabs {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.badges-format-tab {
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.badges-format-tab.active {
+  color: #4f46e5;
+  background: #ede9fe;
+}
+
+.badges-copy-btn {
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+}
+
+.badges-copy-btn:hover {
+  background: #4338ca;
+}
+
+.badges-copy-btn.copied {
+  background: #059669;
+}
+
+.badges-textarea {
+  width: 100%;
+  font-family: monospace;
+  font-size: 0.8rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Pro tip notice */
+.badges-tip-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.82rem;
+  color: #166534;
+  line-height: 1.45;
+}
+
+.badges-tip-box strong {
+  color: #14532d;
+}
+
+/* ==========================================================================
+   5. Where to Place Your Badge (Exact /buyers Step Title & Desc font sizes)
+   ========================================================================== */
+
+.badges-placement-section {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.35rem 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.badges-placement-head {
+  text-align: center;
+  margin-bottom: 1.15rem;
+}
+
+.badges-placement-title {
+  font-size: clamp(1.45rem, 2.8vw, 1.85rem);
+  font-weight: 850;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.35rem 0;
+}
+
+.badges-placement-sub {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.badges-placement-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+}
+
+.badges-placement-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1rem 1.15rem;
+  transition: all 0.15s ease;
+}
+
+.badges-placement-card:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
+.badges-placement-step {
+  font-size: 1.08rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.badges-placement-step.purple {
+  color: #4f46e5;
+}
+
+.badges-placement-step.green {
+  color: #059669;
+}
+
+.badges-placement-step.amber {
+  color: #d97706;
+}
+
+.badges-placement-text {
+  font-size: 0.86rem;
+  color: #64748b;
+  line-height: 1.48;
+  margin: 0;
+}
+
+/* ==========================================================================
+   6. Cosmic Bottom CTA Banner (Exact /buyers CTA font sizes)
+   ========================================================================== */
+
+.badges-cta-banner {
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(99, 102, 241, 0.18),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(168, 85, 247, 0.18),
+      transparent 45%
+    ),
+    linear-gradient(135deg, #0a0d16 0%, #151833 55%, #0f172a 100%);
+  border-radius: 6px;
+  padding: 2.25rem 2.25rem 2rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 36px -12px rgba(15, 23, 42, 0.4);
+  margin-bottom: 1.25rem;
+}
+
+.badges-cta-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.badges-cta-left {
+  max-width: 620px;
+}
+
+.badges-cta-pill {
+  display: inline-block;
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  color: #c7d2fe;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  margin-bottom: 0.65rem;
+  text-transform: uppercase;
+}
+
+.badges-cta-title {
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 850;
+  color: #ffffff;
+  line-height: 1.35;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.025em;
+}
+
+.badges-cta-title-highlight {
+  color: #818cf8;
+}
+
+.badges-cta-desc {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.badges-cta-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.badges-cta-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #4f46e5;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+  white-space: nowrap;
+}
+
+.badges-cta-btn-primary:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.badges-cta-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.badges-cta-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ==========================================================================
+   7. Responsive Breakpoints - Mobile-First (Exact /buyers scale)
+   ========================================================================== */
+
+@media (max-width: 960px) {
+  .badges-main-grid {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
+
+  .badges-sticky-col {
+    position: static;
+  }
+
+  .badges-placement-grid {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  .badges-cta-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.25rem;
+  }
+
+  .badges-cta-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .badges-page-wrapper {
+    padding: 0.35rem 0 1.25rem;
+  }
+
+  .badges-container {
+    padding: 0 1rem;
+  }
+
+  .badges-hero-title {
+    font-size: clamp(1.45rem, 5.5vw, 1.95rem);
+    line-height: 1.18;
+    margin-bottom: 0.45rem;
+  }
+
+  .badges-hero-desc {
+    font-size: 0.88rem;
+    line-height: 1.48;
+    margin-bottom: 0.85rem;
+  }
+
+  .badges-trust-num {
+    font-size: 0.85rem;
+  }
+
+  .badges-trust-label {
+    font-size: 0.68rem;
+  }
+
+  .badges-card {
+    padding: 1rem 1rem;
+  }
+
+  .badges-tile {
+    padding: 0.75rem 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .badges-canvas {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .badges-placement-section {
+    padding: 1rem 1rem;
+  }
+
+  .badges-placement-title {
+    font-size: 1.45rem;
+  }
+
+  .badges-placement-sub {
+    font-size: 0.84rem;
+  }
+
+  .badges-cta-banner {
+    padding: 1.65rem 1.25rem;
+  }
+
+  .badges-cta-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.55rem;
+  }
+
+  .badges-cta-btn-primary,
+  .badges-cta-btn-secondary {
+    width: 100%;
+    justify-content: center;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.88rem;
+  }
+}
