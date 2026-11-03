@@ -2,14 +2,24 @@ import React from "react";
 import { Metadata } from "next";
 import TypingTestClient from "./TypingTestClient";
 import TypingSeoContent, { TYPING_FAQ } from "./TypingSeoContent";
-import { BENCHMARK } from "@/lib/typing";
+import { type Bench } from "@/lib/typing";
+import { getDefaultBench } from "@/lib/typing-benchmark";
+
+// The score to beat changes as people post faster times, so this page is refreshed every 5 minutes.
+export const revalidate = 300;
 
 const SITE = "https://www.saasmrkt.com";
 const PAGE_URL = `${SITE}/typing-test`;
-const title = `Typing Speed Test: Can You Beat ${BENCHMARK.wpm} WPM?`;
-const description = `Free 15, 30 or 60 second typing speed test. Check your WPM and accuracy, then climb the SaaS MRKT leaderboard. Can you beat our team's ${BENCHMARK.wpm} WPM?`;
+function copy(bench: Bench) {
+  return {
+    title: `Typing Speed Test: Can You Beat ${bench.wpm} WPM?`,
+    description: `Free 30, 45 or 60 second typing speed test. Check your WPM and accuracy, then climb the SaaS MRKT leaderboard. Can you beat ${bench.team ? "our team's" : "the top score of"} ${bench.wpm} WPM?`,
+  };
+}
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const { title, description } = copy(await getDefaultBench());
+  return {
   title,
   description,
   keywords: [
@@ -38,9 +48,12 @@ export const metadata: Metadata = {
     title: `${title} | SaaS MRKT`,
     description,
   },
-};
+  };
+}
 
-export default function TypingTestPage() {
+export default async function TypingTestPage() {
+  const bench = await getDefaultBench();
+  const { description } = copy(bench);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -56,7 +69,7 @@ export default function TypingTestPage() {
         inLanguage: "en",
         isAccessibleForFree: true,
         featureList: [
-          "15, 30 and 60 second tests",
+          "30, 45 and 60 second tests",
           "Words and quote modes",
           "Punctuation and numbers options",
           "Live WPM and accuracy",
@@ -93,7 +106,7 @@ export default function TypingTestPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <TypingTestClient>
+      <TypingTestClient initialRecord={bench.team ? null : { name: bench.name, wpm: bench.wpm }}>
         <TypingSeoContent />
       </TypingTestClient>
     </>

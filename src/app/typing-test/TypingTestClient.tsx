@@ -5,7 +5,9 @@ import PageLayout from "@/components/PageLayout";
 import "@/app/buyers/buyers-page.css";
 import "./typing-test.css";
 import {
-  BENCHMARK,
+  BENCHMARK as TEAM,
+  type Bench,
+  resolveBench,
   DEFAULT_CONFIG,
   DEFAULT_DURATION,
   DURATIONS,
@@ -164,7 +166,13 @@ function parseSavedPlayer(raw: string): { name: string; email: string } {
 }
 
 // `children` is the server-rendered SEO copy, shown below the test.
-export default function TypingTestClient({ children }: { children?: React.ReactNode }) {
+export default function TypingTestClient({
+  children,
+  initialRecord = null,
+}: {
+  children?: React.ReactNode;
+  initialRecord?: { name: string; wpm: number } | null;
+}) {
   const [phase, setPhase] = useState<Phase>("form");
   const [config, setConfig] = useState<TestConfig>(DEFAULT_CONFIG);
   const duration = config.duration;
@@ -193,6 +201,11 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
   const [lbDuration, setLbDuration] = useState<Duration>(DEFAULT_DURATION);
   const [board, setBoard] = useState<Board | null>(null);
   const [boardKey, setBoardKey] = useState(0);
+  // Fastest score per test length, so the score to beat follows the board instead of staying at 53.
+  const [records, setRecords] = useState<Partial<Record<Duration, { name: string; wpm: number } | null>>>(
+    // The server already knows the default length's record, so the first paint matches the live board.
+    initialRecord ? { [DEFAULT_DURATION]: initialRecord } : {},
+  );
 
   const inputRef = useRef<HTMLInputElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -230,6 +243,24 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
       cancelled = true;
     };
   }, [lbDuration, boardKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/typing?benchmarks=1", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("unavailable"))))
+      .then((data: { benchmarks: Record<string, { name: string; wpm: number } | null> }) => {
+        if (cancelled) return;
+        const next: Partial<Record<Duration, { name: string; wpm: number } | null>> = {};
+        for (const d of DURATIONS) next[d] = data.benchmarks[String(d)] ?? null;
+        setRecords(next);
+      })
+      .catch(() => {
+        // Without the board, the team's score stands in.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [boardKey]);
 
   // Starts (or restarts) a run. A patch changes the test setup, e.g. startTest({ punctuation: true }).
   const startTest = (patch: Partial<TestConfig> = {}) => {
@@ -504,10 +535,13 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
     }
   };
 
+  const benchFor = (d: Duration): Bench => resolveBench(records[d]);
+  const lbBench = benchFor(lbDuration);
+
   const rows = useMemo<Row[]>(() => {
     if (!board) return [];
     const list: Row[] = board.entries.map((entry) => ({ ...entry, kind: "user" as const }));
-    list.push({ name: BENCHMARK.name, wpm: BENCHMARK.wpm, accuracy: null, kind: "bench" });
+    list.push({ name: TEAM.name, wpm: TEAM.wpm, accuracy: null, kind: "bench" });
     // Benchmark sorts ahead of ties so "beating" it means a strictly higher score.
     return list.sort((a, b) => b.wpm - a.wpm || (a.kind === "bench" ? -1 : b.kind === "bench" ? 1 : 0));
   }, [board]);
@@ -516,7 +550,9 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
   const topWpm = Math.max(1, ...rows.map((r) => r.wpm));
   const boardLoading = !board || board.duration !== lbDuration;
   const myName = cleanName(name);
-  const diff = result ? Math.round((result.wpm - BENCHMARK.wpm) * 10) / 10 : 0;
+  const resultBench = benchFor(result?.duration ?? config.duration);
+  const diff = result ? Math.round((result.wpm - resultBench.wpm) * 10) / 10 : 0;
+  const heroBench = benchFor(config.duration);
 
   return (
     <PageLayout noContainer>
@@ -556,9 +592,9 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
                     <path d="M14 4L16.2 11.3L24 13.5L16.2 15.7L14 23L11.8 15.7L4 13.5L11.8 11.3Z" />
                     <path d="M34 22L35.4 26.6L40 28L35.4 29.4L34 34L32.6 29.4L28 28L32.6 26.6Z" opacity="0.6" />
                   </svg>
-                  Can you beat our{" "}
+                  Can you beat {heroBench.team ? "our " : ""}
                   <span className="tt-title-accent">
-                    {BENCHMARK.wpm} WPM?
+                    {heroBench.wpm} WPM?
                     <svg className="tt-swoosh" viewBox="0 0 220 16" fill="none" preserveAspectRatio="none" aria-hidden="true">
                       <path d="M3 11C55 2 150 1 217 9" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
                     </svg>
@@ -588,7 +624,7 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
                 <div className="tt-form-layout">
                 <form className="tt-form" onSubmit={handleStart} noValidate>
                   <div className="tt-form-head">
-                    <span className="tt-bench-pill"><Icon name="trophy" size={16} /> Team Benchmark: {BENCHMARK.wpm} WPM</span>
+                    <span className="tt-bench-pill"><Icon name="trophy" size={16} /> {heroBench.team ? "Team Benchmark" : `Top Score · ${heroBench.name}`}: {heroBench.wpm} WPM</span>
                     <h2>
                       <svg className="tt-burst" viewBox="0 0 36 30" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
                         <path d="M6 7l3 6M17 2l1 7M29 11l-7 3" />
@@ -655,7 +691,7 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
                   </p>
                 </form>
                 <div className="tt-form-art" aria-hidden="true">
-                  <Gauge value={BENCHMARK.wpm} />
+                  <Gauge value={heroBench.wpm} />
                   <Keycaps />
                 </div>
                 </div>
@@ -808,12 +844,12 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
                   <div className="tt-res-hero">
                     <div className="tt-res-gauge">
                       <Gauge value={result.wpm} max={Math.max(100, Math.ceil((result.wpm * 1.15) / 10) * 10)} animate badge />
-                      <p className="tt-coach">{coachLine(result.wpm, result.ranked)}</p>
+                      <p className="tt-coach">{coachLine(result.wpm, result.ranked, resultBench)}</p>
                     </div>
 
                     <div className="tt-res-side">
                       {result.ranked ? (
-                        <Versus wpm={result.wpm} diff={diff} />
+                        <Versus wpm={result.wpm} diff={diff} bench={resultBench} />
                       ) : (
                         <div className="tt-verdict tt-try">
                           <span className="tt-verdict-icon"><Icon name="info" size={22} /></span>
@@ -985,7 +1021,10 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
                           <span className="tt-who">
                             <span className="tt-name">
                               <span className="tt-name-text">{row.name}</span>
-                              {row.kind === "bench" && <em>Beat this</em>}
+                              {((row.kind === "bench" && lbBench.team) ||
+                                (row.kind === "user" && !lbBench.team && row.name === lbBench.name && row.wpm === lbBench.wpm)) && (
+                                <em>Beat this</em>
+                              )}
                               {isYou && <em>You</em>}
                             </span>
                             <small className="tt-meta">
@@ -1013,7 +1052,7 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
               <li className="tt-perk-purple">
                 <span className="tt-perk-icon"><Icon name="bolt" size={22} /></span>
                 <strong>Test Your Speed</strong>
-                <small>15s, 30s or 60s</small>
+                <small>30s, 45s or 60s</small>
               </li>
               <li className="tt-perk-blue">
                 <span className="tt-perk-icon"><Icon name="bars" size={22} /></span>
@@ -1023,7 +1062,7 @@ export default function TypingTestClient({ children }: { children?: React.ReactN
               <li className="tt-perk-amber">
                 <span className="tt-perk-icon"><Icon name="trophy" size={22} /></span>
                 <strong>Beat the Benchmark</strong>
-                <small>Can you beat <b>{BENCHMARK.wpm} WPM</b>?</small>
+                <small>Can you beat <b>{heroBench.wpm} WPM</b>?</small>
               </li>
             </ul>
             </div>
@@ -1128,12 +1167,14 @@ const ICON_PATHS: Record<IconName, React.ReactNode> = {
 };
 
 // Result-screen copy: the verdict against the team benchmark, and a one-line coach note.
-function Verdict({ diff }: { diff: number }) {
+function Verdict({ diff, bench }: { diff: number; bench: Bench }) {
   const gap = Math.abs(diff);
-  if (diff > 0) return <>You beat the team! <b>{diff} WPM</b> faster than our {BENCHMARK.wpm}.</>;
-  if (diff === 0) return <>Dead heat with the team&apos;s {BENCHMARK.wpm} WPM. One more run?</>;
-  if (gap <= 5) return <>So close! Only <b>{gap} WPM</b> short of our {BENCHMARK.wpm}. Try again.</>;
-  return <>The team types at {BENCHMARK.wpm} WPM. You&apos;re <b>{gap} WPM</b> away. Try again!</>;
+  const who = bench.team ? "the team" : bench.name;
+  const whose = bench.team ? "our" : `${bench.name}'s`;
+  if (diff > 0) return <>You beat {who}! <b>{diff} WPM</b> faster than {whose} {bench.wpm}.</>;
+  if (diff === 0) return <>Dead heat with {bench.team ? "the team's" : `${bench.name}'s`} {bench.wpm} WPM. One more run?</>;
+  if (gap <= 5) return <>So close! Only <b>{gap} WPM</b> short of {whose} {bench.wpm}. Try again.</>;
+  return <>{bench.team ? "The team types" : `${bench.name} leads`} at {bench.wpm} WPM. You&apos;re <b>{gap} WPM</b> away. Try again!</>;
 }
 
 const AVATAR_GRADIENTS = [
@@ -1163,8 +1204,8 @@ function chipLabel(chip: string): string {
 }
 
 // You against the team benchmark, as two bars, with the verdict underneath.
-function Versus({ wpm, diff }: { wpm: number; diff: number }) {
-  const max = Math.max(wpm, BENCHMARK.wpm, 1) * 1.08;
+function Versus({ wpm, diff, bench }: { wpm: number; diff: number; bench: Bench }) {
+  const max = Math.max(wpm, bench.wpm, 1) * 1.08;
   const win = diff > 0;
   return (
     <div className={`tt-versus${win ? " tt-versus-win" : ""}`}>
@@ -1174,22 +1215,22 @@ function Versus({ wpm, diff }: { wpm: number; diff: number }) {
         <b>{wpm}</b>
       </div>
       <div className="tt-vs-row tt-vs-team">
-        <span>Team</span>
-        <div className="tt-vs-track"><i style={{ width: `${(BENCHMARK.wpm / max) * 100}%` }} /></div>
-        <b>{BENCHMARK.wpm}</b>
+        <span>{bench.team ? "Team" : "Top"}</span>
+        <div className="tt-vs-track"><i style={{ width: `${(bench.wpm / max) * 100}%` }} /></div>
+        <b>{bench.wpm}</b>
       </div>
       <p className="tt-verdict-line">
         <Icon name={win ? "trophy" : "info"} size={18} />
-        <span><Verdict diff={diff} /></span>
+        <span><Verdict diff={diff} bench={bench} /></span>
       </p>
     </div>
   );
 }
 
-function coachLine(wpm: number, ranked: boolean): string {
+function coachLine(wpm: number, ranked: boolean, bench: Bench): string {
   // The team benchmark is a plain timed score, so practice runs aren't compared against it.
   if (!ranked) return "Nice run! Switch to a plain timed test when you want to compete on the leaderboard.";
-  if (wpm >= BENCHMARK.wpm) return "Outstanding! You're typing faster than our team.";
+  if (wpm >= bench.wpm) return `Outstanding! You're typing faster than ${bench.team ? "our team" : bench.name}.`;
   if (wpm >= 40) return "Nice work! A little more practice and you'll beat the benchmark.";
   return "Keep practicing! Your speed will improve with regular practice.";
 }

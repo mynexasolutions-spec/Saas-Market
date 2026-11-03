@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { serviceClient } from "@/lib/supabase/server";
 import {
   MAX_KEYS_PER_SECOND,
+  DURATIONS,
   MAX_WPM,
   cleanName,
   computeScore,
@@ -28,7 +29,35 @@ function fail(status: number, error: string) {
   return NextResponse.json({ error }, { status, headers: NO_STORE });
 }
 
+// Fastest score for each test length: this is what the page shows as the score to beat.
+async function benchmarks() {
+  const db = serviceClient();
+  const results = await Promise.all(
+    DURATIONS.map((d) =>
+      db
+        .from("typing_scores")
+        .select("name,wpm")
+        .eq("duration_seconds", d)
+        .order("wpm", { ascending: false })
+        .order("accuracy", { ascending: false })
+        .order("updated_at", { ascending: true })
+        .limit(1),
+    ),
+  );
+  if (results.some((r) => r.error)) {
+    console.error("typing_benchmarks_failed", { code: results.find((r) => r.error)?.error?.code });
+    return fail(503, "Leaderboard unavailable.");
+  }
+  const out: Record<string, { name: string; wpm: number } | null> = {};
+  DURATIONS.forEach((d, i) => {
+    const top = results[i].data?.[0];
+    out[String(d)] = top ? { name: String(top.name), wpm: Number(top.wpm) } : null;
+  });
+  return NextResponse.json({ benchmarks: out }, { headers: NO_STORE });
+}
+
 export async function GET(request: NextRequest) {
+  if (request.nextUrl.searchParams.has("benchmarks")) return benchmarks();
   const duration = Number(request.nextUrl.searchParams.get("duration") ?? 30);
   if (!isDuration(duration)) return fail(400, "Unknown test length.");
 

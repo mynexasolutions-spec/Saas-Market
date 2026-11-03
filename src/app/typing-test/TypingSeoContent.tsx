@@ -37,10 +37,10 @@ export const TYPING_FAQ: { question: string; answer: string }[] = [
   {
     question: "Which typing tests count on the leaderboard?",
     answer:
-      "Plain timed tests of 15, 30 or 60 seconds, with punctuation, numbers and stop on error switched off. Words, quote and the other custom tests are practice runs, because their speeds are not directly comparable.",
+      "Plain timed tests of 30, 45 or 60 seconds, with punctuation, numbers and stop on error switched off. Words, quote and the other custom tests are practice runs, because their speeds are not directly comparable.",
   },
   {
-    question: "Why are there 15, 30 and 60 second tests?",
+    question: "Why are there 30, 45 and 60 second tests?",
     answer:
       "Shorter tests usually produce a higher WPM than longer ones because you do not have time to tire. Each test length has its own leaderboard so scores stay comparable.",
   },

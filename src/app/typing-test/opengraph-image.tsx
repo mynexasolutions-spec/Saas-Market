@@ -1,12 +1,15 @@
 import { ImageResponse } from "next/og";
-import { BENCHMARK } from "@/lib/typing";
+import { getDefaultBench } from "@/lib/typing-benchmark";
 
-export const alt = `Typing speed test: can you beat our ${BENCHMARK.wpm} WPM?`;
+export const revalidate = 300;
+
+export const alt = "Typing speed test: can you beat the score on the leaderboard?";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 // Link preview for /typing-test, so a shared "Challenge a friend" link shows the benchmark.
-export default function Image() {
+export default async function Image() {
+  const bench = await getDefaultBench();
   return new ImageResponse(
     (
       <div
@@ -38,13 +41,13 @@ export default function Image() {
             SaaS MRKT · Typing Speed Test
           </div>
           <div style={{ display: "flex", marginTop: 34, fontSize: 76, fontWeight: 800, color: "#0f172a", lineHeight: 1.05 }}>
-            Can you beat our
+            {bench.team ? "Can you beat our" : "Can you beat the top"}
           </div>
           <div style={{ display: "flex", fontSize: 96, fontWeight: 800, color: "#6d4df2", lineHeight: 1.05 }}>
-            {BENCHMARK.wpm} WPM?
+            {bench.wpm} WPM?
           </div>
           <div style={{ display: "flex", marginTop: 26, fontSize: 30, color: "#475569", lineHeight: 1.35 }}>
-            Free 15, 30 and 60 second test with a live leaderboard.
+            Free 30, 45 and 60 second test with a live leaderboard.
           </div>
         </div>
 
@@ -63,7 +66,7 @@ export default function Image() {
             color: "#ffffff",
           }}
         >
-          <div style={{ display: "flex", fontSize: 150, fontWeight: 800, lineHeight: 1 }}>{BENCHMARK.wpm}</div>
+          <div style={{ display: "flex", fontSize: 150, fontWeight: 800, lineHeight: 1 }}>{bench.wpm}</div>
           <div style={{ display: "flex", fontSize: 40, fontWeight: 700, letterSpacing: 6, color: "#ddd0ff" }}>WPM</div>
         </div>
       </div>

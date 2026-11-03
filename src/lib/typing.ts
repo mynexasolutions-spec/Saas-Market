@@ -1,11 +1,24 @@
 // Shared by the /typing-test page and /api/typing so both score a run identically.
 
-export const DURATIONS = [15, 30, 60] as const;
+export const DURATIONS = [30, 45, 60] as const;
 export type Duration = (typeof DURATIONS)[number];
 export const DEFAULT_DURATION: Duration = 30;
 
 // The score visitors are challenged to beat. Edit here to change the pinned benchmark.
+// The team's fixed score. It is the floor of the "score to beat" until someone on the board goes past it.
 export const BENCHMARK = { name: "SaaS MRKT Team", wpm: 53 };
+
+// The score to beat for one test length: the team's, or the board leader's once they are faster.
+export interface Bench {
+  name: string;
+  wpm: number;
+  team: boolean;
+}
+
+export function resolveBench(record: { name: string; wpm: number } | null | undefined): Bench {
+  if (record && record.wpm > BENCHMARK.wpm) return { name: record.name, wpm: record.wpm, team: false };
+  return { name: BENCHMARK.name, wpm: BENCHMARK.wpm, team: true };
+}
 
 export const MAX_WPM = 250;
 export const MAX_KEYS_PER_SECOND = 25;
