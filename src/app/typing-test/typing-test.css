@@ -1,0 +1,3452 @@
+/* ==========================================================================
+   Typing Speed Test - lavender hero, dark purple "stage" for the test,
+   light card for the leaderboard.
+   Uses the global brand tokens (--primary, --slate-*) from globals.css.
+   ========================================================================== */
+
+/* ---------- Hero ---------- */
+.tt-hero {
+  position: relative;
+  padding: 1.5rem 0 2.25rem;
+  text-align: center;
+  isolation: isolate;
+}
+
+.tt-wave {
+  position: absolute;
+  inset: -1rem 0 auto;
+  width: 100%;
+  height: 15rem;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.tt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(124, 92, 240, 0.28);
+  box-shadow: 0 6px 18px -10px rgba(94, 75, 238, 0.5);
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.tt-title {
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin: 1rem auto 0.9rem;
+  font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--slate-900);
+}
+
+.tt-title-accent {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(90deg, #5e4bee, #9333ea);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tt-swoosh {
+  position: absolute;
+  left: 4%;
+  bottom: -0.55rem;
+  width: 92%;
+  height: 0.8rem;
+  color: #7c3aed;
+  pointer-events: none;
+}
+
+.tt-sparkle {
+  position: absolute;
+  left: -3rem;
+  top: -1.4rem;
+  width: 2.8rem;
+  color: #7c5cf0;
+  animation: tt-twinkle 2.6s ease-in-out infinite;
+}
+
+@keyframes tt-twinkle {
+  50% {
+    opacity: 0.55;
+    transform: scale(0.88) rotate(8deg);
+  }
+}
+
+.tt-lede {
+  max-width: 38rem;
+  margin: 0 auto;
+  font-size: 1.08rem;
+  line-height: 1.6;
+  color: var(--slate-500);
+}
+
+/* 3D keycap floating beside the headline */
+.tt-hero-key {
+  position: absolute;
+  top: 0.5rem;
+  right: 4%;
+  display: block;
+  width: 9rem;
+  filter: drop-shadow(0 18px 14px rgba(91, 63, 214, 0.38));
+  animation: tt-float 5s ease-in-out infinite;
+}
+
+.tt-hero-key svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+@keyframes tt-float {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* ---------- Layout ---------- */
+.tt-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 3rem;
+}
+
+.tt-side {
+  position: sticky;
+  top: 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ---------- Stage (dark panel) ---------- */
+.tt-stage {
+  scroll-margin-top: 6rem;
+  position: relative;
+  min-height: 34rem;
+  padding: 2rem 2.25rem;
+  border-radius: 1.6rem;
+  color: var(--slate-700);
+  background:
+    radial-gradient(60% 50% at 88% 100%, rgba(168, 85, 247, 0.16) 0%, transparent 70%),
+    radial-gradient(70% 60% at 100% 0%, rgba(94, 75, 238, 0.1) 0%, transparent 60%),
+    linear-gradient(160deg, #ffffff 0%, #f6f2ff 60%, #efe8ff 100%);
+  border: 1px solid rgba(124, 92, 240, 0.16);
+  box-shadow: 0 30px 60px -34px rgba(76, 53, 184, 0.45);
+  overflow: hidden;
+}
+
+/* ---------- Form ---------- */
+.tt-form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  gap: 1.5rem;
+  align-items: center;
+  min-height: 29rem;
+}
+
+.tt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  max-width: 32rem;
+}
+
+.tt-form-head h2 {
+  position: relative;
+  width: fit-content;
+  margin: 0.9rem 0 0.4rem;
+  font-size: 1.95rem;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--slate-900);
+}
+
+.tt-form-head h2 em {
+  position: relative;
+  display: inline-block;
+  font-style: normal;
+  background: linear-gradient(90deg, #6d4df2, #c026d3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tt-form-head p {
+  color: var(--slate-500);
+  font-size: 0.98rem;
+}
+
+.tt-bench-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(124, 92, 240, 0.3);
+  box-shadow: 0 8px 18px -12px rgba(94, 75, 238, 0.5);
+  color: #6d28d9;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.tt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.tt-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.tt-label svg {
+  color: var(--slate-600);
+}
+
+/* Each field also carries its icon inside the input. */
+.tt-input {
+  position: relative;
+  display: block;
+}
+
+.tt-input > svg {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  color: #6d28d9;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Two classes, so it beats ".tt-field input" (which sets all four paddings) whichever comes first. */
+.tt-field .tt-input input {
+  padding-left: 3rem;
+}
+
+.tt-field input {
+  width: 100%;
+  padding: 0.95rem 1.1rem;
+  border-radius: 0.9rem;
+  border: 1.5px solid rgba(124, 92, 240, 0.3);
+  background: rgba(237, 233, 254, 0.5);
+  color: var(--slate-900);
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.tt-field input::placeholder {
+  color: var(--slate-400);
+}
+
+.tt-field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(124, 92, 240, 0.2);
+}
+
+.tt-field input[aria-invalid="true"] {
+  border-color: #ef4444;
+}
+
+.tt-field-error {
+  font-style: normal;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+.tt-fineprint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--slate-500);
+  text-align: center;
+}
+
+/* Gauge + keycaps beside the form */
+.tt-form-art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tt-gauge {
+  position: relative;
+  width: 12.5rem;
+  aspect-ratio: 200 / 215;
+  filter: drop-shadow(0 8px 16px rgba(168, 85, 247, 0.28));
+}
+
+.tt-gauge svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.tt-gauge-fill {
+  animation: tt-gauge-in 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tt-gauge-in {
+  from {
+    stroke-dashoffset: var(--tt-gauge-from);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* The knob rides the end of the arc while it fills. */
+.tt-gauge-knob {
+  transform-origin: 100px 100px;
+  animation: tt-knob 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tt-knob {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(var(--sweep));
+  }
+}
+
+.tt-gauge-read {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(100% * 200 / 215); /* centred on the dial, above the pedestal */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.tt-gauge-read strong {
+  font-size: 3.2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--slate-900);
+}
+
+.tt-gauge-read span {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--slate-600);
+}
+
+.tt-keys {
+  width: 14.5rem;
+  margin-top: -0.4rem;
+  filter: drop-shadow(0 16px 14px rgba(124, 58, 237, 0.35));
+}
+
+.tt-keys svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* ---------- Buttons & pills ---------- */
+.tt-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 1.6rem;
+  border: none;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, #a855f7 0%, #5e4bee 100%);
+  color: var(--white);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 14px 28px -10px rgba(94, 75, 238, 0.7);
+  transition: filter 0.15s, box-shadow 0.15s;
+}
+
+.tt-cta:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 18px 32px -10px rgba(94, 75, 238, 0.8);
+}
+
+.tt-secondary {
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid rgba(124, 92, 240, 0.4);
+  background: var(--white);
+  color: var(--primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.tt-secondary:hover {
+  border-color: var(--primary);
+  background: var(--primary-50);
+}
+
+.tt-cta:focus-visible,
+.tt-secondary:focus-visible,
+.tt-pill:focus-visible,
+.tt-tab:focus-visible,
+.tt-link-btn:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+.tt-pills {
+  display: inline-flex;
+  gap: 0.6rem;
+}
+
+.tt-pill {
+  position: relative;
+  min-width: 4.2rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid rgba(124, 92, 240, 0.25);
+  background: var(--white);
+  color: var(--slate-700);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tt-pill:hover {
+  border-color: var(--primary);
+}
+.tt-pill-check {
+  position: absolute;
+  top: -0.45rem;
+  right: -0.35rem;
+  display: grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border: 2px solid #8b5cf6;
+  border-radius: 50%;
+  background: #fff;
+  color: #6d28d9;
+  box-shadow: 0 4px 10px -4px rgba(109, 40, 217, 0.6);
+}
+
+
+.tt-pill-on {
+  background: linear-gradient(90deg, #6d4df2, #a855f7);
+  border-color: transparent;
+  color: var(--white);
+  box-shadow: 0 8px 20px -6px rgba(124, 92, 240, 0.7);
+}
+
+/* ---------- Play area ---------- */
+.tt-progress {
+  height: 4px;
+  margin-bottom: 1.25rem;
+  border-radius: var(--radius-full);
+  background: rgba(124, 92, 240, 0.15);
+  overflow: hidden;
+}
+
+.tt-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6d4df2, #e879f9);
+  transition: width 0.2s linear;
+}
+
+.tt-words-viewport {
+  --tt-line: 3rem;
+  position: relative;
+  height: calc(var(--tt-line) * 3);
+  overflow: hidden;
+  cursor: text;
+  scroll-behavior: smooth;
+  font-family: ui-monospace, "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  font-size: 1.6rem;
+  line-height: var(--tt-line);
+}
+
+.tt-words {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.9rem;
+}
+
+.tt-word {
+  position: relative;
+  display: inline-block;
+  height: var(--tt-line);
+  white-space: nowrap;
+}
+
+.tt-letter {
+  position: relative;
+  color: #6f6a9c;
+  transition: color 0.08s;
+}
+
+.tt-ok {
+  color: #16a34a;
+}
+
+.tt-bad {
+  color: #ef4444;
+}
+
+.tt-extra {
+  color: #b91c1c;
+}
+
+.tt-miss {
+  color: rgba(239, 68, 68, 0.5);
+}
+
+.tt-word-err {
+  text-decoration: underline;
+  text-decoration-color: #ef4444;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+}
+
+/* Caret: a single bar that slides to the letter about to be typed. */
+.tt-caret-el {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 2px;
+  height: var(--tt-line);
+  pointer-events: none;
+  transition: transform 0.12s cubic-bezier(0.3, 0.7, 0.4, 1);
+  will-change: transform;
+}
+
+.tt-caret-el::before {
+  content: "";
+  position: absolute;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  left: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: #7c3aed;
+}
+
+.tt-caret-el[data-snap] {
+  transition: none;
+}
+
+.tt-idle .tt-caret-el::before {
+  animation: tt-blink 1s steps(1) infinite;
+}
+
+@keyframes tt-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.tt-focus-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(246, 242, 255, 0.82);
+  backdrop-filter: blur(3px);
+  color: var(--slate-800);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tt-hidden-input {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tt-play-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--slate-500);
+}
+
+.tt-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.6rem 0.55rem 1.1rem;
+  border: 1px solid rgba(124, 92, 240, 0.18);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  box-shadow: 0 6px 16px -10px rgba(76, 53, 184, 0.45);
+  color: var(--slate-800);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tt-link-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.tt-link-btn kbd {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: rgba(124, 92, 240, 0.14);
+  color: var(--slate-700);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+/* ---------- Typing screen (white card) ---------- */
+.tt-grid-play {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.tt-grid-play .tt-side {
+  display: none;
+}
+
+.tt-stage-play {
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 1.6rem 1.9rem 1.5rem;
+  background: var(--white);
+  box-shadow: 0 24px 50px -32px rgba(76, 53, 184, 0.4);
+}
+
+.tt-play-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.tt-play-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  white-space: nowrap;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--slate-900);
+}
+
+.tt-kbd-glyph {
+  flex-shrink: 0;
+  width: 2.2rem;
+  height: auto;
+}
+
+.tt-tab:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.tt-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.tt-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 1rem;
+  background: #f4f0ff;
+}
+
+.tt-stat-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  background: #ebe4ff;
+  color: #6d28d9;
+}
+
+.tt-stat small {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--slate-700);
+}
+
+.tt-stat strong {
+  display: block;
+  font-size: 1.9rem;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #4c1d95;
+  font-variant-numeric: tabular-nums;
+}
+
+.tt-stage-play .tt-progress {
+  height: 0.6rem;
+  margin: 1.25rem 0;
+  background: #e7e3f4;
+}
+
+.tt-stage-play .tt-progress-bar {
+  background: linear-gradient(90deg, #5e4bee, #6d28d9);
+}
+
+.tt-words-box {
+  padding: 0.4rem 1.5rem;
+  border: 1px solid rgba(124, 92, 240, 0.14);
+  border-radius: 1.1rem;
+  background: #faf8ff;
+}
+
+.tt-stage-play .tt-words-viewport {
+  --tt-line: 3.6rem;
+  font-size: 1.9rem;
+}
+
+/* Lavender pill behind the word being typed. */
+.tt-word-active {
+  isolation: isolate;
+}
+
+.tt-word-active::before {
+  content: "";
+  position: absolute;
+  inset: 0.5rem -0.25rem;
+  z-index: -1;
+  border-radius: 0.5rem;
+  background: rgba(124, 92, 240, 0.16);
+}
+
+.tt-play-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--slate-700);
+}
+
+.tt-play-info {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: #f1ecff;
+  color: var(--primary);
+}
+
+.tt-stage-play .tt-play-foot {
+  margin-top: 1.25rem;
+}
+
+/* Hero decorations while typing: WASD keys on the left, stopwatch on the right. */
+.tt-hero-keys {
+  position: absolute;
+  top: 0.6rem;
+  left: 9%;
+  width: 11.5rem;
+}
+
+.tt-hero-keys .tt-keys {
+  width: 100%;
+  margin: 0;
+}
+
+.tt-stopwatch {
+  position: absolute;
+  top: 0.4rem;
+  right: 8%;
+  display: block;
+  width: 10rem;
+  filter: drop-shadow(0 16px 12px rgba(91, 63, 214, 0.35));
+  animation: tt-float 5s ease-in-out infinite;
+}
+
+.tt-stopwatch svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* ---------- Result ---------- */
+.tt-result {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tt-res-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+}
+
+.tt-res-title {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--slate-900);
+}
+
+.tt-res-title .tt-kbd-glyph {
+  width: 2rem;
+}
+
+.tt-res-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+}
+
+.tt-res-chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  background: var(--white);
+  border: 1px solid rgba(124, 92, 240, 0.25);
+  color: #5b21b6;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* Score on the left; comparison, status and the buttons beside it so nothing needs a scroll. */
+.tt-res-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-areas:
+    "gauge side"
+    "actions actions";
+  gap: 0.6rem 1.5rem;
+  align-items: center;
+}
+
+.tt-coach {
+  margin-top: 0.7rem;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--slate-600);
+}
+
+.tt-res-gauge {
+  grid-area: gauge;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  text-align: center;
+}
+
+.tt-res-gauge .tt-gauge {
+  width: 14rem;
+}
+
+.tt-res-gauge .tt-gauge-read strong {
+  font-size: 3.6rem;
+}
+
+.tt-res-side {
+  grid-area: side;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.tt-versus {
+  padding: 1rem 1.1rem;
+  border-radius: 1rem;
+  background: var(--white);
+  border: 1px solid rgba(124, 92, 240, 0.16);
+}
+
+.tt-vs-row {
+  display: grid;
+  grid-template-columns: 2.8rem minmax(0, 1fr) 2.8rem;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--slate-600);
+}
+
+.tt-vs-row + .tt-vs-row {
+  margin-top: 0.55rem;
+}
+
+.tt-vs-row b {
+  text-align: right;
+  color: var(--slate-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.tt-vs-track {
+  height: 0.7rem;
+  border-radius: var(--radius-full);
+  background: #efeaff;
+  overflow: hidden;
+}
+
+.tt-vs-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #6d4df2, #a855f7);
+  transform-origin: left;
+  animation: tt-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tt-vs-team .tt-vs-track i {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  animation-delay: 0.1s;
+}
+
+.tt-versus-win .tt-vs-row:first-child .tt-vs-track i {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+@keyframes tt-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.tt-verdict-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed rgba(124, 92, 240, 0.25);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--slate-700);
+}
+
+.tt-verdict-line svg {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--primary);
+}
+
+.tt-verdict-line b {
+  color: #6d28d9;
+}
+
+.tt-versus-win .tt-verdict-line,
+.tt-versus-win .tt-verdict-line b,
+.tt-versus-win .tt-verdict-line svg {
+  color: #047857;
+}
+
+.tt-verdict {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 1rem;
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.tt-verdict b {
+  font-weight: 800;
+}
+
+.tt-verdict-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.tt-try {
+  background: rgba(124, 92, 240, 0.1);
+  border: 1px solid rgba(124, 92, 240, 0.2);
+  color: var(--slate-800);
+}
+
+.tt-try b,
+.tt-try .tt-verdict-icon {
+  color: #6d28d9;
+}
+
+.tt-submit-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: 0.9rem;
+  background: rgba(124, 92, 240, 0.08);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--slate-600);
+}
+
+.tt-submit-status.tt-saved {
+  background: #dcfce7;
+  color: #047857;
+}
+
+.tt-submit-status.tt-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.tt-result-actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.tt-result-actions .tt-cta,
+.tt-result-actions .tt-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.9rem 1.5rem;
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+/* Compact stat tiles: icon beside the label and value. */
+.tt-result-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.tt-result-stats > div,
+.tt-chars {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  background: var(--white);
+  border: 1px solid rgba(124, 92, 240, 0.14);
+  box-shadow: 0 10px 24px -22px rgba(76, 53, 184, 0.5);
+}
+
+.tt-rs-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 0.8rem;
+  background: #efe9ff;
+  color: #6d28d9;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.tt-rs-bad .tt-rs-icon {
+  background: #ffe4e6;
+  color: #e11d48;
+}
+
+.tt-rs-pb .tt-rs-icon {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.tt-result-stats small {
+  display: block;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+.tt-result-stats strong {
+  font-size: 1.5rem;
+  line-height: 1.15;
+  font-weight: 800;
+  color: var(--slate-900);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Small unit after a big number, so "500 WPM" still fits a narrow tile. */
+.tt-unit {
+  margin-left: 0.25em;
+  font-size: 0.58em;
+  font-weight: 700;
+  color: var(--slate-500);
+}
+
+.tt-rs-new {
+  margin-left: 0.4rem;
+  padding: 0.08rem 0.45rem;
+  border-radius: var(--radius-full);
+  background: #fef3c7;
+  color: #b45309;
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* Characters, spelled out instead of 107/3/0/0 */
+.tt-chars {
+  flex-wrap: wrap;
+}
+
+.tt-chars > small {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--slate-700);
+}
+
+.tt-chars ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.1rem;
+  margin-left: auto;
+  list-style: none;
+}
+
+.tt-chars li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+.tt-ci {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.tt-ci svg {
+  stroke-width: 3.2;
+}
+
+.tt-ci-dot::after {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.tt-chars .ok .tt-ci {
+  background: #16a34a;
+}
+
+.tt-chars .bad .tt-ci {
+  background: #ef4444;
+}
+
+.tt-chars .extra .tt-ci {
+  background: #f59e0b;
+}
+
+.tt-chars .miss .tt-ci {
+  background: #94a3b8;
+}
+
+.tt-chars li b {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.tt-chars .ok b {
+  color: #16a34a;
+}
+
+.tt-chars .bad b {
+  color: #ef4444;
+}
+
+.tt-chars .extra b {
+  color: #f59e0b;
+}
+
+.tt-chars .miss b {
+  color: #64748b;
+}
+
+/* WPM over time */
+.tt-chart {
+  padding: 1rem 1.1rem 0.7rem;
+  border-radius: 1rem;
+  background: var(--white);
+  border: 1px solid rgba(124, 92, 240, 0.14);
+}
+
+.tt-chart-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.tt-chart-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tt-chart-icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.6rem;
+  background: #efe9ff;
+  color: #6d28d9;
+}
+
+.tt-chart-head strong {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.tt-chart-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+.tt-chart-legend i {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-left: 0.5rem;
+  border-radius: 50%;
+}
+
+.tt-lg-wpm {
+  background: #6d28d9;
+}
+
+.tt-lg-raw {
+  background: #c4b5fd;
+}
+
+.tt-lg-err {
+  background: #ef4444;
+}
+
+.tt-chart-plot {
+  position: relative;
+}
+
+.tt-chart-plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+}
+
+.tt-chart-tip {
+  position: absolute;
+  top: 0.2rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.6rem;
+  background: #1e1b4b;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  box-shadow: 0 10px 20px -10px rgba(30, 27, 75, 0.7);
+  pointer-events: none;
+}
+
+.tt-chart-tip b {
+  margin-right: 0.45rem;
+  color: #c4b5fd;
+}
+
+/* ---------- Leaderboard (light card) ---------- */
+.tt-board {
+  padding: 1.5rem 1.4rem 1.1rem;
+  background: var(--white);
+  border: 1px solid rgba(124, 92, 240, 0.12);
+  border-radius: 1.4rem;
+  box-shadow: 0 18px 40px -26px rgba(76, 53, 184, 0.45);
+}
+
+.tt-board-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.tt-board-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--slate-900);
+}
+
+.tt-board-head h2 svg {
+  box-sizing: border-box;
+  width: 2.3rem;
+  height: 2.3rem;
+  padding: 0.55rem;
+  border-radius: 0.75rem;
+  background: #ede9fe;
+  color: var(--primary);
+}
+
+.tt-tabs {
+  display: inline-flex;
+  padding: 0.25rem;
+  border-radius: var(--radius-full);
+  background: var(--slate-100);
+}
+
+.tt-tab {
+  padding: 0.35rem 0.95rem;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--slate-600);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tt-tab-on {
+  background: linear-gradient(90deg, #5e4bee, #7c3aed);
+  color: var(--white);
+  box-shadow: 0 6px 14px -6px rgba(94, 75, 238, 0.7);
+}
+
+.tt-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  max-height: 30rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.tt-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.2rem 2.4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem 1rem 1rem 0.8rem;
+  border-radius: 0.9rem;
+  background: var(--slate-50);
+}
+
+.tt-medal {
+  width: 1.9rem;
+  height: 2.4rem;
+  filter: drop-shadow(0 3px 4px rgba(15, 23, 42, 0.18));
+}
+
+.tt-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--slate-500);
+  background: var(--slate-100);
+}
+
+.tt-avatar {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  box-shadow: 0 6px 12px -6px rgba(15, 23, 42, 0.35), inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.tt-avatar-bench {
+  background: linear-gradient(145deg, #fbbf24, #d97706);
+}
+
+.tt-who {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.tt-meta {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--slate-400);
+}
+
+/* How this score compares with the best one on the board. */
+.tt-row-bar {
+  position: absolute;
+  left: 0.8rem;
+  right: 1rem;
+  bottom: 0.4rem;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: rgba(124, 92, 240, 0.12);
+  overflow: hidden;
+}
+
+.tt-row-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: var(--fill);
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a78bfa, #6d28d9);
+  transform-origin: left;
+  animation: tt-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tt-row-bench .tt-row-bar {
+  background: rgba(245, 158, 11, 0.2);
+}
+
+.tt-row-bench .tt-row-bar::after {
+  background: linear-gradient(90deg, #fbbf24, #d97706);
+}
+
+.tt-board-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -0.4rem 0 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+.tt-live {
+  position: relative;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.tt-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #10b981;
+  animation: tt-ping 1.8s ease-out infinite;
+}
+
+@keyframes tt-ping {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+
+.tt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  margin-top: 0.6rem;
+  padding: 1.2rem 1rem;
+  border: 1.5px dashed rgba(124, 92, 240, 0.3);
+  border-radius: 1rem;
+  background: rgba(246, 243, 255, 0.6);
+  text-align: center;
+}
+
+.tt-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  margin-bottom: 0.3rem;
+  border-radius: 50%;
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.tt-empty strong {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.tt-empty small {
+  font-size: 0.85rem;
+  color: var(--slate-500);
+}
+
+.tt-name {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  font-weight: 700;
+  color: var(--slate-800);
+}
+
+.tt-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tt-name em {
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: var(--primary-100);
+  color: var(--primary);
+  font-style: normal;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tt-score {
+  text-align: right;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.tt-score small {
+  margin-left: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--slate-400);
+  text-transform: uppercase;
+}
+
+.tt-row-bench {
+  background: linear-gradient(90deg, #fef3c7 0%, #fffbeb 100%);
+  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.2);
+}
+
+.tt-row-bench .tt-name em {
+  background: #fde68a;
+  color: #92400e;
+}
+
+.tt-row-you {
+  background: var(--primary-50);
+  box-shadow: inset 0 0 0 1.5px var(--primary-200);
+}
+
+.tt-board-note {
+  padding: 0.75rem 0.25rem;
+  font-size: 0.88rem;
+  color: var(--slate-500);
+}
+
+/* ---------- Feature strip under the leaderboard ---------- */
+.tt-perks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  list-style: none;
+  padding: 1.4rem 0.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(124, 92, 240, 0.12);
+  border-radius: 1.4rem;
+  box-shadow: 0 18px 40px -30px rgba(76, 53, 184, 0.4);
+}
+
+.tt-perks li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.6rem;
+  text-align: center;
+}
+
+.tt-perks li + li {
+  border-left: 1px solid var(--slate-150);
+}
+
+.tt-perk-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.3rem;
+  border-radius: 50%;
+  background: var(--pk-bg, var(--primary-50));
+  color: var(--pk-fg, var(--primary));
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+.tt-perk-purple {
+  --pk-bg: #efe9ff;
+  --pk-fg: #6d28d9;
+  --pk-hi: linear-gradient(145deg, #8b5cf6, #6d28d9);
+}
+
+.tt-perk-blue {
+  --pk-bg: #e0f2fe;
+  --pk-fg: #0369a1;
+  --pk-hi: linear-gradient(145deg, #38bdf8, #0284c7);
+}
+
+.tt-perk-amber {
+  --pk-bg: #fef3c7;
+  --pk-fg: #b45309;
+  --pk-hi: linear-gradient(145deg, #fbbf24, #d97706);
+}
+
+.tt-perks li:hover .tt-perk-icon {
+  background: var(--pk-hi);
+  color: #fff;
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 12px 20px -10px var(--pk-fg);
+}
+
+.tt-perks small b {
+  font-weight: 800;
+  color: #b45309;
+}
+
+
+.tt-perks strong {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.tt-perks small {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--slate-500);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .tt-hero-key {
+    display: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .tt-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tt-side {
+    position: static;
+  }
+}
+
+/* Mobile: left-aligned hero, gauge + keycaps tucked into the top-right of the form. */
+@media (max-width: 760px) {
+  .tt-hero {
+    padding: 0.5rem 0 1.5rem;
+    text-align: left;
+  }
+
+  .tt-sparkle {
+    display: none;
+  }
+
+  .tt-title {
+    width: auto;
+    margin: 0.9rem 0 0.7rem;
+    padding-right: 4.5rem;
+  }
+
+  .tt-lede {
+    margin: 0;
+    font-size: 0.98rem;
+  }
+
+  .tt-hero-key {
+    display: block;
+    top: 0.2rem;
+    right: 0;
+    width: 5.2rem;
+    filter: drop-shadow(0 8px 7px rgba(91, 63, 214, 0.38));
+  }
+
+  .tt-stage {
+    min-height: 0;
+    padding: 1.4rem 1.1rem;
+  }
+
+  .tt-form-layout {
+    position: relative;
+    display: block;
+    min-height: 0;
+  }
+
+  .tt-form {
+    max-width: none;
+    gap: 1rem;
+  }
+
+  .tt-form-head h2 {
+    margin-top: 0.8rem;
+    padding-right: 7.6rem;
+    font-size: 1.5rem;
+  }
+
+  .tt-form-head p {
+    padding-right: 7.6rem;
+    font-size: 0.85rem;
+  }
+
+  /* Fields leave room for the art on the right; the button spans the full width. */
+  .tt-field {
+    max-width: calc(100% - 7.8rem);
+  }
+
+  .tt-field input {
+    padding: 0.7rem 0.7rem;
+    font-size: 0.78rem;
+  }
+
+  .tt-pills {
+    gap: 0.4rem;
+  }
+
+  .tt-pill {
+    min-width: 0;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+  }
+
+  .tt-fineprint {
+    font-size: 0.74rem;
+  }
+
+  .tt-form-art {
+    position: absolute;
+    top: 0;
+    right: -0.2rem;
+    width: 7.2rem;
+    gap: 0.2rem;
+  }
+
+  .tt-gauge {
+    width: 6.8rem;
+  }
+
+  .tt-gauge-read strong {
+    font-size: 1.85rem;
+  }
+
+  .tt-gauge-read span {
+    margin-top: 0.2rem;
+    font-size: 0.6rem;
+  }
+
+  .tt-keys {
+    width: 7.2rem;
+    margin-top: 0.9rem;
+    filter: drop-shadow(0 8px 8px rgba(124, 58, 237, 0.35));
+  }
+
+}
+
+@media (max-width: 560px) {
+  .tt-board {
+    padding: 1.2rem 1rem 0.9rem;
+  }
+
+  .tt-board-head h2 {
+    font-size: 1.15rem;
+  }
+
+  .tt-tab {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  /* Tighter rows so "SaaS MRKT Team  BEAT THIS" fits without truncating. */
+  .tt-row {
+    grid-template-columns: 1.7rem minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem 0.9rem 0.6rem;
+  }
+
+  .tt-avatar {
+    display: none;
+  }
+
+  .tt-row-bar {
+    left: 0.6rem;
+    right: 0.75rem;
+  }
+
+  .tt-medal {
+    width: 1.6rem;
+    height: 2rem;
+  }
+
+  .tt-name {
+    font-size: 0.9rem;
+  }
+
+  .tt-name em {
+    margin-left: 0.35rem;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.6rem;
+  }
+
+  .tt-score {
+    font-size: 1rem;
+  }
+
+  .tt-score small {
+    margin-left: 0.15rem;
+    font-size: 0.65rem;
+  }
+
+  .tt-words-viewport {
+    --tt-line: 2.4rem;
+    font-size: 1.2rem;
+  }
+
+  .tt-result-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tt-perks {
+    padding: 1.1rem 0.25rem;
+  }
+
+  .tt-perks li {
+    padding: 0 0.4rem;
+  }
+
+  .tt-perk-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .tt-perks strong {
+    font-size: 0.8rem;
+  }
+
+  .tt-perks small {
+    font-size: 0.72rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-words-viewport {
+    scroll-behavior: auto;
+  }
+
+  .tt-hero-key,
+  .tt-gauge-fill {
+    animation: none;
+  }
+
+  .tt-idle .tt-caret-el::before {
+    animation: none;
+  }
+
+  .tt-caret-el {
+    transition: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .tt-hero-keys {
+    left: 2%;
+    width: 9rem;
+  }
+
+  .tt-stopwatch {
+    right: 2%;
+    width: 8rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .tt-hero-keys {
+    display: none;
+  }
+
+  .tt-stopwatch {
+    top: 0.2rem;
+    right: 0;
+    width: 5.2rem;
+    filter: drop-shadow(0 8px 7px rgba(91, 63, 214, 0.35));
+  }
+
+  .tt-stage-play {
+    padding: 1.1rem 1rem;
+  }
+
+  .tt-play-title {
+    font-size: 1.15rem;
+  }
+
+  .tt-kbd-glyph {
+    width: 1.8rem;
+  }
+
+  .tt-stats {
+    gap: 0.5rem;
+  }
+
+  .tt-stat {
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.7rem 0.3rem;
+    text-align: center;
+  }
+
+  .tt-stat-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .tt-stat small {
+    font-size: 0.7rem;
+  }
+
+  .tt-stat strong {
+    font-size: 1.35rem;
+  }
+
+  .tt-words-box {
+    padding: 0.2rem 0.8rem;
+  }
+
+  .tt-stage-play .tt-words-viewport {
+    --tt-line: 2.7rem;
+    font-size: 1.25rem;
+  }
+
+  .tt-word-active::before {
+    inset: 0.35rem -0.2rem;
+  }
+
+  .tt-play-hint {
+    gap: 0.5rem;
+    font-size: 0.82rem;
+  }
+
+  .tt-play-info {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* ---------- Guide under the test: levels, steps, tips, FAQ ---------- */
+.tt-seo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 0 0 3rem;
+}
+
+.tt-seo-card {
+  padding: 1.9rem 2rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(124, 92, 240, 0.14);
+  border-radius: 1.5rem;
+  box-shadow: 0 22px 44px -34px rgba(76, 53, 184, 0.45);
+}
+
+.tt-seo-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.9rem;
+}
+
+.tt-seo-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 0.9rem;
+  background: linear-gradient(145deg, #efe9ff, #e0d6ff);
+  color: #5b21b6;
+}
+
+.tt-seo h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--slate-900);
+}
+
+.tt-seo h3 {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.tt-seo p,
+.tt-seo li {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--slate-600);
+}
+
+.tt-seo-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+/* Guide cards: eyebrow chip, highlighted heading, art in the corner */
+.tt-guide {
+  position: relative;
+  overflow: hidden;
+}
+
+.tt-guide > *:not(.tt-guide-art) {
+  position: relative;
+  z-index: 1;
+}
+
+.tt-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-full);
+  background: #efe9ff;
+  color: #5b21b6;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.tt-guide h2 {
+  margin: 0.85rem 0 0.6rem;
+  font-size: clamp(1.5rem, 2.3vw, 2rem);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--slate-900);
+}
+
+.tt-hl {
+  position: relative;
+  display: inline-block;
+  color: #6d28d9;
+}
+
+.tt-hl svg {
+  position: absolute;
+  left: 0;
+  bottom: -0.35rem;
+  width: 100%;
+  height: 0.5rem;
+  color: #7c3aed;
+}
+
+.tt-guide-lede {
+  max-width: 40rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--slate-600);
+}
+
+.tt-guide-art {
+  position: absolute;
+  top: 0.9rem;
+  right: 1.4rem;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.tt-guide-art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.tt-guide-art-kb {
+  width: 19.5rem;
+  filter: drop-shadow(0 18px 16px rgba(91, 63, 214, 0.28));
+}
+
+.tt-guide-art-key {
+  width: 8rem;
+  filter: drop-shadow(0 16px 14px rgba(91, 63, 214, 0.3));
+}
+
+.tt-guide-tips .tt-guide-lede {
+  padding-right: 7rem;
+}
+
+/* Faint waves along the bottom of the levels card. */
+.tt-guide-levels::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 60%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 300' preserveAspectRatio='none'%3E%3Cpath d='M0 150C140 90 260 220 420 150S690 80 800 130V300H0Z' fill='%23efe8ff' fill-opacity='.7'/%3E%3C/svg%3E") no-repeat bottom / 100% 100%;
+  pointer-events: none;
+}
+
+/* Speed scale with the team marker */
+.tt-scale {
+  position: relative;
+  margin: 3.6rem 0 2.4rem;
+}
+
+.tt-scale-bar {
+  display: flex;
+  height: 0.8rem;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.tt-scale-bar span {
+  display: block;
+  height: 100%;
+}
+
+.tt-scale-dot {
+  position: absolute;
+  top: 0.4rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 3px solid #b9a8f5;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+}
+
+.tt-scale-flag {
+  position: absolute;
+  bottom: calc(100% + 0.85rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.95rem;
+  border-radius: var(--radius-full);
+  background: #4c1d95;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  box-shadow: 0 12px 22px -10px rgba(76, 29, 149, 0.7);
+}
+
+.tt-scale-flag svg {
+  color: #fcd34d;
+}
+
+.tt-scale-flag::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 6px solid transparent;
+  border-top-color: #4c1d95;
+  transform: translateX(-50%);
+}
+
+.tt-scale-ticks {
+  position: relative;
+  height: 1.3rem;
+  margin-top: 0.7rem;
+}
+
+.tt-scale-ticks span {
+  position: absolute;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--slate-600);
+  transform: translateX(-50%);
+}
+
+/* Level tiles */
+.tt-levels {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.9rem;
+  list-style: none;
+}
+
+.tt-lv {
+  position: relative;
+  padding: 1rem 1rem 1.2rem;
+  border-radius: 1.1rem;
+  background: linear-gradient(180deg, #ffffff, #faf8ff);
+  border: 1px solid rgba(124, 92, 240, 0.14);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Covers the strip the tile just left, so the hover can't drop while it lifts. */
+.tt-lv::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 4px;
+}
+
+.tt-lv:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 28px -22px rgba(76, 53, 184, 0.6);
+}
+
+.tt-lv-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.tt-lv-icon {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 0.65rem;
+  background: var(--tint);
+  color: var(--ink);
+}
+
+.tt-lv-name {
+  padding: 0.22rem 0.7rem;
+  border-radius: var(--radius-full);
+  background: var(--tint);
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tt-lv strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.tt-lv p {
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.tt-lv-team {
+  border: 2px solid #8b5cf6;
+  background: linear-gradient(180deg, #faf7ff, #ffffff);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12), 0 18px 32px -24px rgba(76, 53, 184, 0.7);
+}
+
+.tt-lv-check {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.1rem;
+  border-radius: 0 1.1rem 0 1.1rem;
+  background: #7c3aed;
+  color: #fff;
+}
+
+/* How it works: numbered steps joined by a dashed line */
+.tt-steps {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  list-style: none;
+}
+
+.tt-steps::before {
+  content: "";
+  position: absolute;
+  top: 2.4rem;
+  bottom: 2.4rem;
+  left: 1.2rem;
+  border-left: 2px dashed #c9bdfb;
+}
+
+.tt-steps li {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.tt-step-n {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6d4df2, #a855f7);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 8px 16px -8px rgba(109, 77, 242, 0.8);
+}
+
+.tt-step-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  background: #f7f4ff;
+  border: 1px solid rgba(124, 92, 240, 0.08);
+}
+
+.tt-step-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 0.8rem;
+  background: #ede8ff;
+  color: #6d28d9;
+}
+
+.tt-step-card b {
+  display: block;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.tt-step-card p {
+  margin: 0.1rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.tt-formula {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+  padding: 1.2rem 1.4rem;
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, #2e1065 0%, #5b21b6 100%);
+  color: #fff;
+  overflow: hidden;
+}
+
+.tt-formula::after {
+  content: "";
+  position: absolute;
+  top: -3.5rem;
+  right: -3.5rem;
+  width: 11rem;
+  height: 11rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192, 132, 252, 0.5), transparent 70%);
+  pointer-events: none;
+}
+
+.tt-formula-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #8b5cf6, #6d28d9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.tt-formula-body {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  padding-left: 1.2rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tt-formula h3 {
+  color: #e9d5ff;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tt-formula code {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.7rem;
+  background: rgba(15, 10, 50, 0.45);
+  font-family: ui-monospace, "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+.tt-formula p {
+  font-size: 0.82rem;
+  color: #ddd6fe;
+}
+
+/* Tips: icon block, text, and a 01-05 badge */
+.tt-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+  list-style: none;
+}
+
+.tt-tips li {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem 0 0;
+  border-radius: 1rem;
+  background: #fff;
+  border: 1px solid rgba(124, 92, 240, 0.12);
+  box-shadow: 0 10px 24px -22px rgba(76, 53, 184, 0.5);
+  overflow: hidden;
+}
+
+.tt-tip-icon {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  background: linear-gradient(145deg, #f3eeff, #e6defe);
+  color: #6d28d9;
+}
+
+.tt-tips li > div {
+  padding: 0.8rem 0;
+}
+
+.tt-tips b {
+  display: block;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.tt-tips p {
+  margin: 0.1rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.tt-tip-n {
+  display: grid;
+  place-items: center;
+  min-width: 2.6rem;
+  height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: var(--radius-full);
+  background: #efe9ff;
+  color: #5b21b6;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+/* FAQ: intro panel on the left, accordion with icons on the right */
+.tt-seo-card.tt-faq-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+  gap: 1.6rem;
+  align-items: stretch;
+  padding: 1.1rem;
+}
+
+.tt-faq-intro {
+  position: sticky;
+  top: 6.5rem;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.6rem 1.5rem 0;
+  border-radius: 1.3rem;
+  background: linear-gradient(170deg, #f6f1ff 0%, #ebe2ff 100%);
+  overflow: hidden;
+}
+
+.tt-faq-intro::before {
+  content: "";
+  position: absolute;
+  right: -20%;
+  bottom: 0;
+  left: -20%;
+  height: 55%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 300' preserveAspectRatio='none'%3E%3Cpath d='M0 120C110 70 220 180 360 120S540 60 600 100V300H0Z' fill='%23dccdff' fill-opacity='.7'/%3E%3C/svg%3E") no-repeat bottom / 100% 100%;
+  pointer-events: none;
+}
+
+.tt-faq-intro > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tt-faq-intro h2 {
+  margin: 0.9rem 0 0.7rem;
+  font-size: clamp(1.7rem, 2.4vw, 2.2rem);
+  line-height: 1.15;
+}
+
+.tt-faq-accent {
+  background: linear-gradient(90deg, #6d4df2, #c026d3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tt-faq-cta {
+  display: inline-flex;
+  margin-top: 1.3rem;
+  padding: 0.85rem 1.5rem;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.tt-faq-art {
+  width: min(100%, 17rem);
+  margin: 1.6rem auto 0;
+  filter: drop-shadow(0 16px 14px rgba(91, 63, 214, 0.28));
+}
+
+.tt-faq-art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.tt-faq details {
+  border: 1px solid rgba(124, 92, 240, 0.14);
+  border-radius: 1.1rem;
+  background: var(--white);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.tt-faq details + details {
+  margin-top: 0.7rem;
+}
+
+.tt-faq details[open] {
+  border: 1.5px solid #8b5cf6;
+  background: linear-gradient(180deg, #faf7ff, #ffffff);
+  box-shadow: 0 16px 30px -24px rgba(76, 53, 184, 0.6);
+}
+
+.tt-faq summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  list-style: none;
+  cursor: pointer;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.tt-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.tt-faq summary:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+  border-radius: 0.8rem;
+}
+
+.tt-faq-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 0.85rem;
+  background: linear-gradient(145deg, #f1ebff, #e4dcff);
+  color: #6d28d9;
+}
+
+.tt-faq-icon b {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.tt-faq-q {
+  flex: 1;
+  min-width: 0;
+}
+
+.tt-faq-toggle {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #efe9ff;
+  color: #5b21b6;
+  transition: background 0.2s ease;
+}
+
+.tt-faq summary:hover .tt-faq-toggle {
+  background: #e2d8ff;
+}
+
+.tt-faq-toggle > span {
+  display: grid;
+  place-items: center;
+}
+
+.tt-faq-chev,
+.tt-faq details[open] .tt-faq-plus {
+  display: none !important;
+}
+
+.tt-faq details[open] .tt-faq-chev {
+  display: grid !important;
+}
+
+.tt-faq details[open] .tt-faq-toggle {
+  background: #fff;
+  box-shadow: 0 4px 10px -4px rgba(109, 40, 217, 0.5);
+}
+
+/* The answer lines up with the question text, to the right of the icon column. */
+.tt-faq details p {
+  margin: 0;
+  padding: 0 3.5rem 1.1rem 4.9rem;
+}
+
+.tt-seo-links {
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--slate-500);
+}
+
+.tt-seo-links a {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.tt-seo-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1100px) {
+  .tt-levels {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .tt-seo-split,
+  .tt-faq-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tt-seo-card.tt-faq-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.2rem;
+  }
+
+  .tt-faq-intro {
+    position: relative;
+    top: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .tt-seo-card {
+    padding: 1.3rem 1.1rem;
+  }
+
+  .tt-seo h2 {
+    font-size: 1.2rem;
+  }
+
+  .tt-levels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tt-scale-flag {
+    font-size: 0.7rem;
+  }
+}
+
+/* ---------- Test options (punctuation, numbers, mode, stop on error) ---------- */
+.tt-opts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.9rem;
+  margin-bottom: 1rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 1rem;
+  background: #f4f0ff;
+}
+
+.tt-opt-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.tt-opt-sep {
+  width: 1px;
+  height: 1.3rem;
+  background: rgba(124, 92, 240, 0.25);
+}
+
+.tt-opt-label {
+  margin-right: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+.tt-chip {
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: 0.6rem;
+  background: transparent;
+  color: var(--slate-600);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tt-chip:hover:not(:disabled) {
+  background: rgba(124, 92, 240, 0.12);
+  color: var(--primary);
+}
+
+.tt-chip-on {
+  background: var(--white);
+  color: #5b21b6;
+  box-shadow: 0 2px 8px -3px rgba(76, 53, 184, 0.45);
+}
+
+.tt-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.tt-chip:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .tt-opts {
+    justify-content: flex-start;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .tt-opt-sep {
+    display: none;
+  }
+
+  .tt-opt-group {
+    width: 100%;
+  }
+}
+
+/* Page edges line up with the navbar: same side gutters at every width (see .navbar-wrapper). */
+.buyers-container.tt-container {
+  max-width: calc(var(--max-width, 1400px) + 3rem);
+  padding-inline: 1.5rem;
+}
+
+@media (max-width: 1040px) {
+  .buyers-container.tt-container {
+    max-width: calc(var(--max-width, 1400px) + 2rem);
+    padding-inline: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .buyers-container.tt-container {
+    max-width: none;
+    padding-inline: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .buyers-container.tt-container {
+    padding-inline: 0.45rem;
+  }
+}
+
+/* ---------- Polish: motion, hover and focus states ---------- */
+@keyframes tt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes tt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tt-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes tt-confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift), 34rem) rotate(var(--spin));
+  }
+}
+
+.tt-badge,
+.tt-title,
+.tt-lede,
+.tt-stage,
+.tt-side > *,
+.tt-seo-card {
+  animation: tt-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tt-title {
+  animation-delay: 0.06s;
+}
+
+.tt-lede {
+  animation-delay: 0.12s;
+}
+
+.tt-stage {
+  animation-delay: 0.14s;
+}
+
+.tt-side > :nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.tt-side > :nth-child(2) {
+  animation-delay: 0.28s;
+}
+
+.tt-form-layout,
+.tt-play,
+.tt-result {
+  animation: tt-fade 0.4s ease both;
+}
+
+.tt-result-stats > div {
+  animation: tt-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tt-result-stats > div:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+.tt-result-stats > div:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.tt-result-stats > div:nth-child(4) {
+  animation-delay: 0.18s;
+}
+
+.tt-result-stats > div:nth-child(5) {
+  animation-delay: 0.24s;
+}
+
+.tt-result-stats > div:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+/* Buttons: a light sweep on hover and a press-down on click. */
+.tt-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.tt-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+.tt-cta:hover::after {
+  transform: translateX(120%);
+}
+
+.tt-cta:active {
+  filter: brightness(0.96);
+  box-shadow: 0 6px 14px -8px rgba(94, 75, 238, 0.8);
+}
+
+.tt-secondary:active {
+  background: var(--primary-100);
+}
+
+/* No transform on hover: a button that moves out from under the cursor flickers at its edge. */
+.tt-pill:not(.tt-pill-on):hover,
+.tt-secondary:hover {
+  box-shadow: 0 10px 20px -12px rgba(94, 75, 238, 0.55);
+}
+
+/* Hover is an inset ring: anything that moves or spills outside the row would add a scrollbar to the list. */
+.tt-row {
+  transition: box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.tt-row:hover {
+  box-shadow: inset 0 0 0 1.5px rgba(124, 92, 240, 0.35);
+}
+
+.tt-words-box {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tt-words-box-on {
+  border-color: rgba(124, 92, 240, 0.45);
+  box-shadow: 0 0 0 4px rgba(124, 92, 240, 0.1);
+}
+
+.tt-skel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.tt-skel li {
+  height: 3.4rem;
+  border-radius: 0.9rem;
+  background: linear-gradient(90deg, #f1ecff 25%, #f9f6ff 50%, #f1ecff 75%);
+  background-size: 200% 100%;
+  animation: tt-shimmer 1.4s linear infinite;
+}
+
+.tt-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tt-confetti i {
+  position: absolute;
+  top: -1rem;
+  width: 0.55rem;
+  height: 0.9rem;
+  border-radius: 2px;
+  opacity: 0;
+  animation: tt-confetti-fall 2.6s ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-badge,
+  .tt-title,
+  .tt-lede,
+  .tt-stage,
+  .tt-side > *,
+  .tt-seo-card,
+  .tt-form-layout,
+  .tt-play,
+  .tt-result,
+  .tt-result-stats > div,
+  .tt-sparkle,
+  .tt-skel li {
+    animation: none;
+  }
+
+  .tt-confetti {
+    display: none;
+  }
+
+  .tt-cta::after {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .tt-result-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .tt-result-stats > div,
+  .tt-chars {
+    gap: 0.6rem;
+    padding: 0.7rem 0.75rem;
+  }
+
+  .tt-rs-icon {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 0.65rem;
+  }
+
+  .tt-result-stats strong {
+    font-size: 1.2rem;
+  }
+
+  .tt-result-stats small {
+    font-size: 0.74rem;
+  }
+
+  .tt-chars ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-left: 0;
+    width: 100%;
+  }
+
+  /* the chart is drawn in a 640-wide box, so labels need bigger units to stay readable when it shrinks */
+  .tt-chart-plot svg text {
+    font-size: 19px;
+  }
+
+  .tt-result-actions .tt-cta,
+  .tt-result-actions .tt-secondary {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-vs-track i {
+    animation: none;
+  }
+}
+
+/* ---------- Keycaps in motion ---------- */
+.tt-keys svg {
+  animation: tt-keys-bob 4.6s ease-in-out infinite;
+}
+
+@keyframes tt-keys-bob {
+  50% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+}
+
+.tt-kc {
+  cursor: pointer;
+}
+
+.tt-kc-push {
+  transition: transform 0.09s ease-out;
+}
+
+/* The keys tap out W, A, S, D in turn, then rest. Only the top face moves, so the side stays put. */
+.tt-kc-top {
+  animation: tt-keypress 4.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.45s);
+}
+
+@keyframes tt-keypress {
+  0%,
+  16%,
+  100% {
+    transform: translateY(0);
+  }
+  5%,
+  10% {
+    transform: translateY(9px);
+  }
+}
+
+/* Hover, a tap, or the real key: that key dips and the demo steps aside. */
+.tt-kc:hover .tt-kc-push,
+.tt-kc-down .tt-kc-push {
+  transform: translateY(9px);
+}
+
+.tt-keys:hover svg {
+  animation-play-state: paused;
+}
+
+.tt-keys:hover .tt-kc-top,
+.tt-kc-down .tt-kc-top {
+  animation: none;
+}
+
+.tt-kc-glow {
+  animation: tt-key-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes tt-key-glow {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-keys svg,
+  .tt-kc-top,
+  .tt-kc-glow {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-row-bar::after,
+  .tt-live::after {
+    animation: none;
+  }
+}
+
+.tt-stage-result {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.tt-sparkle-r {
+  right: -3rem;
+  left: auto;
+  top: -1.2rem;
+  animation-delay: 1.1s;
+}
+
+/* ---------- Form card decoration ---------- */
+.tt-burst {
+  position: absolute;
+  top: -0.9rem;
+  right: -2.3rem;
+  width: 2rem;
+  color: #7c3aed;
+}
+
+.tt-underline {
+  position: absolute;
+  left: 2%;
+  bottom: -0.45rem;
+  width: 96%;
+  height: 0.5rem;
+  color: #7c3aed;
+  pointer-events: none;
+}
+
+/* Soft waves along the bottom of the form card. */
+.tt-stage-form::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 58%;
+  opacity: 0.7;
+  /* fade in from the left so the shape has no hard edge */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 45%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 45%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 360' preserveAspectRatio='none'%3E%3Cpath d='M0 200C110 140 210 270 350 210S540 130 600 160V360H0Z' fill='%23e9e0ff' fill-opacity='.75'/%3E%3Cpath d='M0 270C140 220 250 330 400 270S560 240 600 255V360H0Z' fill='%23dccdff' fill-opacity='.65'/%3E%3C/svg%3E") no-repeat right bottom / 100% 100%;
+  pointer-events: none;
+}
+
+.tt-stage-form .tt-form-layout {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 760px) {
+  .tt-burst {
+    display: none;
+  }
+
+  .tt-input > svg {
+    left: 0.75rem;
+    width: 16px;
+    height: 16px;
+  }
+
+  .tt-field .tt-input input {
+    padding-left: 2.4rem;
+  }
+
+  .tt-label {
+    font-size: 0.88rem;
+  }
+
+  .tt-form-head h2 {
+    width: auto;
+  }
+}
+
+@media (min-width: 1361px) {
+  .tt-result-stats {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .tt-result-stats {
+    gap: 0.45rem;
+  }
+
+  .tt-result-stats > div {
+    gap: 0.45rem;
+    padding: 0.55rem 0.55rem;
+  }
+
+  .tt-result-stats .tt-rs-icon {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 0.6rem;
+  }
+
+  .tt-result-stats .tt-rs-icon svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .tt-result-stats small {
+    font-size: 0.66rem;
+  }
+
+  .tt-result-stats strong {
+    font-size: 1.05rem;
+  }
+}
+
+/* Not enough width for two columns: gauge, then the comparison, then the buttons. */
+@media (max-width: 1100px) {
+  .tt-res-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "gauge"
+      "side"
+      "actions";
+    gap: 1rem;
+  }
+}
+
+
+
+@media (max-width: 1100px) {
+  .tt-guide-art-kb {
+    width: 13rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .tt-guide-art-kb {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .tt-guide-art-key {
+    width: 5.5rem;
+    top: 0.6rem;
+    right: 0.8rem;
+  }
+
+  .tt-guide-tips .tt-guide-lede {
+    padding-right: 0;
+  }
+
+  .tt-step-icon {
+    display: none;
+  }
+
+  .tt-formula {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tt-formula-body {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .tt-tips li {
+    grid-template-columns: 3.2rem minmax(0, 1fr) auto;
+    gap: 0.7rem;
+  }
+
+  .tt-scale-flag {
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .tt-seo-card.tt-faq-layout {
+    padding: 0.6rem;
+  }
+
+  .tt-faq summary {
+    gap: 0.7rem;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .tt-faq-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .tt-faq details p {
+    padding: 0 1rem 1rem;
+  }
+}
+
+/* Phones: a smaller gauge, and the buttons come before the comparison so they stay on the first screen. */
+@media (max-width: 760px) {
+  .tt-res-hero {
+    grid-template-areas:
+      "gauge"
+      "actions"
+      "side";
+  }
+
+  .tt-res-gauge .tt-gauge {
+    width: 11.5rem;
+  }
+
+  .tt-res-gauge .tt-gauge-read strong {
+    font-size: 2.9rem;
+  }
+}

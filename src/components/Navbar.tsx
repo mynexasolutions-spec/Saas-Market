@@ -232,6 +232,23 @@ export default function Navbar({
                         </Link>
 
                         <Link
+                          href="/typing-test"
+                          className="mega-menu-item"
+                          onClick={() => setResourcesOpen(false)}
+                        >
+                          <div className="mega-icon-box mega-icon-brand">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="2" y="6" width="20" height="12" rx="2" />
+                              <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" />
+                            </svg>
+                          </div>
+                          <div className="mega-item-info">
+                            <span className="mega-item-title">Typing Test <em className="mega-new-badge">New</em></span>
+                            <span className="mega-item-desc">Beat our WPM &amp; join the leaderboard</span>
+                          </div>
+                        </Link>
+
+                        <Link
                           href="/alternatives"
                           className="mega-menu-item"
                           onClick={() => setResourcesOpen(false)}
@@ -591,6 +608,14 @@ export default function Navbar({
                     >
                       <span className="mobile-sublink-dot" />
                       <span>Spend Calculator</span>
+                    </Link>
+                    <Link
+                      href="/typing-test"
+                      className="mobile-sublink-item"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <span className="mobile-sublink-dot" />
+                      <span>Typing Test <em className="mega-new-badge">New</em></span>
                     </Link>
                     <Link
                       href="/alternatives"

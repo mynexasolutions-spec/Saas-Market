@@ -141,6 +141,7 @@ export default function Footer() {
               </div>
               <ul className="footer-links-list">
                 <li><Link href="/tools/saas-spend-calculator" className="footer-link-item">Spend Calculator</Link></li>
+                <li><Link href="/typing-test" className="footer-link-item">Typing Test</Link></li>
                 <li><Link href="/how-it-works" className="footer-link-item">How it Works</Link></li>
                 <li><Link href="/buyers" className="footer-link-item">Buyer Guide</Link></li>
                 <li><Link href="/trust" className="footer-link-item">Trust &amp; Security</Link></li>

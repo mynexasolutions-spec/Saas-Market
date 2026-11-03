@@ -88,6 +88,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/typing-test`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/badges`,
       lastModified: currentDate,
       changeFrequency: "monthly",

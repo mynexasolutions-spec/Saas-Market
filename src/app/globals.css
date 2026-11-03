@@ -111,6 +111,39 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Site-wide scrollbar in the brand purple. Components that style or hide their own scrollbar keep doing so. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(94, 75, 238, 0.06);
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 44px;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #8b7cf5, var(--primary)) padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary), var(--primary-hover)) padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox has no ::-webkit-scrollbar, and in Chromium these two properties would override the rules above. */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) var(--primary-50);
+  }
+}
+
 body {
   font-family: var(--font-sans);
   background-color: #FAFAFC;
@@ -574,6 +607,27 @@ textarea {
 .mega-icon-blue {
   background: #EFF6FF;
   color: #2563EB;
+}
+
+.mega-icon-brand {
+  background: linear-gradient(145deg, #8B5CF6, #5E4BEE);
+  color: #FFFFFF;
+  box-shadow: 0 8px 16px -8px rgba(94, 75, 238, 0.7);
+}
+
+.mega-new-badge {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #A855F7, #5E4BEE);
+  color: #FFFFFF;
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: 1px;
 }
 
 .mega-icon-purple {
