@@ -624,7 +624,7 @@ export default function TypingTestClient({
                 <div className="tt-form-layout">
                 <form className="tt-form" onSubmit={handleStart} noValidate>
                   <div className="tt-form-head">
-                    <span className="tt-bench-pill"><Icon name="trophy" size={16} /> {heroBench.team ? "Team Benchmark" : `Top Score · ${heroBench.name}`}: {heroBench.wpm} WPM</span>
+                    <span className="tt-bench-pill"><Icon name="trophy" size={16} /> <span className="tt-bench-text">{heroBench.team ? "Team Benchmark" : `Top Score · ${heroBench.name}`}: {heroBench.wpm} WPM</span></span>
                     <h2>
                       <svg className="tt-burst" viewBox="0 0 36 30" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
                         <path d="M6 7l3 6M17 2l1 7M29 11l-7 3" />
